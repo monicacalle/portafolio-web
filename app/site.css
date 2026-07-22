@@ -1,0 +1,267 @@
+/* =========================================================================
+   Header
+   ========================================================================= */
+.hdr {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  transition: background 0.5s var(--ease-out-quart), box-shadow 0.5s var(--ease-out-quart);
+}
+.hdr--scrolled {
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.hdr__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.hdr__brand {
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.hdr__brand span {
+  color: var(--burgundy);
+  margin-left: 0.28em;
+}
+.hdr__nav {
+  display: flex;
+  gap: clamp(1rem, 2.4vw, 2.4rem);
+}
+.hdr__link {
+  position: relative;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  padding: 0.35rem 0;
+  transition: color 0.3s ease;
+}
+.hdr__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1.5px;
+  width: 100%;
+  background: var(--burgundy);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+.hdr__link:hover,
+.hdr__link.is-active {
+  color: var(--ink);
+}
+.hdr__link:hover::after,
+.hdr__link.is-active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.hdr__burger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.hdr__burger span {
+  width: 24px;
+  height: 1.6px;
+  background: var(--ink);
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.3s ease;
+}
+.hdr__burger.is-open span:first-child {
+  transform: translateY(3.8px) rotate(45deg);
+}
+.hdr__burger.is-open span:last-child {
+  transform: translateY(-3.8px) rotate(-45deg);
+}
+
+@media (max-width: 760px) {
+  .hdr__burger {
+    display: flex;
+  }
+  .hdr__nav {
+    position: fixed;
+    inset: var(--header-height) 0 auto;
+    flex-direction: column;
+    gap: 0;
+    background: var(--paper-2);
+    padding: 0 var(--edge);
+    box-shadow: 0 20px 40px -24px color-mix(in srgb, var(--ink) 40%, transparent);
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.5s var(--ease-out-expo);
+  }
+  .hdr__nav--open {
+    clip-path: inset(0 0 0 0);
+  }
+  .hdr__link {
+    padding: 1rem 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+}
+
+/* =========================================================================
+   Hero
+   ========================================================================= */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--header-height);
+  overflow: hidden;
+}
+.hero__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.1rem, 1vw, 1rem);
+  flex: 1;
+  min-height: 0;
+}
+.hero__word {
+  display: flex;
+  font-family: var(--font-heading), serif;
+  font-size: var(--fs-display);
+  line-height: 0.9;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+.hero__letter {
+  display: inline-block;
+  overflow: hidden;
+  padding-block: 0.06em; /* room for descenders during the wipe */
+}
+.hero__glyph {
+  display: inline-block;
+}
+.hero__word--left {
+  justify-content: flex-end;
+}
+
+/* Portrait sits between the two words */
+.hero__portrait-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(9rem, 26vw, 21rem);
+  aspect-ratio: 3 / 4;
+  margin-inline: clamp(-0.6rem, -1vw, -0.2rem);
+  z-index: 2;
+}
+.hero__portrait {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px 999px 14px 14px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--burgundy) 60%, transparent);
+}
+.hero__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.hero__ring {
+  position: absolute;
+  inset: -7% -7% -3%;
+  border: 1px solid color-mix(in srgb, var(--burgundy) 45%, transparent);
+  border-radius: 999px 999px 20px 20px;
+  z-index: -1;
+}
+
+.hero__meta {
+  position: relative;
+  z-index: 3;
+  padding-bottom: clamp(1.5rem, 4vh, 3rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.hero__name {
+  font-size: var(--fs-medium);
+  color: var(--burgundy);
+}
+.hero__role {
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+  margin: 0;
+}
+.hero__cue {
+  margin-top: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  width: fit-content;
+}
+.hero__cue-line {
+  width: 3.2rem;
+  height: 1px;
+  background: var(--ink-faint);
+  position: relative;
+  overflow: hidden;
+}
+.hero__cue-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--burgundy);
+  transform: translateX(-100%);
+  animation: cue 2.4s var(--ease-out-expo) infinite;
+}
+@keyframes cue {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+.hero__mark {
+  position: absolute;
+  top: calc(var(--header-height) + 0.6rem);
+  right: var(--edge);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  color: var(--ink-faint);
+  writing-mode: vertical-rl;
+}
+
+@media (max-width: 720px) {
+  .hero__inner {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .hero__word--left {
+    justify-content: center;
+  }
+  .hero__portrait-wrap {
+    width: clamp(11rem, 52vw, 16rem);
+    margin-block: 0.4rem;
+  }
+  .hero__mark {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue-line::after {
+    animation: none;
+  }
+}

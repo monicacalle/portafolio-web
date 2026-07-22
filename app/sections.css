@@ -1,0 +1,419 @@
+/* Shared section rhythm */
+.section {
+  padding-block: clamp(5rem, 12vh, 9rem);
+}
+.section__head {
+  max-width: 46rem;
+  margin-bottom: clamp(2.5rem, 6vh, 4.5rem);
+}
+.section__title {
+  font-size: var(--fs-title);
+  color: var(--ink);
+  margin: 0.5rem 0 0;
+}
+.section__lead {
+  margin-top: 1rem;
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+  max-width: 36rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.7rem;
+  border-radius: 999px;
+  transition: transform 0.35s var(--ease-out-expo), background 0.35s ease, color 0.35s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn--solid {
+  background: var(--burgundy);
+  color: var(--paper-2);
+}
+.btn--solid:hover {
+  background: var(--ink);
+}
+.btn--ghost {
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  color: var(--ink);
+}
+.btn--ghost:hover {
+  border-color: var(--burgundy);
+  color: var(--burgundy);
+}
+
+/* =========================================================================
+   About
+   ========================================================================= */
+.about__grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  margin-top: 1.5rem;
+}
+.about__title {
+  font-size: var(--fs-subtitle);
+  margin: 0 0 1.5rem;
+  color: var(--ink);
+}
+.about__title span {
+  color: var(--burgundy);
+}
+.about__copy p {
+  color: var(--ink-soft);
+  margin: 0 0 1.1rem;
+  max-width: 40ch;
+}
+.about__actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.about__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 260px 260px 22px 22px;
+  overflow: hidden;
+  box-shadow: 0 50px 90px -50px color-mix(in srgb, var(--burgundy) 55%, transparent);
+}
+.about__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 900px) {
+  .about__grid {
+    grid-template-columns: 1fr;
+  }
+  .about__media {
+    max-width: 22rem;
+  }
+}
+
+/* =========================================================================
+   Skills
+   ========================================================================= */
+.skills__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+.skill {
+  position: relative;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  background: var(--paper-2);
+  border: 1px solid color-mix(in srgb, var(--hero-accent) 55%, transparent);
+  border-radius: 20px;
+  transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
+}
+.skill:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -40px color-mix(in srgb, var(--blue-deep) 40%, transparent);
+}
+.skill__index {
+  font-family: var(--font-heading), serif;
+  font-size: 2.4rem;
+  color: color-mix(in srgb, var(--blue-deep) 30%, var(--hero-accent));
+  line-height: 1;
+}
+.skill__kicker {
+  margin: 1.4rem 0 0.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+}
+.skill__title {
+  /* Sans, not the display serif: TheSeasons renders "-" (Front-End, No-Code)
+     as an ornamental glyph. Matches the reference, which uses Geist for labels. */
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.25;
+  font-size: var(--fs-small);
+  margin: 0 0 0.7rem;
+  color: var(--ink);
+}
+.skill__body {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin: 0 0 1.2rem;
+}
+.skill__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.skill__tags li {
+  font-size: 0.74rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blue) 32%, var(--paper));
+  color: var(--blue-deep);
+}
+@media (max-width: 720px) {
+  .skills__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================================
+   Curriculum
+   ========================================================================= */
+.cv__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+.cv__heading {
+  font-size: var(--fs-medium);
+  color: var(--burgundy);
+  margin: 0 0 2rem;
+}
+.cv__track {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border-left: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  padding-left: 1.8rem;
+}
+.cv__item {
+  position: relative;
+}
+.cv__item::before {
+  content: "";
+  position: absolute;
+  left: -2.2rem;
+  top: 0.55rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--burgundy);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--burgundy) 14%, transparent);
+}
+.cv__when {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.cv__role {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 0.35rem 0 0.1rem;
+  color: var(--ink);
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+.cv__place {
+  font-size: 0.85rem;
+  color: var(--burgundy);
+  margin: 0 0 0.5rem;
+}
+.cv__body {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .cv__grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+/* =========================================================================
+   Projects
+   ========================================================================= */
+.pgroup {
+  margin-top: clamp(3rem, 8vh, 5.5rem);
+}
+.pgroup__head {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: baseline;
+  margin-bottom: 2.2rem;
+  max-width: 52rem;
+}
+.pgroup__n {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  color: color-mix(in srgb, var(--blue-deep) 34%, var(--hero-accent));
+  line-height: 0.8;
+  flex: 0 0 auto;
+}
+.pgroup__label {
+  /* Sans: contains "/" (Proyectos UX/UI), which the serif ornamentalises. */
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  font-size: var(--fs-medium);
+  color: var(--ink);
+  margin: 0 0 0.4rem;
+}
+.pgroup__blurb {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 42ch;
+}
+.pgroup__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+}
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--paper-2);
+  border: 1px solid color-mix(in srgb, var(--hero-accent) 50%, transparent);
+}
+.card--wide {
+  grid-column: span 2;
+}
+.card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-out-expo);
+}
+.card:hover .card__media img {
+  transform: scale(1.05);
+}
+.card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.3rem 1.3rem;
+}
+.card__title {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+  font-size: 1.02rem;
+  margin: 0;
+  color: var(--ink);
+}
+.card__tag {
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  margin: 0;
+  text-align: right;
+  flex: 0 0 auto;
+}
+@media (max-width: 700px) {
+  .pgroup__grid {
+    grid-template-columns: 1fr;
+  }
+  .card--wide {
+    grid-column: span 1;
+  }
+  .card__media {
+    aspect-ratio: 16 / 11;
+  }
+}
+
+/* =========================================================================
+   Contact + Footer
+   ========================================================================= */
+.contact {
+  background: var(--burgundy);
+  color: var(--paper);
+  padding-bottom: 0;
+  margin-top: clamp(3rem, 8vh, 6rem);
+}
+.eyebrow--light {
+  color: var(--hero-accent);
+}
+.contact__title {
+  font-size: var(--fs-title);
+  margin: 0.6rem 0 0;
+  color: var(--paper-2);
+}
+.contact__lead {
+  margin: 1.4rem 0 2.4rem;
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
+  max-width: 34rem;
+  font-size: var(--fs-xs);
+}
+.contact__mail {
+  /* The email is the primary CTA and MUST be legible: TheSeasons renders "@"
+     and "." as ornaments, so this uses Geist even though it carries .serif
+     elsewhere for its size. */
+  display: inline-block;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.5rem, 5.5vw, 2.7rem);
+  color: var(--hero-accent);
+  border-bottom: 1px solid color-mix(in srgb, var(--hero-accent) 40%, transparent);
+  padding-bottom: 0.1em;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+.contact__mail:hover {
+  color: var(--paper-2);
+  border-color: var(--paper-2);
+}
+.contact__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 2.6rem;
+}
+.contact__tags span {
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--paper) 26%, transparent);
+  color: color-mix(in srgb, var(--paper) 88%, transparent);
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding-block: 2.5rem;
+  margin-top: clamp(3rem, 8vh, 5rem);
+  border-top: 1px solid color-mix(in srgb, var(--paper) 18%, transparent);
+}
+.footer__brand {
+  font-size: 1.3rem;
+  color: var(--paper-2);
+}
+.footer__links {
+  display: flex;
+  gap: 1.4rem;
+}
+.footer__links a {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+  transition: color 0.3s ease;
+}
+.footer__links a:hover {
+  color: var(--hero-accent);
+}
+.footer__fine {
+  width: 100%;
+  font-size: 0.74rem;
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
+  margin: 0;
+}
