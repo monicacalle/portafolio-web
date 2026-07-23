@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import logo from "@/public/images/asset4.png";
 
 const LINKS = [
   { href: "#home", label: "Inicio" },
@@ -44,8 +46,8 @@ export function Header() {
   return (
     <header className={`hdr ${scrolled ? "hdr--scrolled" : ""}`}>
       <div className="hdr__inner shell">
-        <a href="#home" className="hdr__brand serif" onClick={() => setOpen(false)}>
-          Mónica<span>Calle</span>
+        <a href="#home" className="hdr__brand" onClick={() => setOpen(false)} aria-label="Mónica Calle — inicio">
+          <Image src={logo} alt="Logo de Mónica Calle" className="hdr__logo" priority />
         </a>
 
         <nav className={`hdr__nav ${open ? "hdr__nav--open" : ""}`}>

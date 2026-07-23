@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ElementType, type ReactNode } from "react";
+import { createElement, useEffect, useRef, type ElementType, type ReactNode } from "react";
 
 /**
  * Lightweight scroll reveal. Adds `.in-view` when the element enters the
@@ -37,14 +37,14 @@ export function Reveal({
     return () => io.disconnect();
   }, []);
 
-  return (
-    <Tag
-      ref={ref}
-      data-reveal=""
-      className={className}
-      style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}
-    >
-      {children}
-    </Tag>
+  return createElement(
+    Tag,
+    {
+      ref,
+      "data-reveal": "",
+      className,
+      style: { "--reveal-delay": `${delay}ms` } as React.CSSProperties,
+    },
+    children,
   );
 }

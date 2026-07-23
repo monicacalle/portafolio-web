@@ -22,13 +22,18 @@
   width: 100%;
 }
 .hdr__brand {
-  font-size: 1.35rem;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
 }
-.hdr__brand span {
-  color: var(--burgundy);
-  margin-left: 0.28em;
+/* The wordmark is burgundy on transparent — sits directly on the cream header.
+   Aspect ratio 768:202 (~3.8:1). */
+.hdr__logo {
+  height: clamp(1.9rem, 2.4vw, 2.35rem);
+  width: auto;
+  transition: opacity 0.3s ease;
+}
+.hdr__brand:hover .hdr__logo {
+  opacity: 0.75;
 }
 .hdr__nav {
   display: flex;

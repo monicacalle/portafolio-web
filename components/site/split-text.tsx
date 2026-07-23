@@ -1,0 +1,56 @@
+"use client";
+
+import { createElement, useEffect, useRef, type ElementType } from "react";
+
+/**
+ * Split-text reveal. Splits on words, wraps each in a masked line, and lifts
+ * them in with a stagger the first time the block scrolls into view. Words stay
+ * as whole units so wrapping and selection behave. Reduced-motion → instant.
+ */
+export function SplitText({
+  text,
+  as: Tag = "span",
+  className,
+  delay = 0,
+  stagger = 0.045,
+}: {
+  text: string;
+  as?: ElementType;
+  className?: string;
+  delay?: number;
+  stagger?: number;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const words = text.split(" ");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("split--in");
+            obs.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return createElement(
+    Tag,
+    { ref, className: `split ${className ?? ""}` },
+    words.map((w, i) => (
+      <span key={i} className="split__word">
+        <span className="split__inner" style={{ transitionDelay: `${delay + i * stagger}s` }}>
+          {w}
+        </span>
+        {i < words.length - 1 ? " " : ""}
+      </span>
+    )),
+  );
+}
