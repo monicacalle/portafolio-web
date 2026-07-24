@@ -131,8 +131,7 @@
   color: var(--burgundy);
 }
 .skill__title {
-  /* Sans, not the display serif: TheSeasons renders "-" (Front-End, No-Code)
-     as an ornamental glyph. Matches the reference, which uses Geist for labels. */
+  /* Keep compact card titles in Geist; display headings use New York. */
   font-family: var(--font-sans), sans-serif;
   font-weight: 800;
   letter-spacing: 0;
