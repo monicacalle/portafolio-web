@@ -40,7 +40,11 @@ export function About() {
           </Reveal>
           <Reveal className="about__actions" delay={300}>
             <Magnetic strength={0.5}>
-              <a className="btn btn--solid" href="#curriculum" data-cursor={t("cvCursor")}>
+              <a
+                className="btn btn--solid"
+                href="#curriculum"
+                data-cursor={t("cvCursor")}
+              >
                 {t("ctaCv")}
               </a>
             </Magnetic>
@@ -52,7 +56,12 @@ export function About() {
           </Reveal>
         </div>
         <Reveal className="about__media" delay={140}>
-          <Image src={about} alt={t("imageAlt")} sizes="(max-width: 900px) 80vw, 26rem" placeholder="blur" />
+          <Image
+            src={about}
+            alt={t("imageAlt")}
+            sizes="(max-width: 900px) 80vw, 26rem"
+            placeholder="blur"
+          />
         </Reveal>
       </div>
     </section>
@@ -62,7 +71,12 @@ export function About() {
 /* =========================================================================
    Skills
    ========================================================================= */
-type SkillItem = { kicker: string; title: string; body: string; tags: string[] };
+type SkillItem = {
+  kicker: string;
+  title: string;
+  body: string;
+  tags: string[];
+};
 
 export function Skills() {
   const t = useTranslations("skills");
@@ -141,8 +155,14 @@ export function Curriculum() {
         <SplitText as="h2" className="section__title" text={t("title")} />
       </div>
       <div className="cv__grid">
-        <Timeline heading={t("educationHeading")} items={t.raw("education") as CvItem[]} />
-        <Timeline heading={t("workHeading")} items={t.raw("work") as CvItem[]} />
+        <Timeline
+          heading={t("educationHeading")}
+          items={t.raw("education") as CvItem[]}
+        />
+        <Timeline
+          heading={t("workHeading")}
+          items={t.raw("work") as CvItem[]}
+        />
       </div>
     </section>
   );
@@ -160,18 +180,32 @@ const PDF_HOST = "/assets";
 // `internal` points to an on-site case study; when set the card navigates
 // there (client-side) instead of opening the raw PDF in a new tab.
 const PROJECT_MEDIA: {
-  items: { img: StaticImageData; href: string; internal?: string; code?: string; wide?: boolean }[];
+  items: {
+    img: StaticImageData;
+    href: string;
+    internal?: string;
+    code?: string;
+    wide?: boolean;
+  }[];
 }[] = [
   {
     items: [
-      { img: vibe, href: `${PDF_HOST}/vibe-app-memoria.pdf`, internal: "/proyectos/vibe" },
-      { img: voluntee, href: `${PDF_HOST}/voluntee-app-slides.pdf`, internal: "/proyectos/voluntee" },
+      {
+        img: vibe,
+        href: `${PDF_HOST}/vibe-app-memoria.pdf`,
+        internal: "/proyectos/vibe",
+      },
+      {
+        img: voluntee,
+        href: `${PDF_HOST}/voluntee-app-slides.pdf`,
+        internal: "/proyectos/voluntee",
+      },
     ],
   },
   {
     items: [
       { img: raiz, href: "https://estudio-raiz.webflow.io/", wide: true },
-      { img: isa, href: "https://monicacalle.es/", wide: true },
+      { img: isa, href: "https://experiencia.monicacalle.es/", wide: true },
       {
         img: iphone,
         href: "https://iphone15-page-clone.vercel.app/",
@@ -180,7 +214,9 @@ const PROJECT_MEDIA: {
     ],
   },
   {
-    items: [{ img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true }],
+    items: [
+      { img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true },
+    ],
   },
 ];
 
@@ -229,10 +265,16 @@ export function Projects() {
                 const href = m.internal ?? m.href;
                 // External links (PDFs, live sites) open in a new tab; internal
                 // case-study links navigate in place via next/link.
-                const linkAttrs = m.internal ? {} : { target: "_blank", rel: "noopener noreferrer" };
+                const linkAttrs = m.internal
+                  ? {}
+                  : { target: "_blank", rel: "noopener noreferrer" };
                 const LinkTag = m.internal ? Link : "a";
                 return (
-                  <Reveal key={p.title} className={`card ${m.wide ? "card--wide" : ""}`} delay={i * 90}>
+                  <Reveal
+                    key={p.title}
+                    className={`card ${m.wide ? "card--wide" : ""}`}
+                    delay={i * 90}
+                  >
                     <LinkTag
                       className="card__media"
                       href={href}
@@ -240,7 +282,12 @@ export function Projects() {
                       data-cursor={cardCursor}
                       aria-label={`${p.action}: ${p.title}`}
                     >
-                      <Image src={m.img} alt={p.title} sizes="(max-width: 800px) 100vw, 40rem" placeholder="blur" />
+                      <Image
+                        src={m.img}
+                        alt={p.title}
+                        sizes="(max-width: 800px) 100vw, 40rem"
+                        placeholder="blur"
+                      />
                     </LinkTag>
                     <div className="card__meta">
                       <div className="card__info">
@@ -248,11 +295,20 @@ export function Projects() {
                         <p className="card__tag">{p.tag}</p>
                       </div>
                       <div className="card__links">
-                        <LinkTag className="card__link" href={href} {...linkAttrs}>
+                        <LinkTag
+                          className="card__link"
+                          href={href}
+                          {...linkAttrs}
+                        >
                           {p.action}
                         </LinkTag>
                         {m.code && (
-                          <a className="card__link card__link--muted" href={m.code} target="_blank" rel="noopener noreferrer">
+                          <a
+                            className="card__link card__link--muted"
+                            href={m.code}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             {codeLabel}
                           </a>
                         )}
@@ -291,7 +347,11 @@ export function Contact() {
         </Reveal>
         <Reveal delay={180}>
           <Magnetic strength={0.25}>
-            <a className="contact__mail" href="mailto:monicacalle369@gmail.com" data-cursor={t("mailCursor")}>
+            <a
+              className="contact__mail"
+              href="mailto:monicacalle369@gmail.com"
+              data-cursor={t("mailCursor")}
+            >
               monicacalle369@gmail.com
             </a>
           </Magnetic>
