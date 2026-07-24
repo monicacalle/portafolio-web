@@ -5,8 +5,16 @@ export const geist = localFont({
   variable: "--font-sans",
   display: "swap",
   src: [
-    { path: "../public/fonts/geist-v1-latin-regular.woff2", weight: "400", style: "normal" },
-    { path: "../public/fonts/geist-v1-latin-800.woff2", weight: "800", style: "normal" },
+    {
+      path: "../public/fonts/geist-v1-latin-regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/geist-v1-latin-800.woff2",
+      weight: "800",
+      style: "normal",
+    },
   ],
 });
 
@@ -14,5 +22,11 @@ export const geist = localFont({
 export const newYork = localFont({
   variable: "--font-heading",
   display: "swap",
-  src: [{ path: "../public/fonts/NewYork PERSONAL USE.otf", weight: "400", style: "normal" }],
+  src: [
+    {
+      path: "../public/fonts/NewYork PERSONAL USE.otf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
 });
