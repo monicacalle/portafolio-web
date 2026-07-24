@@ -1,0 +1,31 @@
+{
+  "eyebrow": "Habilidades",
+  "title": "Herramientas y fortalezas",
+  "lead": "Una selección de lo que uso para diseñar producto de principio a fin: de la investigación a una interfaz cuidada y viable.",
+  "items": [
+    {
+      "kicker": "Producto",
+      "title": "Diseño de producto & UX",
+      "body": "Del problema a la solución: investigación, arquitectura de la información, flujos y prototipos que valido antes de llegar al diseño final.",
+      "tags": ["Investigación UX", "Wireframes", "Prototipado", "User journeys", "Design thinking"]
+    },
+    {
+      "kicker": "Diseño",
+      "title": "Diseño UI & visual",
+      "body": "Convierto ideas en direcciones visuales claras, sistemas de interfaz y recursos alineados con la marca.",
+      "tags": ["Figma", "Design systems", "Illustrator", "Photoshop", "InDesign"]
+    },
+    {
+      "kicker": "Desarrollo",
+      "title": "Front-end & handoff",
+      "body": "Una base de front-end que uso para validar la viabilidad de mis diseños, hablar el idioma de desarrollo y entregar specs que se implementan sin fricción.",
+      "tags": ["HTML5", "CSS3", "JavaScript", "React", "WordPress", "Webflow"]
+    },
+    {
+      "kicker": "Colaboración",
+      "title": "Fortalezas profesionales",
+      "body": "Trabajo con equipos y clientes desde una comunicación clara, la resolución de problemas, la adaptabilidad y una mentalidad centrada en el usuario.",
+      "tags": ["Comunicación", "Trabajo en equipo", "Resolución de problemas", "Adaptabilidad"]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "eyebrow": "Currículum",
+  "title": "Formación y experiencia",
+  "educationHeading": "Formación",
+  "workHeading": "Experiencia laboral",
+  "education": [
+    {
+      "when": "Actualidad",
+      "title": "Máster en Diseño Gráfico, UX/UI y Diseño Web",
+      "place": "CEI, Escuela de Diseño y Marketing · España",
+      "body": "Branding y sistemas de identidad visual, arquitectura de la información, prototipado y microinteracciones UX."
+    },
+    {
+      "when": "2022 – 2023",
+      "title": "Desarrollo Full Stack",
+      "place": "4Geeks Academy · Chile",
+      "body": "Front-end con JavaScript (ES6+, React) y back-end con Python (Flask, APIs REST), construyendo y desplegando aplicaciones web."
+    },
+    {
+      "when": "2010 – 2015",
+      "title": "Licenciatura en Lenguas Extranjeras",
+      "place": "Unidad Central del Valle · Colombia",
+      "body": "Enseñanza de inglés y francés, con base en lingüística, comunicación intercultural y metodologías pedagógicas."
+    }
+  ],
+  "work": [
+    {
+      "when": "Actualidad",
+      "title": "Desarrolladora UX/UI y WordPress",
+      "place": "Neerutech · España",
+      "body": "Diseño la experiencia y la acompaño hasta producción: de la investigación y el prototipo en Figma a una tienda WooCommerce funcionando, con migraciones sin tiempo de inactividad."
+    },
+    {
+      "when": "2023",
+      "title": "Desarrolladora Front-End",
+      "place": "Enerlink · Chile",
+      "body": "Construí el sistema de notificaciones y preferencias de su aplicación web de medición inteligente, con actualizaciones en tiempo real y filtros configurables."
+    },
+    {
+      "when": "2022 – 2023",
+      "title": "Asistente de docencia",
+      "place": "4Geeks Academy · Chile",
+      "body": "Acompañé a estudiantes en JavaScript y React, adaptando la explicación a la forma de razonar de cada persona."
+    }
+  ]
+}

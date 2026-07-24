@@ -1,0 +1,184 @@
+/* =========================================================================
+   Case study (on-site project detail — /proyectos/[slug])
+   Editorial long-form layout that reuses the site's cream/burgundy tokens.
+   ========================================================================= */
+.cs {
+  padding-top: calc(var(--header-height) + clamp(2rem, 6vw, 4.5rem));
+  padding-bottom: clamp(4rem, 10vw, 8rem);
+}
+
+.cs__shell {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* Back link ------------------------------------------------------------- */
+.cs__back {
+  align-self: flex-start;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: color 0.3s var(--ease-out-quart);
+}
+.cs__back:hover {
+  color: var(--burgundy);
+}
+
+/* Header ---------------------------------------------------------------- */
+.cs__head {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  max-width: 46rem;
+}
+.cs__title {
+  font-size: var(--fs-display);
+  color: var(--burgundy);
+  margin: 0;
+}
+.cs__tagline {
+  font-size: var(--fs-small);
+  line-height: 1.35;
+  color: var(--ink-soft);
+  max-width: 40rem;
+}
+
+/* Meta chips ------------------------------------------------------------ */
+.cs__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: rgba(36, 14, 6, 0.12);
+  border: 1px solid rgba(36, 14, 6, 0.12);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.cs__meta-item {
+  background: var(--paper-2);
+  padding: clamp(0.9rem, 2.4vw, 1.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cs__meta-item dt {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.cs__meta-item dd {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+/* Hero image ------------------------------------------------------------ */
+.cs__hero {
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
+  overflow: hidden;
+  background: var(--paper-2);
+  box-shadow: 0 40px 80px -50px rgba(36, 14, 6, 0.55);
+}
+.cs__hero img {
+  width: 100%;
+  height: auto;
+}
+
+/* Overview grid --------------------------------------------------------- */
+.cs__overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: clamp(1.25rem, 3vw, 2rem);
+  margin: 0;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
+  border-top: 1px solid rgba(36, 14, 6, 0.14);
+  border-bottom: 1px solid rgba(36, 14, 6, 0.14);
+}
+.cs__overview-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cs__overview-item dt {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+}
+.cs__overview-item dd {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* Stats band ------------------------------------------------------------ */
+.cs__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(2rem, 5vw, 3.25rem);
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
+  background: var(--burgundy);
+  color: var(--paper);
+}
+.cs__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cs__stat-value {
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  line-height: 1;
+  color: var(--paper);
+}
+.cs__stat-label {
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: rgba(247, 241, 230, 0.78);
+}
+
+/* Body sections --------------------------------------------------------- */
+.cs__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 3.25rem);
+  max-width: 44rem;
+}
+.cs__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.cs__section-title {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  color: var(--burgundy);
+  margin: 0;
+}
+.cs__section-body {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Footer CTA ------------------------------------------------------------ */
+.cs__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding-top: clamp(1.5rem, 4vw, 2.5rem);
+  border-top: 1px solid rgba(36, 14, 6, 0.14);
+}
+.cs__back--foot {
+  align-self: center;
+}

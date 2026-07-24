@@ -1,0 +1,46 @@
+{
+  "eyebrow": "Résumé",
+  "title": "Education and experience",
+  "educationHeading": "Education",
+  "workHeading": "Work experience",
+  "education": [
+    {
+      "when": "Present",
+      "title": "Master's in Graphic Design, UX/UI & Web Design",
+      "place": "CEI, School of Design and Marketing · Spain",
+      "body": "Branding and visual identity systems, information architecture, prototyping and UX microinteractions."
+    },
+    {
+      "when": "2022 – 2023",
+      "title": "Full Stack Development",
+      "place": "4Geeks Academy · Chile",
+      "body": "Front-end with JavaScript (ES6+, React) and back-end with Python (Flask, REST APIs), building and deploying web applications."
+    },
+    {
+      "when": "2010 – 2015",
+      "title": "Bachelor's in Foreign Languages",
+      "place": "Unidad Central del Valle · Colombia",
+      "body": "Teaching English and French, grounded in linguistics, intercultural communication and pedagogical methods."
+    }
+  ],
+  "work": [
+    {
+      "when": "Present",
+      "title": "UX/UI & WordPress Developer",
+      "place": "Neerutech · Spain",
+      "body": "I design the experience and see it through to production: from research and the Figma prototype to a working WooCommerce store, with zero-downtime migrations."
+    },
+    {
+      "when": "2023",
+      "title": "Front-End Developer",
+      "place": "Enerlink · Chile",
+      "body": "I built the notifications and preferences system for their smart-metering web app, with real-time updates and configurable filters."
+    },
+    {
+      "when": "2022 – 2023",
+      "title": "Teaching Assistant",
+      "place": "4Geeks Academy · Chile",
+      "body": "I supported students in JavaScript and React, adapting my explanations to how each person reasons."
+    }
+  ]
+}

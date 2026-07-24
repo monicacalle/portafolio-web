@@ -1,11 +1,12 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { PERSON } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${PERSON.name} — ${PERSON.jobTitle}`;
+export const alt = PERSON.name;
 
 // Brand colours (kept literal; this runs outside the CSS pipeline).
 const PAPER = "#f7f1e6";
@@ -14,6 +15,7 @@ const BURGUNDY = "#4e0909";
 const BLUE = "#c4d9dd";
 
 export default async function OpengraphImage() {
+  const t = await getTranslations("og");
   // TheSeasons is a TTF, which Satori can embed (woff2 cannot be used here).
   const seasons = await readFile(
     join(process.cwd(), "public/fonts/the-seasons-regular.ttf"),
@@ -46,8 +48,8 @@ export default async function OpengraphImage() {
             color: BURGUNDY,
           }}
         >
-          <span>PORTAFOLIO</span>
-          <span style={{ color: INK, opacity: 0.55 }}>VALENCIA · ESPAÑA</span>
+          <span>{t("wordmark")}</span>
+          <span style={{ color: INK, opacity: 0.55 }}>{t("location")}</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -63,7 +65,7 @@ export default async function OpengraphImage() {
               color: BURGUNDY,
             }}
           >
-            Diseñadora UX · UI · Frontend
+            {t("role")}
           </div>
         </div>
 
@@ -85,7 +87,7 @@ export default async function OpengraphImage() {
               borderRadius: 6,
             }}
           />
-          <span>Diseño UX · UI · Branding · Frontend</span>
+          <span>{t("services")}</span>
         </div>
 
         {/* accent bar down the right edge */}

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { geist, theSeasons } from "./fonts";
 import "./globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
@@ -7,65 +9,58 @@ import { NegativeReveal } from "@/components/site/negative-reveal";
 import { Preloader } from "@/components/site/preloader";
 import { Cursor } from "@/components/site/cursor";
 import { ScrollProgress } from "@/components/site/scroll-progress";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, PERSON } from "@/lib/site";
+import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
 
-const TITLE = "Mónica Calle — Diseñadora UX/UI & Front-End";
-const DESC =
-  "Portafolio de Mónica Calle. Diseño UX/UI, diseño gráfico y desarrollo front-end con una mirada visual, estratégica y cuidada.";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = (await getLocale()) as Locale;
+  const t = await getTranslations("meta");
+  const title = t("title");
+  const description = t("description");
 
-export const metadata: Metadata = {
-  title: TITLE,
-  description: DESC,
-  metadataBase: new URL(SITE_URL),
-  applicationName: "Portafolio Mónica Calle",
-  authors: [{ name: "Mónica Calle" }],
-  creator: "Mónica Calle",
-  keywords: [
-    "Mónica Calle",
-    "Diseñadora UX/UI",
-    "Diseño de producto",
-    "Diseño web",
-    "Front-End",
-    "Figma",
-    "Branding",
-    "React",
-    "WordPress",
-    "Valencia",
-    "portafolio",
-  ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: TITLE,
-    description: DESC,
-    url: SITE_URL,
-    siteName: "Mónica Calle — Portafolio",
-    locale: "es_ES",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: DESC,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
-};
+  return {
+    title,
+    description,
+    metadataBase: new URL(SITE_URL),
+    applicationName: t("applicationName"),
+    authors: [{ name: PERSON.name }],
+    creator: PERSON.name,
+    keywords: t.raw("keywords") as string[],
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description,
+      url: SITE_URL,
+      siteName: t("ogSiteName"),
+      locale: OG_LOCALE[locale],
+      type: "website",
+    },
+    twitter: { card: "summary_large_image", title, description },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="es" className={`${geist.variable} ${theSeasons.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${geist.variable} ${theSeasons.variable}`} suppressHydrationWarning>
       <body className="grain">
-        <Backdrop />
-        <Preloader />
-        <Cursor />
-        <ScrollProgress />
-        <SmoothScroll>{children}</SmoothScroll>
-        <NegativeReveal />
+        <NextIntlClientProvider messages={messages}>
+          <Backdrop />
+          <Preloader />
+          <Cursor />
+          <ScrollProgress />
+          <SmoothScroll>{children}</SmoothScroll>
+          <NegativeReveal />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

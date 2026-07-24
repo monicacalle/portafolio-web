@@ -1,0 +1,112 @@
+{
+  "ui": {
+    "back": "Volver a proyectos",
+    "eyebrow": "Caso de estudio",
+    "overview": {
+      "product": "El producto",
+      "role": "Mi rol",
+      "audience": "Público",
+      "challenge": "El reto",
+      "limitations": "Alcance"
+    },
+    "meta": {
+      "role": "Rol",
+      "year": "Año",
+      "type": "Tipo",
+      "platform": "Plataforma"
+    },
+    "cta": "Ver el proyecto completo (PDF)"
+  },
+  "items": {
+    "vibe": {
+      "title": "Vibe",
+      "tagline": "Un GPS hormonal que traduce el ciclo femenino en decisiones diarias de energía, ánimo y rendimiento.",
+      "meta": {
+        "role": "Diseño UX/UI · Investigación UX",
+        "year": "2025",
+        "type": "App móvil · FemTech",
+        "platform": "iOS / Android"
+      },
+      "overview": {
+        "product": "Vibe (Variable Infradian Biological Efficiency) es una app de FemTech que traduce las cuatro fases del ciclo —menstrual, folicular, ovulatoria y lútea— en recomendaciones accionables para entrenar, trabajar, descansar y planificar. No solo registra datos: los interpreta y los convierte en una guía diaria.",
+        "role": "Proyecto integral de diseño de producto: investigación (desk research, netnografía, benchmarking, DAFO y encuestas), síntesis (user personas, mapas de empatía y user journeys), concepto, propuesta de valor y dirección visual.",
+        "audience": "Mujeres profesionales que quieren rendir de forma sostenible sin luchar contra su biología, de la consultora junior que optimiza su entrenamiento a la directiva en perimenopausia que ya no encaja en el modelo de «28 días».",
+        "challenge": "Convertir el registro de síntomas en decisiones diarias accionables, sin caer en un «tracker de fertilidad» ni generar carga mental.",
+        "limitations": "Proyecto conceptual de máster, sin una base de datos histórica para entrenar algoritmos; el reto era diseñar una experiencia creíble e inclusiva con ciclos irregulares, anticoncepción y perimenopausia."
+      },
+      "sections": [
+        {
+          "heading": "El conflicto",
+          "body": "El estándar de vida actual nos exige operar bajo un ritmo circadiano (lineal, de 24 horas), ignorando que la biología femenina se rige por un ciclo infradiano de unos 28 días. Esa desconexión obliga a las mujeres a sostener una productividad y un estado emocional constantes, lo que genera frustración, culpa y una sensación de pérdida de control cuando su energía fluctúa de forma natural. Las herramientas actuales se quedan en el seguimiento reproductivo y dejan un vacío en la gestión del día a día."
+        },
+        {
+          "heading": "El proceso — Design Thinking",
+          "body": "Estructuré el proyecto con Design Thinking. En Observar combiné desk research, netnografía, benchmarking, una matriz DAFO y una encuesta a 69 personas. En Sintetizar construí dos user personas, sus mapas de empatía y sus user journeys, y una matriz de necesidades. La pregunta que guió cada decisión: «¿Cómo podríamos ayudar a las mujeres a usar su ciclo para planificar energía, ánimo y rendimiento, convirtiendo el registro en decisiones accionables y sin generar carga mental?»."
+        },
+        {
+          "heading": "Hallazgos clave",
+          "body": "La investigación reveló una desconexión crítica entre la intuición y la herramienta, y un cambio de expectativa claro: de «trackear» datos a «recibir instrucciones». Las usuarias ven venir el choque, pero no tienen un airbag digital que las prepare; y rechazan de forma explícita el lenguaje infantil y las notificaciones invasivas."
+        },
+        {
+          "heading": "Posicionamiento",
+          "body": "Frente a Flo, Clue o Apple Health —centradas en la predicción reproductiva— Vibe se posiciona en la acción: instrucciones prácticas por fase y sincronización con la agenda y el estrés, con una estética ejecutiva (lejos del «rosa» infantil) y una privacidad radical, sin venta de datos a terceros. Su propuesta de valor, el «GPS hormonal», no existía en el mercado."
+        },
+        {
+          "heading": "La propuesta",
+          "body": "Vibe convierte el ciclo en un sistema operativo personal: menos improvisación y culpa; más claridad, rendimiento sostenible y bienestar medible, semana a semana, según tu biología. El algoritmo se diseñó inclusivo con ciclos irregulares, anticoncepción y perimenopausia para no generar frustración en quienes no encajan en el modelo estándar."
+        }
+      ],
+      "stats": [
+        { "value": "67,7 %", "label": "detecta señales físicas de que viene un «día difícil»…" },
+        { "value": "1,6 %", "label": "…pero dice que su app actual la ayuda a anticiparse." },
+        { "value": "64,5 %", "label": "quiere instrucciones claras de autocuidado, no solo un gráfico." },
+        { "value": "40,3 %", "label": "prioriza «hackear» la estabilidad emocional sobre el dolor físico." }
+      ]
+    },
+    "voluntee": {
+      "title": "Voluntee",
+      "tagline": "Ayúdalos, ayúdate: una plataforma que convierte las ganas de ayudar en acción real, sin burocracia ni desconfianza.",
+      "meta": {
+        "role": "Investigación UX · Diseño UX/UI",
+        "year": "2025",
+        "type": "App móvil + web · Impacto social",
+        "platform": "iOS / Android / Web"
+      },
+      "overview": {
+        "product": "Voluntee es una plataforma —app y web— que conecta a las personas con oportunidades de voluntariado. Centraliza una oferta hoy dispersa, reduce la burocracia (subes tus documentos una sola vez) y añade la capa que faltaba: transparencia y reconocimiento del impacto.",
+        "role": "Proyecto de equipo de diseño de producto. Participé en el ciclo completo: investigación (desk research, netnografía, benchmarking, DAFO, encuesta y entrevistas), síntesis (user personas, mapas de empatía y customer journeys), definición de la propuesta de valor y diseño UX/UI, hasta el prototipo de alta fidelidad y el sistema visual.",
+        "audience": "Personas con ganas de aportar pero sin saber por dónde empezar: desde la principiante de 24 años que llega por redes hasta el voluntario experimentado de 50 que exige claridad. Del otro lado, las ONG y entidades que buscan captar y coordinar voluntarios de forma sencilla.",
+        "challenge": "El freno no es la motivación, es la confianza y la simplicidad. Había que reducir la burocracia, aclarar qué es realmente el voluntariado (el 66 % cree que es remunerado) y transmitir seguridad sobre la legitimidad de cada organización.",
+        "limitations": "Proyecto académico de máster en equipo, sin una base de datos real de organizaciones; el reto era diseñar una experiencia creíble, transparente e inclusiva —desde el principiante hasta el segmento 65+— a partir de investigación primaria."
+      },
+      "sections": [
+        {
+          "heading": "El conflicto",
+          "body": "Existe mucha gente dispuesta a ayudar, pero la experiencia de empezar es un muro: papeleo, largos tiempos de espera, tareas poco claras e información dispersa entre webs antiguas y grupos informales. A eso se suma la desconfianza —«¿se aprovechan del voluntario?, ¿es legítima la entidad?»— y una confusión de base: mucha gente ni siquiera tiene claro qué implica ser voluntario. La conclusión de la investigación fue tajante: al usuario no le falta motivación, le falta confianza y simplicidad."
+        },
+        {
+          "heading": "El proceso — Doble Diamante",
+          "body": "Trabajamos con el modelo del Doble Diamante del Design Council (Descubrir, Definir, Desarrollar, Entregar) para asegurar que resolvíamos el problema correcto antes de idear soluciones. En Descubrir combinamos desk research, netnografía, benchmarking de siete plataformas, una matriz DAFO, una encuesta y entrevistas. En Definir sintetizamos dos user personas —Marina, principiante que llega por redes, y Carlos, experto exigente con la información— con sus mapas de empatía y customer journeys."
+        },
+        {
+          "heading": "Hallazgos clave",
+          "body": "La investigación dibujó un usuario mayoritariamente novato que llega por recomendación de un conocido y busca flexibilidad (participar de forma puntual, mensual o anual). El mayor freno es la información poco clara: más de la mitad participaría más si fuera transparente y estuviera organizada. Y una expectativa a corregir: dos de cada tres creen que el voluntariado puede ser remunerado, señal de que el onboarding debe educar antes de pedir."
+        },
+        {
+          "heading": "Posicionamiento",
+          "body": "El benchmarking de referentes como hacesfalta.org, Worldpackers o Moviliza-T reveló apps poco funcionales, sin filtros ajustados a las necesidades reales del voluntario ni registro según su perfil. Voluntee se posiciona justo ahí: claridad, transparencia y reducción de burocracia, con un sistema visual propio —verde-oro y lavanda, tipografías Space Grotesk y Futura— fresco y contemporáneo que rompe con la típica estética de ONG sin perder profesionalismo."
+        },
+        {
+          "heading": "La propuesta",
+          "body": "Voluntee centraliza la oferta y la ordena con filtros avanzados (nivel de experiencia, tipo de organización, duración, impacto social y modalidad). Ataca la burocracia con un perfil donde subes la documentación una sola vez, y construye confianza con sellos de verificación, reseñas de otros voluntarios y un onboarding que aclara qué es —y qué no es— el voluntariado. Cierra el círculo con reconocimiento del impacto: certificados, horas acumuladas y un resumen de tu huella para tu CV."
+        }
+      ],
+      "stats": [
+        { "value": "56 %", "label": "nunca había hecho voluntariado: el público es, sobre todo, principiante." },
+        { "value": "58 %", "label": "empezó porque «una persona me invitó», no por la información oficial." },
+        { "value": "66 %", "label": "cree, erróneamente, que el voluntariado puede ser remunerado." },
+        { "value": "+50 %", "label": "participaría más si la información fuera transparente y organizada." }
+      ]
+    }
+  }
+}

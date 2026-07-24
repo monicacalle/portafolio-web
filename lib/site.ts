@@ -9,13 +9,16 @@ export const SITE_URL = "https://portafolio-en-espa-ol-monica-calle.vercel.app";
 
 export const PERSON = {
   name: "Mónica Calle",
-  jobTitle: "Diseñadora UX/UI & Front-End",
+  // NOTE: the user-facing jobTitle/description are localized in messages/{es,en}
+  // (used by generateMetadata + the JSON-LD in page.tsx). These fields are kept
+  // as a default/structural fallback and mirror the ES positioning.
+  jobTitle: "Diseñadora de Producto (UX/UI)",
   email: "monicacalle369@gmail.com",
   locality: "Valencia",
   region: "Comunidad Valenciana",
   country: "ES",
   description:
-    "Diseñadora UX/UI y diseñadora gráfica con base en front-end. Diseño de producto, branding y desarrollo web con una mirada visual, estratégica y cuidada.",
+    "Diseñadora de producto (UX/UI) con base en desarrollo front-end. Prototipado en alta fidelidad, usabilidad y conversión, branding y handoff validado a desarrollo.",
   linkedin: "https://www.linkedin.com/in/monica-calle-betancourt/",
   knowsAbout: [
     "Diseño UX/UI",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { loader } from "@/lib/loader";
 
 /**
@@ -10,6 +11,7 @@ import { loader } from "@/lib/loader";
  * `portfolio:ready` event the hero listens for to start its own entrance.
  */
 export function Preloader() {
+  const t = useTranslations("preloader");
   const reduce = useReducedMotion();
   const [count, setCount] = useState(0);
   const [done, setDone] = useState(false);
@@ -68,7 +70,7 @@ export function Preloader() {
             transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
           >
             <div className="preloader__inner">
-              <span className="preloader__word">Portafolio</span>
+              <span className="preloader__word">{t("word")}</span>
               <span className="preloader__count">
                 {String(count).padStart(3, "0")}
               </span>
