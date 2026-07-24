@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
-import { geist, theSeasons } from "./fonts";
+import { geist, newYork } from "./fonts";
 import "./globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { Backdrop } from "@/components/site/backdrop";
@@ -51,7 +51,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${geist.variable} ${theSeasons.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${geist.variable} ${newYork.variable}`} suppressHydrationWarning>
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
           <Backdrop />

@@ -10,9 +10,9 @@ export const geist = localFont({
   ],
 });
 
-// TheSeasons — the editorial display serif that carries the whole brand.
-export const theSeasons = localFont({
+// New York — editorial display serif for headings and titles.
+export const newYork = localFont({
   variable: "--font-heading",
   display: "swap",
-  src: [{ path: "../public/fonts/the-seasons-regular.ttf", weight: "400", style: "normal" }],
+  src: [{ path: "../public/fonts/NewYork PERSONAL USE.otf", weight: "400", style: "normal" }],
 });
