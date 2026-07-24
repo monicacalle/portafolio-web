@@ -1,6 +1,6 @@
 "use client";
 
-import { createElement, useEffect, useRef, type ElementType } from "react";
+import { createElement, Fragment, useEffect, useRef, type ElementType } from "react";
 
 /**
  * Split-text reveal. Splits on words, wraps each in a masked line, and lifts
@@ -45,12 +45,16 @@ export function SplitText({
     Tag,
     { ref, className: `split ${className ?? ""}` },
     words.map((w, i) => (
-      <span key={i} className="split__word">
-        <span className="split__inner" style={{ transitionDelay: `${delay + i * stagger}s` }}>
-          {w}
+      // The space is a sibling BETWEEN words, not inside .split__word (which is
+      // inline-block + overflow:hidden and would trim/clip a trailing space).
+      <Fragment key={i}>
+        <span className="split__word">
+          <span className="split__inner" style={{ transitionDelay: `${delay + i * stagger}s` }}>
+            {w}
+          </span>
         </span>
         {i < words.length - 1 ? " " : ""}
-      </span>
+      </Fragment>
     )),
   );
 }

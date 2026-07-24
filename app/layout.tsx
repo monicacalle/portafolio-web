@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { geist, theSeasons } from "./fonts";
 import "./globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
+import { Backdrop } from "@/components/site/backdrop";
+import { NegativeReveal } from "@/components/site/negative-reveal";
 import { Preloader } from "@/components/site/preloader";
 import { Cursor } from "@/components/site/cursor";
 import { ScrollProgress } from "@/components/site/scroll-progress";
@@ -58,10 +60,12 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${geist.variable} ${theSeasons.variable}`} suppressHydrationWarning>
       <body className="grain">
+        <Backdrop />
         <Preloader />
         <Cursor />
         <ScrollProgress />
         <SmoothScroll>{children}</SmoothScroll>
+        <NegativeReveal />
       </body>
     </html>
   );
