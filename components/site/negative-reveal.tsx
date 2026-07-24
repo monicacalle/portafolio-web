@@ -23,7 +23,9 @@ import { useEffect, useRef } from "react";
 */
 
 const REVEAL = {
-  COLOR: "255, 255, 255", // white = full negative; a colour tints the inversion
+  // Fill for mix-blend-mode: difference. Tuned so the cream paper (#f7f1e6)
+  // inverts to the brand burgundy #4E0909: fill = cream − target = 169,232,221.
+  COLOR: "169, 232, 221",
   MAIN: 60, // main blob radius (css px) — small
   WAVE: 0.10, // wavy edge amplitude (a clean wave, not noise)
   TAIL: 15, // trail length (frames of history)

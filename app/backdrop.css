@@ -57,15 +57,17 @@
 }
 
 /* Negative reveal (see components/site/negative-reveal.tsx). A full-viewport
-   canvas ABOVE the content; mix-blend-mode: difference means the white blob it
-   paints inverts everything beneath it into a photographic negative. z-index 45
-   keeps it above the hero content but below the header, grain and cursor. */
+   canvas ABOVE the content; mix-blend-mode: difference inverts everything
+   beneath the blob. Its fill (rgb 169,232,221) is tuned so the cream paper
+   inverts to the brand burgundy #4E0909, while text/letters flip to light.
+   z-index 55 sits ABOVE the header (so its letters invert too) but below the
+   grain and cursor. */
 .negative-reveal {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 45;
+  z-index: 55;
   pointer-events: none;
   mix-blend-mode: difference;
   filter: url(#reveal-goo); /* fuse shapes into a liquid body; pinch off drops */
