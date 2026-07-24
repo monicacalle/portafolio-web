@@ -1,0 +1,31 @@
+{
+  "eyebrow": "Skills",
+  "title": "Tools and strengths",
+  "lead": "A selection of what I use to design product end to end: from research to a considered, feasible interface.",
+  "items": [
+    {
+      "kicker": "Product",
+      "title": "Product & UX design",
+      "body": "From problem to solution: research, information architecture, flows and prototypes I validate before reaching final design.",
+      "tags": ["UX research", "Wireframes", "Prototyping", "User journeys", "Design thinking"]
+    },
+    {
+      "kicker": "Design",
+      "title": "UI & visual design",
+      "body": "I turn ideas into clear visual directions, interface systems and brand-aligned assets.",
+      "tags": ["Figma", "Design systems", "Illustrator", "Photoshop", "InDesign"]
+    },
+    {
+      "kicker": "Development",
+      "title": "Front-end & handoff",
+      "body": "A front-end foundation I use to check the feasibility of my designs, speak developers' language and hand off specs that ship without friction.",
+      "tags": ["HTML5", "CSS3", "JavaScript", "React", "WordPress", "Webflow"]
+    },
+    {
+      "kicker": "Collaboration",
+      "title": "Professional strengths",
+      "body": "I work with teams and clients through clear communication, problem-solving, adaptability and a user-centered mindset.",
+      "tags": ["Communication", "Teamwork", "Problem-solving", "Adaptability"]
+    }
+  ]
+}

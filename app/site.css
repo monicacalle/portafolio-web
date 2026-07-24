@@ -270,3 +270,61 @@
     animation: none;
   }
 }
+
+/* =========================================================================
+   Header actions + language switcher
+   ========================================================================= */
+.hdr__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper-2) 55%, transparent);
+}
+.lang__btn {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  padding: 0.26rem 0.5rem;
+  border-radius: 999px;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+.lang__btn:hover {
+  color: var(--ink);
+}
+.lang__btn.is-active {
+  color: var(--paper-2);
+  background: var(--burgundy);
+}
+.lang__btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Desktop switcher sits inline in the header; the mobile one lives inside the
+   nav drawer. */
+.hdr__lang--mobile {
+  display: none;
+}
+@media (max-width: 760px) {
+  .hdr__lang--desktop {
+    display: none;
+  }
+  .hdr__lang--mobile {
+    display: inline-flex;
+    margin: 0.6rem 0 1.2rem;
+  }
+}

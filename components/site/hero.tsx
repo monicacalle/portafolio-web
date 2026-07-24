@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   motion,
   useReducedMotion,
@@ -15,9 +16,6 @@ import { loader } from "@/lib/loader";
 // WebGL portrait — client-only, never SSR'd.
 const HeroCanvas = dynamic(() => import("./hero-canvas"), { ssr: false });
 
-const LEFT = ["P", "O", "R", "T", "A"];
-const RIGHT = ["F", "O", "L", "I", "O"];
-
 const letter: Variants = {
   hidden: { y: "118%", opacity: 0, filter: "blur(16px)" },
   show: (i: number) => ({
@@ -29,8 +27,15 @@ const letter: Variants = {
 };
 
 export function Hero() {
+  const t = useTranslations("hero");
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+
+  // The display word is split around the portrait; both halves come from the
+  // messages so the word (PORTA·FOLIO / PORT·FOLIO) adapts per language.
+  const left = t("wordLeft").split("");
+  const right = t("wordRight").split("");
+
   // Seed from the loader so we don't setState on the first commit; only
   // subscribe if the intro hasn't finished yet.
   const [ready, setReady] = useState(() => loader.isReady);
@@ -63,10 +68,10 @@ export function Hero() {
   return (
     <section id="home" ref={sectionRef} onMouseMove={onMove} onMouseLeave={onLeave} className="hero">
       <motion.div style={{ opacity: heroFade }} className="hero__inner">
-        <h1 className="visually-hidden">Portafolio de Mónica Calle</h1>
+        <h1 className="visually-hidden">{t("hiddenTitle")}</h1>
 
         <motion.span style={{ y: titleY }} className="hero__word hero__word--left" aria-hidden>
-          {LEFT.map((c, i) => (
+          {left.map((c, i) => (
             <span key={i} className="hero__letter">
               <motion.span
                 className="hero__glyph"
@@ -85,22 +90,22 @@ export function Hero() {
           <motion.div
             style={{ y: py }}
             className="hero__portrait"
-            data-cursor="Mónica"
+            data-cursor={t("portraitCursor")}
           >
             <HeroCanvas />
           </motion.div>
           <span className="hero__ring" aria-hidden />
           <span className="hero__badge" aria-hidden>
-            UX · UI · Front-End
+            {t("badge")}
           </span>
         </motion.div>
 
         <motion.span style={{ y: titleY }} className="hero__word hero__word--right" aria-hidden>
-          {RIGHT.map((c, i) => (
+          {right.map((c, i) => (
             <span key={i} className="hero__letter">
               <motion.span
                 className="hero__glyph"
-                custom={i + 5}
+                custom={i + left.length}
                 variants={letter}
                 initial="hidden"
                 animate={ready ? "show" : "hidden"}
@@ -118,16 +123,16 @@ export function Hero() {
         animate={ready ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
-        <p className="hero__name serif">Mónica Calle</p>
-        <p className="hero__role">Diseñadora UX/UI &amp; Front-End · Valencia, España</p>
-        <a className="hero__cue" href="#about" aria-label="Ir a la sección sobre mí" data-cursor="Baja">
-          <span>Desliza</span>
+        <p className="hero__name serif">{t("name")}</p>
+        <p className="hero__role">{t("role")}</p>
+        <a className="hero__cue" href="#about" aria-label={t("cueAria")} data-cursor={t("cueCursor")}>
+          <span>{t("cue")}</span>
           <span className="hero__cue-line" aria-hidden />
         </a>
       </motion.div>
 
       <span className="hero__mark" aria-hidden>
-        © 2026
+        {t("mark")}
       </span>
     </section>
   );

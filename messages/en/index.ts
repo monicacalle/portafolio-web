@@ -1,0 +1,31 @@
+import about from "./about.json";
+import caseStudies from "./case-studies.json";
+import contact from "./contact.json";
+import curriculum from "./curriculum.json";
+import hero from "./hero.json";
+import languageSwitcher from "./languageSwitcher.json";
+import meta from "./meta.json";
+import nav from "./nav.json";
+import og from "./og.json";
+import preloader from "./preloader.json";
+import projects from "./projects.json";
+import services from "./services.json";
+import skills from "./skills.json";
+
+const messages = {
+  meta,
+  nav,
+  og,
+  hero,
+  preloader,
+  about,
+  skills,
+  services,
+  curriculum,
+  projects,
+  contact,
+  caseStudies,
+  languageSwitcher,
+};
+
+export default messages;

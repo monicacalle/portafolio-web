@@ -1,0 +1,112 @@
+{
+  "ui": {
+    "back": "Back to projects",
+    "eyebrow": "Case study",
+    "overview": {
+      "product": "The product",
+      "role": "My role",
+      "audience": "Audience",
+      "challenge": "The challenge",
+      "limitations": "Scope"
+    },
+    "meta": {
+      "role": "Role",
+      "year": "Year",
+      "type": "Type",
+      "platform": "Platform"
+    },
+    "cta": "See the full project (PDF)"
+  },
+  "items": {
+    "vibe": {
+      "title": "Vibe",
+      "tagline": "A hormonal GPS that translates the female cycle into daily decisions about energy, mood and performance.",
+      "meta": {
+        "role": "UX/UI Design · UX Research",
+        "year": "2025",
+        "type": "Mobile app · FemTech",
+        "platform": "iOS / Android"
+      },
+      "overview": {
+        "product": "Vibe (Variable Infradian Biological Efficiency) is a FemTech app that translates the four phases of the cycle — menstrual, follicular, ovulatory and luteal — into actionable recommendations for training, working, resting and planning. It doesn't just record data: it interprets it and turns it into daily guidance.",
+        "role": "An end-to-end product-design project: research (desk research, netnography, benchmarking, SWOT and surveys), synthesis (user personas, empathy maps and user journeys), concept, value proposition and visual direction.",
+        "audience": "Professional women who want to perform sustainably without fighting their biology, from the junior consultant optimizing her training to the executive in perimenopause who no longer fits the “28-day” model.",
+        "challenge": "Turn symptom tracking into actionable daily decisions, without becoming a “fertility tracker” or adding mental load.",
+        "limitations": "A conceptual master's project, with no historical database to train algorithms; the challenge was to design a credible, inclusive experience across irregular cycles, contraception and perimenopause."
+      },
+      "sections": [
+        {
+          "heading": "The conflict",
+          "body": "The modern standard of living demands that we operate on a circadian rhythm (linear, 24 hours), ignoring that female biology runs on an infradian cycle of around 28 days. That disconnect forces women to sustain constant productivity and a constant emotional state, which breeds frustration, guilt and a sense of losing control when their energy naturally fluctuates. Today's tools stop at reproductive tracking and leave a gap in day-to-day management."
+        },
+        {
+          "heading": "The process — Design Thinking",
+          "body": "I structured the project with Design Thinking. In Observe I combined desk research, netnography, benchmarking, a SWOT matrix and a survey of 69 people. In Synthesize I built two user personas, their empathy maps and user journeys, and a needs matrix. The question that guided every decision: “How might we help women use their cycle to plan energy, mood and performance, turning tracking into actionable decisions without adding mental load?”"
+        },
+        {
+          "heading": "Key findings",
+          "body": "Research surfaced a critical disconnect between intuition and the tool, and a clear shift in expectation: from “tracking” data to “getting instructions.” Women see the crash coming but have no digital airbag to prepare them; and they explicitly reject childish language and invasive notifications."
+        },
+        {
+          "heading": "Positioning",
+          "body": "Against Flo, Clue or Apple Health — focused on reproductive prediction — Vibe positions itself in action: practical instructions per phase and syncing with the calendar and stress, with an executive aesthetic (far from the childish “pink”) and radical privacy, with no selling of data to third parties. Its value proposition, the “hormonal GPS,” didn't exist in the market."
+        },
+        {
+          "heading": "The proposal",
+          "body": "Vibe turns the cycle into a personal operating system: less improvising and guilt; more clarity, sustainable performance and measurable wellbeing, week by week, based on your biology. The algorithm was designed to be inclusive of irregular cycles, contraception and perimenopause, so it never frustrates the women who don't fit the standard model."
+        }
+      ],
+      "stats": [
+        { "value": "67.7%", "label": "sense the physical signals of a “hard day” coming…" },
+        { "value": "1.6%", "label": "…yet say their current app helps them prepare for it." },
+        { "value": "64.5%", "label": "want clear self-care instructions, not just a chart." },
+        { "value": "40.3%", "label": "would rather “hack” emotional stability than physical pain." }
+      ]
+    },
+    "voluntee": {
+      "title": "Voluntee",
+      "tagline": "Help them, help yourself: a platform that turns the will to help into real action, with no bureaucracy and no distrust.",
+      "meta": {
+        "role": "UX Research · UX/UI Design",
+        "year": "2025",
+        "type": "Mobile + web app · Social impact",
+        "platform": "iOS / Android / Web"
+      },
+      "overview": {
+        "product": "Voluntee is a platform — app and web — that connects people with volunteering opportunities. It centralizes an offer that's scattered today, cuts the bureaucracy (you upload your documents once) and adds the missing layer: transparency and recognition of impact.",
+        "role": "A team product-design project. I took part in the full cycle: research (desk research, netnography, benchmarking, SWOT, survey and interviews), synthesis (user personas, empathy maps and customer journeys), defining the value proposition and UX/UI design, through to the high-fidelity prototype and the visual system.",
+        "audience": "People who want to help but don't know where to start — from the 24-year-old beginner who arrives via social media to the 50-year-old experienced volunteer who demands clarity. On the other side, the NGOs and organizations that want to recruit and coordinate volunteers with ease.",
+        "challenge": "The barrier isn't motivation — it's trust and simplicity. We had to cut the bureaucracy, clarify what volunteering actually is (66% think it's paid) and convey security about how legitimate each organization is.",
+        "limitations": "An academic master's team project, with no real database of organizations; the challenge was to design a credible, transparent and inclusive experience — from the beginner to the 65+ segment — grounded in primary research."
+      },
+      "sections": [
+        {
+          "heading": "The conflict",
+          "body": "There are plenty of people willing to help, but the experience of getting started is a wall: paperwork, long waits, unclear tasks and information scattered across dated websites and informal groups. On top of that comes distrust — “are they taking advantage of the volunteer? is the organization legitimate?” — and a foundational confusion: many people aren't even clear on what volunteering involves. The research verdict was blunt: users don't lack motivation, they lack trust and simplicity."
+        },
+        {
+          "heading": "The process — Double Diamond",
+          "body": "We worked with the Design Council's Double Diamond model (Discover, Define, Develop, Deliver) to make sure we were solving the right problem before ideating solutions. In Discover we combined desk research, netnography, a benchmark of seven platforms, a SWOT matrix, a survey and interviews. In Define we synthesized two user personas — Marina, a beginner who arrives via social media, and Carlos, an expert demanding about information — with their empathy maps and customer journeys."
+        },
+        {
+          "heading": "Key findings",
+          "body": "Research painted a mostly first-time user who arrives on a friend's recommendation and looks for flexibility (helping out on a one-off, monthly or yearly basis). The biggest barrier is unclear information: over half would take part more if it were transparent and organized. And an expectation to correct: two in three believe volunteering can be paid — a sign the onboarding has to educate before it asks."
+        },
+        {
+          "heading": "Positioning",
+          "body": "Benchmarking against players like hacesfalta.org, Worldpackers or Moviliza-T revealed apps that are barely functional, with no filters tuned to a volunteer's real needs and no sign-up based on their profile. Voluntee positions itself exactly there: clarity, transparency and less bureaucracy, with its own visual system — gold-green and lavender, Space Grotesk and Futura type — that's fresh and contemporary, breaking from the typical NGO aesthetic without losing professionalism."
+        },
+        {
+          "heading": "The proposal",
+          "body": "Voluntee centralizes the offer and orders it with advanced filters (experience level, type of organization, duration, social impact and format). It attacks bureaucracy with a profile where you upload your documents just once, and builds trust with verification badges, reviews from other volunteers and an onboarding that clarifies what volunteering is — and isn't. It closes the loop with recognition of impact: certificates, accumulated hours and a summary of your footprint for your CV."
+        }
+      ],
+      "stats": [
+        { "value": "56%", "label": "had never volunteered before — the audience is, above all, first-timers." },
+        { "value": "58%", "label": "started because “someone invited me,” not from official information." },
+        { "value": "66%", "label": "wrongly believe that volunteering can be paid." },
+        { "value": "+50%", "label": "would take part more if the information were transparent and organized." }
+      ]
+    }
+  }
+}
