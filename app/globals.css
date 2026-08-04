@@ -14,19 +14,28 @@
 
 :root {
   /* Ink + paper */
-  --paper: #f7f1e6;          /* dominant cream background */
-  --paper-2: #fff8f2;        /* lifted card cream */
-  --ink: #240e06;            /* near-black warm brown text */
+  --paper: #f7f1e6;
+  /* dominant cream background */
+  --paper-2: #fff8f2;
+  /* lifted card cream */
+  --ink: #240e06;
+  /* near-black warm brown text */
   --ink-soft: rgba(36, 14, 6, 0.72);
   --ink-faint: rgba(36, 14, 6, 0.5);
 
   /* Brand */
-  --burgundy: #4e0909;       /* deep red, the "main color" */
-  --burgundy-ink: #42210b;   /* brown-red for dark panels */
-  --blue-deep: #0c2a58;      /* primary blue */
-  --blue: #b7cde4;           /* secondary dusty blue */
-  --blue-soft: #acb3c6;      /* tertiary */
-  --hero-accent: #c4d9dd;    /* pale aqua card border / accent */
+  --burgundy: #4e0909;
+  /* deep red, the "main color" */
+  --burgundy-ink: #42210b;
+  /* brown-red for dark panels */
+  --blue-deep: #0c2a58;
+  /* primary blue */
+  --blue: #b7cde4;
+  /* secondary dusty blue */
+  --blue-soft: #acb3c6;
+  /* tertiary */
+  --hero-accent: #c4d9dd;
+  /* pale aqua card border / accent */
 
   /* Fluid type scale (from the reference :root) */
   --fs-display: clamp(3rem, 11.5vw, 9.5rem);
@@ -37,7 +46,8 @@
   --fs-xs: clamp(1rem, 3vw, 1.2rem);
 
   --header-height: 4.75rem;
-  --edge: clamp(1.25rem, 5vw, 5rem);   /* page side gutter */
+  --edge: clamp(1.25rem, 5vw, 5rem);
+  /* page side gutter */
   --maxw: 78rem;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -84,7 +94,10 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, .serif {
+h1,
+h2,
+h3,
+.serif {
   font-family: var(--font-heading), serif;
   font-weight: 400;
   line-height: 0.98;
@@ -146,10 +159,12 @@ img {
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
+
 [data-reveal].in-view {
   opacity: 1;
   transform: none;
 }
+
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     opacity: 1;
