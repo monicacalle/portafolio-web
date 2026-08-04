@@ -13,6 +13,7 @@ import raiz from "@/public/images/mockupraiz.png";
 import isa from "@/public/images/mockupisa.png";
 import iphone from "@/public/images/iphone.webp";
 import grafico from "@/public/images/portafolioabierto.png";
+import luxeestate from "@/public/images/luxeestate.png";
 
 /* =========================================================================
    About
@@ -207,9 +208,9 @@ const PROJECT_MEDIA: {
       { img: raiz, href: "https://estudio-raiz.webflow.io/", wide: true },
       { img: isa, href: "https://experiencia.monicacalle.es/", wide: true },
       {
-        img: iphone,
-        href: "https://iphone15-page-clone.vercel.app/",
-        code: "https://github.com/monicacalle/iphone15-page-clone",
+        img: luxeestate,
+        href: "https://luxeestate-jgcq.vercel.app/",
+        wide: true,
       },
     ],
   },
