@@ -274,7 +274,7 @@ export function Projects() {
                 return (
                   <Reveal
                     key={p.title}
-                    className={`card ${m.wide ? "card--wide" : ""}`}
+                    className={`card ${m.wide ? "card--wide" : ""} ${gi === 1 ? `card--folder card--folder-${i}` : ""}`}
                     delay={i * 90}
                   >
                     <LinkTag
@@ -282,6 +282,7 @@ export function Projects() {
                       href={href}
                       {...linkAttrs}
                       data-cursor={cardCursor}
+                      data-title={p.title}
                       aria-label={`${p.action}: ${p.title}`}
                     >
                       <Image

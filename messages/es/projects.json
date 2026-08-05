@@ -19,7 +19,7 @@
       "blurb": "Webs desarrolladas con WordPress, Webflow y front-end a medida, para unir marca, funcionalidad y detalle visual.",
       "items": [
         { "title": "Estudio Raíz", "tag": "Webflow", "action": "Ver sitio" },
-        { "title": "Isabella Mendoza · Experiencia Capilar", "tag": "WordPress", "action": "Ver sitio" },
+        { "title": "Isabella Mendoza", "tag": "WordPress", "action": "Ver sitio" },
         { "title": "Luxe Estate", "tag": "Next.js · Tailwind", "action": "Ver sitio" }
       ]
     },
