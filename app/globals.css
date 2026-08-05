@@ -14,9 +14,9 @@
 
 :root {
   /* Ink + paper */
-  --paper: #f7f1e6;
+  --paper: #f4f2f0;
   /* dominant cream background */
-  --paper-2: #fff8f2;
+  --paper-2: #fdfdfd;
   /* lifted card cream */
   --ink: #240e06;
   /* near-black warm brown text */
@@ -37,13 +37,13 @@
   --hero-accent: #c4d9dd;
   /* pale aqua card border / accent */
 
-  /* Fluid type scale (from the reference :root) */
-  --fs-display: clamp(3.2rem, 12vw, 10.2rem);
-  --fs-title: clamp(2.6rem, 10vw, 4.5rem);
-  --fs-subtitle: clamp(2rem, 8vw, 3.5rem);
-  --fs-medium: clamp(1.5rem, 4.5vw, 2rem);
-  --fs-small: clamp(1.05rem, 3.4vw, 1.4rem);
-  --fs-xs: clamp(1rem, 3vw, 1.2rem);
+  /* Fluid type scale (Upscaled for accessibility) */
+  --fs-display: clamp(3.5rem, 12vw, 11rem);
+  --fs-title: clamp(2.8rem, 10vw, 5rem);
+  --fs-subtitle: clamp(2.2rem, 8vw, 3.8rem);
+  --fs-medium: clamp(1.65rem, 4.5vw, 2.25rem);
+  --fs-small: clamp(1.15rem, 3.4vw, 1.5rem);
+  --fs-xs: clamp(1.05rem, 3vw, 1.25rem);
 
   --header-height: 4.75rem;
   --edge: clamp(1.25rem, 5vw, 5rem);
@@ -71,6 +71,7 @@
 }
 
 html {
+  font-size: 112.5%; /* 1rem = 18px, scales up all typography and rem-based units globally */
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
