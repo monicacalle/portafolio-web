@@ -165,9 +165,9 @@
 .hero__portrait-wrap {
   position: relative;
   flex: 0 0 auto;
-  width: clamp(9rem, 26vw, 21rem);
+  width: clamp(9rem, 24vw, 19.5rem);
   aspect-ratio: 3 / 4;
-  margin-inline: clamp(-0.6rem, -1vw, -0.2rem);
+  margin-inline: clamp(0.5rem, 2vw, 2rem);
   z-index: 2;
 }
 .hero__portrait {
@@ -254,12 +254,24 @@
     flex-direction: column;
     gap: 0.4rem;
   }
-  .hero__word--left {
+  .hero__word--left,
+  .hero__word--right {
     justify-content: center;
+  }
+  .hero__word--left {
+    transform: translateX(0.35rem); /* Optical alignment */
+  }
+  .hero__word--right {
+    margin-top: 0;
   }
   .hero__portrait-wrap {
     width: clamp(11rem, 52vw, 16rem);
-    margin-block: 0.4rem;
+    margin-top: 2rem;
+    margin-bottom: 1.4rem;
+  }
+  .hero__meta {
+    align-items: center;
+    text-align: center;
   }
   .hero__mark {
     display: none;

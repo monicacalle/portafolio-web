@@ -200,9 +200,14 @@
   overflow: hidden;
   border-block: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
   padding-block: clamp(1.4rem, 3.5vw, 2.6rem);
-  background: color-mix(in srgb, var(--hero-accent) 22%, var(--paper));
+  background: var(--burgundy);
   margin-block: clamp(3rem, 9vh, 7rem);
   white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .marquee {
+    margin-block: 1rem;
+  }
 }
 .marquee__track {
   display: inline-flex;
@@ -216,14 +221,13 @@
   align-items: center;
   font-family: var(--font-heading), serif;
   font-size: clamp(1.8rem, 5vw, 3.4rem);
-  color: var(--ink);
+  color: #c1dbe8;
   padding-inline: clamp(1rem, 2.5vw, 2rem);
 }
 .marquee__star {
-  color: var(--burgundy);
-  font-size: 0.5em;
+  color: #c1dbe8;
+  font-size: 1em;
   margin-left: clamp(1.4rem, 4vw, 3rem);
-  translate: 0 -0.15em;
 }
 
 /* =========================================================================

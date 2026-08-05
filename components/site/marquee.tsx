@@ -50,7 +50,7 @@ export function Marquee({ items }: { items: string[] }) {
             {items.map((it, i) => (
               <span className="marquee__item" key={`${c}-${i}`}>
                 {it}
-                <span className="marquee__star">✳</span>
+                <span className="marquee__star">-</span>
               </span>
             ))}
           </div>

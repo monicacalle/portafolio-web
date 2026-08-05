@@ -463,3 +463,83 @@
   color: color-mix(in srgb, var(--paper) 55%, transparent);
   margin: 0;
 }
+
+/* =========================================================================
+   Mobile Centering Overrides
+   ========================================================================= */
+@media (max-width: 768px) {
+  .section {
+    padding-block: clamp(2.5rem, 6vh, 4rem);
+  }
+  .section__head,
+  .section__title,
+  .section__lead,
+  .eyebrow {
+    text-align: center;
+    margin-inline: auto;
+    display: block;
+  }
+  .about__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .about__actions {
+    justify-content: center;
+  }
+  .about__media {
+    margin-inline: auto;
+  }
+  .skill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .skill__tags {
+    justify-content: center;
+  }
+  .pgroup__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .pgroup__blurb {
+    margin-inline: auto;
+  }
+  .card__meta {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.8rem;
+  }
+  .card__info {
+    align-items: center;
+  }
+  .card__links {
+    justify-content: center;
+  }
+  .contact__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .contact__lead {
+    margin-inline: auto;
+  }
+  .contact__tags {
+    justify-content: center;
+  }
+  .footer {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .footer__links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

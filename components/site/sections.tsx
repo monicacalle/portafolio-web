@@ -6,6 +6,7 @@ import logo from "@/public/images/asset4.png";
 import { SplitText } from "./split-text";
 import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
+import { Footer } from "./footer";
 import about from "@/public/images/about.png";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
@@ -364,16 +365,7 @@ export function Contact() {
         </Reveal>
       </div>
 
-      <footer className="footer shell">
-        <Image src={logo} alt={t("footer.logoAlt")} className="footer__logo" />
-        <nav className="footer__links">
-          <a href="#about">{nav("about")}</a>
-          <a href="#skills">{nav("skills")}</a>
-          <a href="#projects">{nav("projects")}</a>
-          <a href="#contact">{nav("contact")}</a>
-        </nav>
-        <p className="footer__fine">{t("footer.fine")}</p>
-      </footer>
+      <Footer />
     </section>
   );
 }
