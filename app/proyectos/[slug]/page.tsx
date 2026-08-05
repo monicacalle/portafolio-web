@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/site/header";
+import { Footer } from "@/components/site/footer";
+import { ArrowLeft } from "lucide-react";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
 
@@ -82,6 +84,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       <main className="cs">
         <div className="cs__shell shell">
           <Link className="cs__back" href="/#projects" data-cursor="←">
+            <ArrowLeft className="cs__back-icon" size={14} />
             {ui.back}
           </Link>
 
@@ -134,15 +137,19 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           </div>
 
           <div className="cs__foot">
+            <Link className="cs__back cs__back--foot" href="/#projects">
+              <ArrowLeft className="cs__back-icon" size={14} />
+              {ui.back}
+            </Link>
             <a className="btn btn--solid" href={media.pdf} target="_blank" rel="noopener noreferrer" data-cursor="PDF">
               {ui.cta}
             </a>
-            <Link className="cs__back cs__back--foot" href="/#projects">
-              {ui.back}
-            </Link>
           </div>
         </div>
       </main>
+      <div className="contact" style={{ overflow: "hidden" }}>
+        <Footer />
+      </div>
     </>
   );
 }

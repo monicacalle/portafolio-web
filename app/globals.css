@@ -38,7 +38,7 @@
   /* pale aqua card border / accent */
 
   /* Fluid type scale (from the reference :root) */
-  --fs-display: clamp(3rem, 11.5vw, 9.5rem);
+  --fs-display: clamp(3.2rem, 12vw, 10.2rem);
   --fs-title: clamp(2.6rem, 10vw, 4.5rem);
   --fs-subtitle: clamp(2rem, 8vw, 3.5rem);
   --fs-medium: clamp(1.5rem, 4.5vw, 2rem);

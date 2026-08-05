@@ -15,6 +15,9 @@
 
 /* Back link ------------------------------------------------------------- */
 .cs__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   align-self: flex-start;
   font-family: var(--font-sans), sans-serif;
   font-weight: 700;
@@ -23,6 +26,12 @@
   text-transform: uppercase;
   color: var(--ink-soft);
   transition: color 0.3s var(--ease-out-quart);
+}
+.cs__back-icon {
+  transition: transform 0.3s var(--ease-out-quart);
+}
+.cs__back:hover .cs__back-icon {
+  transform: translateX(-3px);
 }
 .cs__back:hover {
   color: var(--burgundy);
@@ -175,6 +184,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: clamp(1rem, 3vw, 2rem);
   padding-top: clamp(1.5rem, 4vw, 2.5rem);
   border-top: 1px solid rgba(36, 14, 6, 0.14);
@@ -182,3 +192,27 @@
 .cs__back--foot {
   align-self: center;
 }
+
+/* =========================================================================
+   Mobile Centering Overrides
+   ========================================================================= */
+@media (max-width: 768px) {
+  .cs__back {
+    align-self: center;
+  }
+  .cs__head,
+  .cs__title,
+  .cs__tagline {
+    text-align: center;
+    align-items: center;
+    margin-inline: auto;
+  }
+  .cs__meta-item,
+  .cs__overview-item,
+  .cs__stat,
+  .cs__section {
+    text-align: center;
+    align-items: center;
+  }
+}
+
