@@ -63,6 +63,13 @@
     cursor: none;
   }
 }
+
+@media (pointer: coarse), (hover: none), (max-width: 1024px) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
 .cursor-dot,
 .cursor-ring {
   position: fixed;

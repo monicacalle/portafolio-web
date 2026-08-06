@@ -20,6 +20,7 @@ export function PdfViewer({ url }: { url: string }) {
   // Computed page size that fits inside the container without cropping
   const [pageW, setPageW] = useState(0);
   const [pageH, setPageH] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Flip animation
   const [isAnimating, setIsAnimating] = useState(false);
@@ -37,11 +38,14 @@ export function PdfViewer({ url }: { url: string }) {
   const recalc = useCallback(() => {
     if (!innerRef.current || pdfRatio === 0) return;
     const rect = innerRef.current.getBoundingClientRect();
+    const isMob = window.innerWidth < 768;
+    setIsMobile(isMob);
+    
     // Padding: 80px top (for header badge), 48px sides, 64px bottom
-    const availW = rect.width - 96;
+    const availW = rect.width - (isMob ? 16 : 96);
     const availH = rect.height - 128; // 64px top + 64px bottom padding
-    // Two pages side by side → each gets half the width
-    const maxW = Math.floor(availW / 2);
+    // Two pages side by side → each gets half the width, unless mobile
+    const maxW = isMob ? availW : Math.floor(availW / 2);
     // Width constrained by height too
     const wFromH = Math.floor(availH * pdfRatio);
     const actualW = Math.min(maxW, wFromH);
@@ -85,6 +89,12 @@ export function PdfViewer({ url }: { url: string }) {
 
   function goNext() {
     if (spread >= numPages || isAnimating) return;
+    
+    if (isMobile) {
+      setSpread(s => Math.min(s + 1, numPages));
+      return;
+    }
+
     setFlipFrontPage(spread);       // front: current right page folds away
     setFlipBackPage(spread + 1);    // back: new left page appears as card lands
     setFlipDir("next");
@@ -105,6 +115,12 @@ export function PdfViewer({ url }: { url: string }) {
 
   function goPrev() {
     if (spread <= 1 || isAnimating) return;
+
+    if (isMobile) {
+      setSpread(s => Math.max(s - 1, 1));
+      return;
+    }
+
     setFlipFrontPage(spread - 1);   // front: current left page folds away
     setFlipBackPage(spread - 2);    // back: new right page appears as card lands
     setFlipDir("prev");
@@ -141,9 +157,9 @@ export function PdfViewer({ url }: { url: string }) {
       </div>
 
       {/* Pagination badge */}
-      <div className="absolute top-[13px] left-4 z-50 px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full text-sm font-medium flex items-center gap-2">
-        <span>Portfolio gráfico y digital</span>
-        <span className="opacity-50">|</span>
+      <div className="absolute top-[13px] left-4 z-50 px-3 md:px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full text-xs md:text-sm font-medium flex items-center gap-2">
+        <span className="hidden md:inline">Portfolio gráfico y digital</span>
+        <span className="hidden md:inline opacity-50">|</span>
         <span>{spread} de {numPages || "--"} páginas</span>
       </div>
 
@@ -174,30 +190,32 @@ export function PdfViewer({ url }: { url: string }) {
             <div
               className="relative flex"
               style={{
-                width: pageW * 2,
+                width: isMobile ? pageW : pageW * 2,
                 height: pageH,
                 boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
               }}
             >
               {/* LEFT PAGE – always static */}
-              <div
-                className="overflow-hidden flex-shrink-0 bg-white"
-                style={{ width: pageW, height: pageH, borderRight: "1px solid rgba(0,0,0,0.15)" }}
-              >
-                {leftPage >= 1 ? (
-                  <Page
-                    pageNumber={leftPage}
-                    width={pageW}
-                    height={pageH}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-50" />
-                )}
-              </div>
+              {!isMobile && (
+                <div
+                  className="overflow-hidden flex-shrink-0 bg-white"
+                  style={{ width: pageW, height: pageH, borderRight: "1px solid rgba(0,0,0,0.15)" }}
+                >
+                  {leftPage >= 1 ? (
+                    <Page
+                      pageNumber={leftPage}
+                      width={pageW}
+                      height={pageH}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-50" />
+                  )}
+                </div>
+              )}
 
-              {/* RIGHT PAGE – always static */}
+              {/* RIGHT PAGE (or single page on mobile) */}
               <div
                 className="overflow-hidden flex-shrink-0 bg-white"
                 style={{ width: pageW, height: pageH }}
@@ -212,7 +230,7 @@ export function PdfViewer({ url }: { url: string }) {
               </div>
 
               {/* FLIP CARD — continuous 3D flip, front + back faces */}
-              {flipActive && (
+              {!isMobile && flipActive && (
                 <div
                   style={{
                     position: "absolute",
@@ -259,15 +277,17 @@ export function PdfViewer({ url }: { url: string }) {
               )}
 
               {/* Spine shadow */}
-              <div
-                className="absolute top-0 pointer-events-none z-20"
-                style={{
-                  left: pageW - 4,
-                  width: 8,
-                  height: pageH,
-                  background: "linear-gradient(to right, rgba(0,0,0,0.18), transparent 40%, transparent 60%, rgba(0,0,0,0.12))",
-                }}
-              />
+              {!isMobile && (
+                <div
+                  className="absolute top-0 pointer-events-none z-20"
+                  style={{
+                    left: pageW - 4,
+                    width: 8,
+                    height: pageH,
+                    background: "linear-gradient(to right, rgba(0,0,0,0.18), transparent 40%, transparent 60%, rgba(0,0,0,0.12))",
+                  }}
+                />
+              )}
             </div>
           )}
         </Document>
@@ -300,7 +320,7 @@ export function PdfViewer({ url }: { url: string }) {
       {/* Fullscreen */}
       <button
         onClick={toggleFullscreen}
-        className="absolute bottom-4 right-4 z-50 p-3 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full shadow-sm transition-colors"
+        className="hidden md:block absolute bottom-4 right-4 z-50 p-3 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full shadow-sm transition-colors"
         style={{ cursor: "pointer" }}
       >
         {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}

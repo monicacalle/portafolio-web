@@ -20,9 +20,11 @@ export function Cursor() {
   const raf = useRef(0);
 
   useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isMobile = window.innerWidth < 1024;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduce) return;
+    if (isTouch || isMobile || reduce) return;
+    
     setEnabled(true);
     // Only hide the native cursor once ours is guaranteed to render.
     document.body.classList.add("has-cursor");
