@@ -27,6 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: PERSON.name,
     keywords: t.raw("keywords") as string[],
     alternates: { canonical: "/" },
+    icons: {
+      icon: "/assets/favicon.svg",
+    },
     openGraph: {
       title,
       description,

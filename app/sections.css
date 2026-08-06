@@ -524,9 +524,8 @@
    brightness(0) crushes it to black, invert(1) flips to white; the small
    sepia/hue nudge warms the white toward the paper cream. */
 .footer__logo {
-  height: clamp(2rem, 3vw, 2.6rem);
+  height: clamp(3.5rem, 4.5vw, 4.5rem);
   width: auto;
-  filter: brightness(0) invert(1) sepia(0.18) saturate(1.1) hue-rotate(-8deg) brightness(1.02);
   opacity: 0.95;
 }
 .footer__links {

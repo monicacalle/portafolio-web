@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import logo from "@/public/images/asset4.png";
+import logo from "@/public/assets/logo-oscuro.svg";
 import { LanguageSwitcher } from "./language-switcher";
 
 // Links are absolute (`/#id`) so the header works from sub-pages (case studies)
