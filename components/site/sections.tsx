@@ -188,6 +188,7 @@ const PROJECT_MEDIA: {
     internal?: string;
     code?: string;
     wide?: boolean;
+    inModalPdf?: boolean;
   }[];
 }[] = [
   {
@@ -217,7 +218,7 @@ const PROJECT_MEDIA: {
   },
   {
     items: [
-      { img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true },
+      { img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true, inModalPdf: true },
     ],
   },
 ];
@@ -228,6 +229,9 @@ type ProjectGroup = {
   blurb: string;
   items: { title: string; tag: string; action: string }[];
 };
+
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { PdfViewer } from "@/components/site/pdf-viewer";
 
 export function Projects() {
   const t = useTranslations("projects");
@@ -270,41 +274,62 @@ export function Projects() {
                 const linkAttrs = m.internal
                   ? {}
                   : { target: "_blank", rel: "noopener noreferrer" };
-                const LinkTag = m.internal ? Link : "a";
-                return (
+                
+                const renderMedia = () => {
+                  const props = {
+                    className: "card__media cursor-pointer",
+                    "data-cursor": cardCursor,
+                    "data-title": p.title,
+                    "aria-label": `${p.action}: ${p.title}`
+                  };
+                  
+                  const img = (
+                    <Image
+                      src={m.img}
+                      alt={p.title}
+                      sizes="(max-width: 800px) 100vw, 40rem"
+                      placeholder="blur"
+                    />
+                  );
+                  
+                  if (m.inModalPdf) {
+                    return (
+                      <DialogTrigger render={<div {...props} />}>
+                        {img}
+                      </DialogTrigger>
+                    );
+                  }
+                  const Tag = m.internal ? Link : "a";
+                  return <Tag href={href} {...linkAttrs} {...props}>{img}</Tag>;
+                };
+
+                const renderAction = () => {
+                  const props = { className: "card__link cursor-pointer" };
+                  if (m.inModalPdf) {
+                    return (
+                      <DialogTrigger render={<div {...props} />}>
+                        {p.action}
+                      </DialogTrigger>
+                    );
+                  }
+                  const Tag = m.internal ? Link : "a";
+                  return <Tag href={href} {...linkAttrs} {...props}>{p.action}</Tag>;
+                };
+                
+                const content = (
                   <Reveal
                     key={p.title}
                     className={`card ${m.wide ? "card--wide" : ""} ${gi === 1 ? `card--folder card--folder-${i}` : ""}`}
                     delay={i * 90}
                   >
-                    <LinkTag
-                      className="card__media"
-                      href={href}
-                      {...linkAttrs}
-                      data-cursor={cardCursor}
-                      data-title={p.title}
-                      aria-label={`${p.action}: ${p.title}`}
-                    >
-                      <Image
-                        src={m.img}
-                        alt={p.title}
-                        sizes="(max-width: 800px) 100vw, 40rem"
-                        placeholder="blur"
-                      />
-                    </LinkTag>
+                    {renderMedia()}
                     <div className="card__meta">
                       <div className="card__info">
                         <h4 className="card__title">{p.title}</h4>
                         <p className="card__tag">{p.tag}</p>
                       </div>
                       <div className="card__links">
-                        <LinkTag
-                          className="card__link"
-                          href={href}
-                          {...linkAttrs}
-                        >
-                          {p.action}
-                        </LinkTag>
+                        {renderAction()}
                         {m.code && (
                           <a
                             className="card__link card__link--muted"
@@ -319,6 +344,15 @@ export function Projects() {
                     </div>
                   </Reveal>
                 );
+                
+                return m.inModalPdf ? (
+                  <Dialog key={p.title}>
+                    {content}
+                    <DialogContent className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
+                      <PdfViewer url={m.href} />
+                    </DialogContent>
+                  </Dialog>
+                ) : content;
               })}
             </div>
           </div>
