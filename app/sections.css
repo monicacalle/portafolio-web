@@ -320,7 +320,7 @@
 
 .card--folder-0 .card__media { --folder-bg: color-mix(in srgb, #FFF1B5 30%, var(--paper)); --tab-color: var(--ink); }
 .card--folder-1 .card__media { --folder-bg: color-mix(in srgb, #C1DBE8 30%, var(--paper)); --tab-color: var(--ink); }
-.card--folder-2 .card__media { --folder-bg: color-mix(in srgb, #591427 45%, var(--paper)); --tab-color: var(--ink); }
+.card--folder-2 .card__media { --folder-bg: color-mix(in srgb, var(--burgundy) 45%, var(--paper)); --tab-color: var(--ink); }
 
 /* The folder tab */
 .card--folder .card__media::before {
