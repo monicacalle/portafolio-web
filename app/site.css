@@ -145,7 +145,7 @@
   font-family: var(--font-heading), serif;
   font-size: var(--fs-display);
   line-height: 0.9;
-  color: var(--ink);
+  color: var(--burgundy);
   letter-spacing: -0.02em;
   user-select: none;
 }
