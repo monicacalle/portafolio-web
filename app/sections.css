@@ -298,6 +298,7 @@
 .card--folder-0 { top: calc(var(--header-height) + 1.5rem); z-index: 10; }
 .card--folder-1 { top: calc(var(--header-height) + 4rem); z-index: 20; }
 .card--folder-2 { top: calc(var(--header-height) + 6.5rem); z-index: 30; }
+.card--folder-3 { top: calc(var(--header-height) + 9rem); z-index: 40; }
 
 .card--folder .card__media {
   display: flex; /* Flex ensures the inner img takes the padded space */
@@ -318,9 +319,14 @@
   object-fit: cover;
 }
 
+.card--folder-3 .card__media img {
+  object-position: left center;
+}
+
 .card--folder-0 .card__media { --folder-bg: color-mix(in srgb, #FFF1B5 30%, var(--paper)); --tab-color: var(--ink); }
 .card--folder-1 .card__media { --folder-bg: color-mix(in srgb, #C1DBE8 30%, var(--paper)); --tab-color: var(--ink); }
 .card--folder-2 .card__media { --folder-bg: color-mix(in srgb, var(--burgundy) 45%, var(--paper)); --tab-color: var(--ink); }
+.card--folder-3 .card__media { --folder-bg: color-mix(in srgb, #C7E5C8 40%, var(--paper)); --tab-color: var(--ink); }
 
 /* The folder tab */
 .card--folder .card__media::before {
@@ -358,6 +364,10 @@
 
 .card--folder-2 .card__media::before { right: 0; left: auto; }
 .card--folder-2 .card__media { border-top-right-radius: 0; }
+
+.card--folder-3 .card__media::before { 
+  left: 20%; 
+}
 
 .card--folder .card__meta {
   padding: 1.5rem clamp(1.2rem, 3vw, 2rem) 2rem;
