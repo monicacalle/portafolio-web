@@ -20,7 +20,8 @@
       "items": [
         { "title": "Estudio Raíz", "tag": "Webflow", "action": "Ver sitio" },
         { "title": "Isabella Mendoza", "tag": "WordPress", "action": "Ver sitio" },
-        { "title": "Luxe Estate", "tag": "Next.js · Tailwind", "action": "Ver sitio" }
+        { "title": "Luxe Estate", "tag": "Next.js · Tailwind", "action": "Ver sitio" },
+        { "title": "Selvática", "tag": "Next.js · Tailwind", "action": "Ver sitio" }
       ]
     },
     {

@@ -15,6 +15,7 @@ import isa from "@/public/images/mockupisa.png";
 import iphone from "@/public/images/iphone.webp";
 import grafico from "@/public/images/portafolioabierto.png";
 import luxeestate from "@/public/images/luxeestate.png";
+import selvatica from "@/public/assets/selvaticamockup.webp";
 
 /* =========================================================================
    About
@@ -212,6 +213,11 @@ const PROJECT_MEDIA: {
       {
         img: luxeestate,
         href: "https://luxeestate-jgcq.vercel.app/",
+        wide: true,
+      },
+      {
+        img: selvatica,
+        href: "https://selvatica-sigma.vercel.app/",
         wide: true,
       },
     ],
