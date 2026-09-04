@@ -11,6 +11,29 @@ import {
 } from "@/components/site/sections";
 import { SITE_URL, PERSON } from "@/lib/site";
 import { type Locale } from "@/lib/i18n/config";
+import type { Metadata } from "next";
+import { shareImage } from "@/lib/og/card";
+
+/*
+  Only the share image, on purpose: everything else about the homepage's
+  metadata is set once in layout.tsx and inherited.
+
+  It has to be declared here rather than there because file-based metadata
+  outranks config-based metadata within the same segment, and
+  app/[locale]/opengraph-image.tsx sits in the same segment as that layout --
+  so the layout's own value was silently discarded and the Spanish homepage
+  kept advertising /es/opengraph-image, which answers 307. Declared one level
+  down, it wins. See lib/og/card.ts for why the redirect matters.
+*/
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const images = shareImage(locale, "/", PERSON.name);
+  return { openGraph: { images }, twitter: { images } };
+}
 
 export default async function Home({
   params,
