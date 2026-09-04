@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
-import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
+import { CASE_STUDY_SLUGS, GRAFICO_ROUTE } from "@/lib/case-studies";
 
 // Derived from CASE_STUDY_SLUGS rather than hand-listed, because the
 // hand-listed version silently went stale: the case-study routes shipped and
@@ -16,6 +16,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: SITE_URL,
       changeFrequency: "monthly",
       priority: 1,
+    },
+    {
+      url: `${SITE_URL}${GRAFICO_ROUTE}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
     },
     ...CASE_STUDY_SLUGS.map((slug) => ({
       url: `${SITE_URL}/proyectos/${slug}`,

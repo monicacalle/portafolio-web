@@ -2,6 +2,7 @@ import about from "./about.json";
 import caseStudies from "./case-studies.json";
 import contact from "./contact.json";
 import curriculum from "./curriculum.json";
+import grafico from "./grafico.json";
 import hero from "./hero.json";
 import languageSwitcher from "./languageSwitcher.json";
 import meta from "./meta.json";
@@ -18,6 +19,7 @@ const messages = {
   nav,
   notFound,
   og,
+  grafico,
   hero,
   preloader,
   about,
