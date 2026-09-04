@@ -350,3 +350,25 @@
     margin: 0.6rem 0 1.2rem;
   }
 }
+
+/* =========================================================================
+   404
+   ========================================================================= */
+.notfound {
+  min-height: 70svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.notfound__title {
+  font-family: var(--font-display), serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1.05;
+  margin: 0;
+}
+.notfound__body {
+  max-width: 46ch;
+  margin: 0;
+}
