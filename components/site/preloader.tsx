@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/i18n/navigation";
 import { loader } from "@/lib/loader";
 
 /**
@@ -15,9 +15,15 @@ export function Preloader() {
   const t = useTranslations("preloader");
   const reduce = useReducedMotion();
   // The curtain is an entrance for the homepage. On a deep link it is a 3.4s
-  // toll on someone who was sent straight to a case study, and those two URLs
-  // were only just made shareable. usePathname resolves during SSR too, so the
-  // curtain is simply never rendered there and there is nothing to flash.
+  // toll on someone sent straight to a case study.
+  //
+  // next-intl's usePathname, NOT Next's. Next's returns the ROUTED path, which
+  // is /es or /en and never "/", so onHome was false on the server for every
+  // route: the curtain was stripped from all server HTML, then inserted after
+  // hydration on / -- and React tore down and re-rendered the entire <body> to
+  // do it, on the canonical homepage. It never appeared on /en at all. This one
+  // strips the locale prefix and returns "/" in both locales, server and
+  // client.
   const onHome = usePathname() === "/";
   const [count, setCount] = useState(0);
   const [done, setDone] = useState(false);

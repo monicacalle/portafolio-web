@@ -234,6 +234,16 @@ img {
   outline-offset: 2px;
   border-radius: 2px;
 }
+/* The ring above is burgundy, which measures 1.00:1 against the burgundy
+   contact panel and near-1 on the two dark project cards -- seven tab stops a
+   page where the ring exists and cannot be seen. currentColor inherits the
+   text colour, which is already required to contrast with whatever it sits on,
+   so it follows the surface instead of fighting it. */
+.contact :where(a, button):focus-visible,
+.card :where(a, button):focus-visible,
+[role="dialog"] :where(a, button):focus-visible {
+  outline-color: currentColor;
+}
 .card :where(a, button):focus-visible {
   outline-offset: -3px;
 }

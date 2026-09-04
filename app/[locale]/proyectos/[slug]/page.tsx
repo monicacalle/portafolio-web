@@ -30,6 +30,14 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
 // reports this route as Dynamic. generateStaticParams is kept because it is
 // still the declaration of which slugs exist, and it would start pre-rendering
 // the moment the locale stops coming from a cookie -- see MP-17.
+// Restored. Removing this in 92ae560 traded one framework log line for four
+// defects, verified by rebuilding both ways: an unknown slug went from a real
+// 404 to a 38-byte empty <body> with no lang attribute, /proyectos/constructor
+// went from 404 to an unauthenticated 500, and the route started emitting two
+// contradictory robots metas. The NoFallbackError it logs is noise; a blank
+// page is not.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
     CASE_STUDY_SLUGS.map((slug) => ({ locale, slug })),
@@ -51,8 +59,12 @@ async function loadCase(slug: string) {
   // which the arrays in this namespace confuse — read it through a string accessor.
   const raw = t.raw as (key: string) => unknown;
   const items = raw("items") as Record<string, CaseStudy>;
-  const cs = items?.[slug];
-  const media = MEDIA[slug];
+  // hasOwn, not bracket access: items["constructor"] resolves up the prototype
+  // chain to a function, which is truthy, so the guard below passed and the
+  // render threw a 500. Belt and braces with dynamicParams above, because the
+  // 500 must not come back if that flag is ever dropped again.
+  const cs = Object.hasOwn(items, slug) ? items[slug] : undefined;
+  const media = Object.hasOwn(MEDIA, slug) ? MEDIA[slug] : undefined;
   if (!cs || !media) return null;
   return { cs, media, ui: raw("ui") as CaseStudyUi };
 }

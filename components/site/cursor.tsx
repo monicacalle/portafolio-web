@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { hasFinePointer, prefersReducedMotion } from "@/lib/motion-gate";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "motion/react";
 
 /**
@@ -19,10 +20,11 @@ export function Cursor() {
   const ringY = useSpring(y, { stiffness: 320, damping: 30, mass: 0.6 });
 
   useEffect(() => {
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const isMobile = window.innerWidth < 1024;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (isTouch || isMobile || reduce) return;
+    // The shared gate, so this and negative-reveal cannot disagree about what
+    // "there is a cursor here" means. They did: this asked ontouchstart and a
+    // width threshold, that one asked the pointer media query, so on a
+    // touchscreen laptop the inverting trail ran with no dot anchoring it.
+    if (!hasFinePointer() || prefersReducedMotion()) return;
     
     // Feature detection has to run on the client: touch support, viewport
     // width and the reduced-motion query do not exist during SSR. Setting
@@ -48,6 +50,7 @@ export function Cursor() {
     window.addEventListener("mousemove", move, { passive: true });
     return () => {
       window.removeEventListener("mousemove", move);
+      document.body.classList.remove("has-cursor");
     };
   }, [x, y]);
 

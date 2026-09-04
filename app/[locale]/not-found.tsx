@@ -25,7 +25,7 @@ export default async function NotFound() {
         <p className="eyebrow">404</p>
         <h1 className="notfound__title">{t("title")}</h1>
         <p className="notfound__body">{t("body")}</p>
-        <Link className="btn" href="/">
+        <Link className="btn btn--solid" href="/">
           {t("cta")}
         </Link>
       </main>

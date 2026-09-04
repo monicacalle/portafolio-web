@@ -202,7 +202,6 @@ const PROJECT_MEDIA: {
     internal?: string;
     code?: string;
     wide?: boolean;
-    inModalPdf?: boolean;
     // Stated on the download link so nobody starts a 23 MB transfer blind.
     // Hand-kept: if a PDF in public/assets is replaced, update this too.
     pdfSize?: string;
@@ -262,8 +261,6 @@ type ProjectGroup = {
   items: { title: string; tag: string; action: string }[];
 };
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { PdfViewer } from "@/components/site/pdf-viewer";
 
 export function Projects() {
   const t = useTranslations("projects");
@@ -331,27 +328,12 @@ export function Projects() {
                       placeholder="blur"
                     />
                   );
-                  
-                  if (m.inModalPdf) {
-                    return (
-                      <DialogTrigger render={<button type="button" {...props} />}>
-                        {img}
-                      </DialogTrigger>
-                    );
-                  }
                   const Tag = m.internal ? Link : "a";
                   return <Tag href={href} {...linkAttrs} {...props}>{img}</Tag>;
                 };
 
                 const renderAction = () => {
                   const props = { className: "card__link cursor-pointer" };
-                  if (m.inModalPdf) {
-                    return (
-                      <DialogTrigger render={<button type="button" {...props} />}>
-                        {p.action}
-                      </DialogTrigger>
-                    );
-                  }
                   const Tag = m.internal ? Link : "a";
                   return <Tag href={href} {...linkAttrs} {...props}>{p.action}</Tag>;
                 };
@@ -396,15 +378,7 @@ export function Projects() {
                     </div>
                   </Reveal>
                 );
-                
-                return m.inModalPdf ? (
-                  <Dialog key={p.title}>
-                    {content}
-                    <DialogContent aria-label={p.title} className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
-                      <PdfViewer url={m.href} />
-                    </DialogContent>
-                  </Dialog>
-                ) : content;
+                return content;
               })}
             </div>
           </div>
