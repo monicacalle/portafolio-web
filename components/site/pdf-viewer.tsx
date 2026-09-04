@@ -8,7 +8,29 @@ import { DialogClose } from "@/components/ui/dialog";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Served from our own origin, resolved by the bundler from the pinned
+// pdfjs-dist in package.json. It used to be
+// `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`: about
+// 1.1 MB of third-party JavaScript, fetched protocol-relative on every modal
+// open and executed as a worker in this origin, with no SRI and no CSP. Two
+// problems, one of them quiet. If unpkg is blocked -- corporate network,
+// ad-blocker, DNS filter, outage -- the flipbook cannot load at all, which is
+// the defect a hiring manager reported. And if unpkg is ever compromised, it
+// runs here.
+//
+// new URL(..., import.meta.url) makes the bundler emit and fingerprint the
+// file, so it is same-origin, versioned with the lockfile, and works offline.
+//
+// pdfjs-dist is now a direct dependency because this file imports it directly,
+// and pnpm's strict layout will not resolve a transitive one. react-pdf pins it
+// exactly (5.4.296), so keep the two in lockstep when either is upgraded: a
+// mismatch surfaces as pdf.js refusing to start with "API version does not
+// match Worker version", which is loud rather than silent, but still a waste of
+// an afternoon.
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url,
+).toString();
 
 export function PdfViewer({ url }: { url: string }) {
   const t = useTranslations("projects");

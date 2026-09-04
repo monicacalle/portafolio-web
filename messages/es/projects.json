@@ -3,6 +3,7 @@
   "title": "En los que he trabajado",
   "codeLabel": "Código",
   "pdfLabel": "Descargar PDF",
+  "pdfSize": "{label} ({size})",
   "pdfTitle": "Portafolio gráfico y digital",
   "pdfPages": "{page} de {total} páginas",
   "pdfClose": "Cerrar",

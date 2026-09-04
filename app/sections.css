@@ -666,3 +666,20 @@ button:where(.card__media, .card__link) {
 button:where(.card__media) {
   width: 100%;
 }
+
+/* LinkedIn beside the contact email. Matches .contact__mail's underline
+   behaviour at a smaller weight, so it reads as secondary to the address. */
+.contact__link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--hero-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 1px;
+}
+.contact__link:hover {
+  text-decoration-thickness: 2px;
+}

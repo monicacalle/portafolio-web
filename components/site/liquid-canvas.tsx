@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { observeRunnable, prefersReducedMotion } from "@/lib/motion-gate";
+import { prefersReducedMotion } from "@/lib/motion-gate";
 
 /*
   Flowing wave field — the animated background.
@@ -91,26 +91,18 @@ export default function LiquidCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Decorative backdrop on every page. Under reduced motion it must not
-    // animate at all: WCAG 2.2.2 covers exactly this, motion that starts by
-    // itself and runs past five seconds.
-    if (prefersReducedMotion()) return;
+    // Decorative backdrop on every page. WCAG 2.2.2 asks that motion which
+    // starts by itself and runs past five seconds can be stopped. It does not
+    // ask for the artwork to disappear -- the previous version returned before
+    // resize() and the first draw, so a reduced-motion visitor got no contour
+    // field at all and a materially different page. One static frame instead.
+    const still = prefersReducedMotion();
 
     const noise = makeNoise(1337);
 
     let W = 0,
       H = 0,
       dpr = 1;
-
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = canvas.clientWidth;
-      H = canvas.clientHeight;
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-    };
-    resize();
-    window.addEventListener("resize", resize);
 
     let raf = 0;
     let startMs = 0;
@@ -237,20 +229,36 @@ export default function LiquidCanvas() {
       ctx.strokeStyle = `rgba(${CONFIG.COLOR}, ${CONFIG.ALPHA})`;
       strokeContours();
 
-      raf = requestAnimationFrame(draw);
+      if (!still) raf = requestAnimationFrame(draw);
     };
 
-    raf = requestAnimationFrame(draw);
+    // Defined after draw() so it can repaint. Assigning canvas.width or
+    // canvas.height wipes the bitmap, even when the value has not changed — the
+    // rAF loop hides that by repainting within a frame, but a still visitor has
+    // no loop, so the field vanished on the first resize. Including the one a
+    // mobile URL bar fires on scroll, which blanked the page just by scrolling.
+    // Repaint through rAF so a drag-resize paints once instead of per event,
+    // and at t=0 so every repaint is the same frame rather than a new phase.
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      if (still) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => draw(0));
+      }
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-    // Off-screen or backgrounded, this loop is invisible work. Stop it.
-    const stopObserving = observeRunnable(canvas, (running) => {
-      cancelAnimationFrame(raf);
-      if (running) raf = requestAnimationFrame(draw);
-    });
+    // Paint once, so the field exists. Only the recursion is gated; when still,
+    // resize() has already scheduled that single frame.
+    if (!still) draw(0);
 
     return () => {
       cancelAnimationFrame(raf);
-      stopObserving();
       window.removeEventListener("resize", resize);
     };
   }, []);

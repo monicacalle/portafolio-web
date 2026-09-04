@@ -1,11 +1,15 @@
 import Image, { type StaticImageData } from "next/image";
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./reveal";
 import { SplitText } from "./split-text";
 import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
 import { Footer } from "./footer";
+import { PERSON } from "@/lib/site";
+import { GRAFICO_ROUTE } from "@/lib/case-studies";
 import about from "@/public/images/about.png";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
@@ -179,8 +183,12 @@ export function Curriculum() {
 /* =========================================================================
    Projects
    ========================================================================= */
-// Case-study PDFs are self-hosted under /public/assets, compressed from the
-// originals (which were 30–90 MB each) to a screen-friendly size.
+// Case-study PDFs are self-hosted under /public/assets. They are NOT
+// screen-optimised, whatever an earlier comment here claimed: vibe is 23 MB and
+// voluntee is 20 MB, which is 20s on good 4G and a minute or more on a weak
+// one. The bulk is 7.5 MB of Form XObjects plus 5 MB of JPEG, so Ghostscript
+// /ebook achieves nothing; it needs a re-export from the source document. Until
+// that happens the labels carry the size, so nobody starts the download blind.
 const PDF_HOST = "/assets";
 
 // Structural (non-copy) data — images, links, layout. Copy (label/blurb/title/
@@ -194,7 +202,9 @@ const PROJECT_MEDIA: {
     internal?: string;
     code?: string;
     wide?: boolean;
-    inModalPdf?: boolean;
+    // Stated on the download link so nobody starts a 23 MB transfer blind.
+    // Hand-kept: if a PDF in public/assets is replaced, update this too.
+    pdfSize?: string;
   }[];
 }[] = [
   {
@@ -202,11 +212,13 @@ const PROJECT_MEDIA: {
       {
         img: vibe,
         href: `${PDF_HOST}/vibe-app-memoria.pdf`,
+        pdfSize: "23 MB",
         internal: "/proyectos/vibe",
       },
       {
         img: voluntee,
         href: `${PDF_HOST}/voluntee-app-slides.pdf`,
+        pdfSize: "20 MB",
         internal: "/proyectos/voluntee",
       },
     ],
@@ -229,7 +241,15 @@ const PROJECT_MEDIA: {
   },
   {
     items: [
-      { img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true, inModalPdf: true },
+      {
+        img: grafico,
+        href: `${PDF_HOST}/portafolio-grafico.pdf`,
+        // Links to the page rather than opening the reader here: a modal
+        // changes no route, so there was nothing to send or index.
+        internal: GRAFICO_ROUTE,
+        wide: true,
+        pdfSize: "2.6 MB",
+      },
     ],
   },
 ];
@@ -241,14 +261,13 @@ type ProjectGroup = {
   items: { title: string; tag: string; action: string }[];
 };
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { PdfViewer } from "@/components/site/pdf-viewer";
 
 export function Projects() {
   const t = useTranslations("projects");
   const groups = t.raw("groups") as ProjectGroup[];
   const codeLabel = t("codeLabel");
   const pdfLabel = t("pdfLabel");
+  const pdfSize = (size: string) => t("pdfSize", { label: pdfLabel, size });
   const cardCursor = t("cardCursor");
 
   return (
@@ -309,27 +328,12 @@ export function Projects() {
                       placeholder="blur"
                     />
                   );
-                  
-                  if (m.inModalPdf) {
-                    return (
-                      <DialogTrigger render={<button type="button" {...props} />}>
-                        {img}
-                      </DialogTrigger>
-                    );
-                  }
                   const Tag = m.internal ? Link : "a";
                   return <Tag href={href} {...linkAttrs} {...props}>{img}</Tag>;
                 };
 
                 const renderAction = () => {
                   const props = { className: "card__link cursor-pointer" };
-                  if (m.inModalPdf) {
-                    return (
-                      <DialogTrigger render={<button type="button" {...props} />}>
-                        {p.action}
-                      </DialogTrigger>
-                    );
-                  }
                   const Tag = m.internal ? Link : "a";
                   return <Tag href={href} {...linkAttrs} {...props}>{p.action}</Tag>;
                 };
@@ -367,22 +371,14 @@ export function Projects() {
                             rel="noopener noreferrer"
                             aria-label={`${pdfLabel}: ${p.title}`}
                           >
-                            {pdfLabel}
+                            {m.pdfSize ? pdfSize(m.pdfSize) : pdfLabel}
                           </a>
                         )}
                       </div>
                     </div>
                   </Reveal>
                 );
-                
-                return m.inModalPdf ? (
-                  <Dialog key={p.title}>
-                    {content}
-                    <DialogContent aria-label={p.title} className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
-                      <PdfViewer url={m.href} />
-                    </DialogContent>
-                  </Dialog>
-                ) : content;
+                return content;
               })}
             </div>
           </div>
@@ -421,6 +417,20 @@ export function Contact() {
               monicacalle369@gmail.com
             </a>
           </Magnetic>
+        </Reveal>
+        {/* The URL was only in the JSON-LD sameAs, so Google could see her
+            LinkedIn and a visitor could not. Both CVs link it; the site was
+            the least connected artefact she hands out. */}
+        <Reveal delay={210}>
+          <a
+            className="contact__link"
+            href={PERSON.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor={t("mailCursor")}
+          >
+            {t("linkedin")}
+          </a>
         </Reveal>
         <Reveal className="contact__tags" delay={240}>
           {tags.map((tag) => (
