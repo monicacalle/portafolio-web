@@ -157,13 +157,7 @@ function Plane({ src, aspect }: { src: string; aspect: number }) {
     };
   }, []);
 
-  // Reduced motion is read once: the shader still renders the portrait, it
-  // just stops rippling. Backgrounded tabs skip the work entirely, since a
-  // WebGL shader is the most expensive thing on the page to run unseen.
-  const still = prefersReducedMotion();
-
   useFrame((_, delta) => {
-    if (still || document.hidden) return;
     const u = uniforms.current;
     const dt = Math.min(delta, 0.05);
     u.uTime.value += dt;
@@ -205,8 +199,31 @@ export default function HeroCanvas({
     // component renders the plain <Image> fallback first and upgrades on the
     // client, which is the progressive enhancement described at the top of
     // this file, so the extra render is intended.
+    //
+    // Reduced motion decides this too. Previously the shader mounted and then
+    // returned early from useFrame, which left uEnter at 0 forever -- and the
+    // fragment shader ends `gl_FragColor = vec4(col, e)` with e = uEnter, so
+    // the plane stayed fully transparent. The context, the texture and a
+    // full-viewport quad were all live, rasterising nothing, every frame. Not
+    // mounting produces the identical picture for free.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGl(supportsWebGL() ? "on" : "off");
+    setGl(supportsWebGL() && !prefersReducedMotion() ? "on" : "off");
+  }, []);
+
+  // This is the one canvas on the page that actually leaves the viewport:
+  // .hero__canvas is position:absolute inside the hero, while the backdrop and
+  // the reveal layer are both fixed and inset:0. So it is the only one worth
+  // pausing on scroll, and it is the expensive one.
+  const [onScreen, setOnScreen] = useState(true);
+  useEffect(() => {
+    const el = document.getElementById("hero-canvas");
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setOnScreen(entry.isIntersecting),
+      { rootMargin: "128px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   return (
@@ -225,6 +242,7 @@ export default function HeroCanvas({
       {gl === "on" && (
         <Canvas
           className="hero__gl"
+          frameloop={onScreen ? "always" : "never"}
           orthographic
           camera={{ position: [0, 0, 1], zoom: 1 }}
           gl={{ antialias: true, alpha: true, failIfMajorPerformanceCaveat: false }}
