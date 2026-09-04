@@ -7,6 +7,7 @@ import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import profile from "@/public/images/profilepicture.png";
 import { loader } from "@/lib/loader";
+import { prefersReducedMotion } from "@/lib/motion-gate";
 
 /*
   The 3D centerpiece — progressive enhancement.
@@ -152,7 +153,13 @@ function Plane({ src, aspect }: { src: string; aspect: number }) {
     };
   }, []);
 
+  // Reduced motion is read once: the shader still renders the portrait, it
+  // just stops rippling. Backgrounded tabs skip the work entirely, since a
+  // WebGL shader is the most expensive thing on the page to run unseen.
+  const still = prefersReducedMotion();
+
   useFrame((_, delta) => {
+    if (still || document.hidden) return;
     const u = uniforms.current;
     const dt = Math.min(delta, 0.05);
     u.uTime.value += dt;
