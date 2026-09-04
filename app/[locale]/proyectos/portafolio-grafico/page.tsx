@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { SITE_URL } from "@/lib/site";
+import { type Locale } from "@/lib/i18n/config";
+import { routing } from "@/lib/i18n/routing";
+import { localePath } from "@/lib/i18n/paths";
 import { GRAFICO_PDF } from "@/lib/case-studies";
 import { GraficoViewer } from "@/components/site/grafico-viewer";
 import grafico from "@/public/images/portafolioabierto.png";
@@ -22,21 +25,45 @@ import grafico from "@/public/images/portafolioabierto.png";
   This page has an address. The flipbook is unchanged and still reachable from
   the card; this is the shareable surface around it.
 */
-export async function generateMetadata(): Promise<Metadata> {
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
   const t = await getTranslations("grafico");
   const title = `${t("title")} — ${t("tagline")}`;
   const description = t("body");
-  const url = `${SITE_URL}/proyectos/portafolio-grafico`;
+  const path = localePath(locale, "/proyectos/portafolio-grafico");
+  const url = `${SITE_URL}${path}`;
   return {
     title,
     description,
-    alternates: { canonical: "/proyectos/portafolio-grafico" },
+    alternates: {
+      canonical: path,
+      languages: {
+        es: "/proyectos/portafolio-grafico",
+        en: "/en/proyectos/portafolio-grafico",
+        "x-default": "/proyectos/portafolio-grafico",
+      },
+    },
     openGraph: { title, description, url, type: "article" },
     twitter: { card: "summary_large_image", title, description },
   };
 }
 
-export default async function GraphicPortfolioPage() {
+export default async function GraphicPortfolioPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
   const t = await getTranslations("grafico");
 
   return (

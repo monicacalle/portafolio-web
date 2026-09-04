@@ -1,27 +1,33 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { setLocaleCookie } from "@/lib/i18n/actions";
+import { usePathname, useRouter } from "@/lib/i18n/navigation";
 import { LOCALES, type Locale } from "@/lib/i18n/config";
 
 /**
- * Compact ES/EN segmented control. Sets the locale cookie that request.ts reads
- * first (via a server action), then refreshes so the new locale renders. No DB /
- * auth — safe on the public page.
+ * Compact ES/EN segmented control.
+ *
+ * It used to set a cookie and refresh in place, which meant both languages
+ * lived at one address: Google could only index one of them, and a link sent to
+ * an English-reading recruiter opened in Spanish. It navigates now, so the
+ * language is in the URL and every page has an address in both.
+ *
+ * usePathname here is next-intl's, not Next's: it returns the path WITHOUT the
+ * locale prefix, so switching keeps you on the page you were reading instead of
+ * sending you home.
  */
 export function LanguageSwitcher({ className }: { className?: string }) {
   const t = useTranslations("languageSwitcher");
   const active = useLocale() as Locale;
+  const pathname = usePathname();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const select = (locale: Locale) => {
     if (locale === active) return;
-    startTransition(async () => {
-      await setLocaleCookie(locale);
-      router.refresh();
+    startTransition(() => {
+      router.replace(pathname, { locale });
     });
   };
 
