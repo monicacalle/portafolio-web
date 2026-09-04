@@ -2,7 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
-import { usePathname, useRouter } from "@/lib/i18n/navigation";
+import { usePathname } from "@/lib/i18n/navigation";
+import { localePath } from "@/lib/i18n/paths";
 import { LOCALES, type Locale } from "@/lib/i18n/config";
 
 /**
@@ -21,13 +22,23 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const t = useTranslations("languageSwitcher");
   const active = useLocale() as Locale;
   const pathname = usePathname();
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const select = (locale: Locale) => {
     if (locale === active) return;
+    // A full navigation rather than the router.
+    //
+    // usePathname never carries the hash, and next-intl's router drops it
+    // whether it is passed as a string href or as a UrlObject -- tried both.
+    // Switching from /en#projects landed on / and lost the reader's place, and
+    // the homepage is one long scroll with anchored sections, so that is the
+    // common case rather than an edge one.
+    //
+    // Changing language changes the whole document, so a reload is honest here,
+    // and localePath is the same rule the canonical tags and the sitemap use.
+    const hash = window.location.hash;
     startTransition(() => {
-      router.replace(pathname, { locale });
+      window.location.href = `${localePath(locale, pathname)}${hash}`;
     });
   };
 
