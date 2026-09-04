@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import {
   motion,
@@ -36,13 +36,22 @@ export function Hero() {
   const left = t("wordLeft").split("");
   const right = t("wordRight").split("");
 
-  // Seed from the loader so we don't setState on the first commit; only
-  // subscribe if the intro hasn't finished yet.
-  const [ready, setReady] = useState(() => loader.isReady);
-  useEffect(() => {
-    if (loader.isReady) return;
-    return loader.subscribe(() => setReady(true));
-  }, []);
+  // useSyncExternalStore rather than seed-then-subscribe. The hand-rolled
+  // version read loader.isReady during render and subscribed in an effect,
+  // bailing out if the loader had already finished. Under reduced motion the
+  // Preloader finishes synchronously in its own effect, which runs before this
+  // one because it sits earlier in the tree -- so this component seeded false,
+  // then bailed without subscribing, and `ready` stayed false forever. The
+  // wordmark, her name and her role line never animated in.
+  //
+  // React re-reads the snapshot after subscribing, so that window cannot exist.
+  // The third argument is the server snapshot: false matches what the server
+  // renders, so hydration stays quiet.
+  const ready = useSyncExternalStore(
+    loader.subscribe,
+    () => loader.isReady,
+    () => false,
+  );
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
