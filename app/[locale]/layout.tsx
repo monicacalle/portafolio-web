@@ -26,6 +26,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const l = locale as Locale;
+  // Before getTranslations. Without it next-intl falls back to reading request
+  // headers to work out the locale, which opts this route out of static
+  // rendering -- and generateMetadata runs for every route, so it did that
+  // everywhere. That is the "reason: headers" in the static-to-dynamic error.
+  setRequestLocale(l);
   const t = await getTranslations("meta");
   const title = t("title");
   const description = t("description");

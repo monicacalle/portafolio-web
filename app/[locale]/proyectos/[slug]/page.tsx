@@ -30,14 +30,6 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
 // reports this route as Dynamic. generateStaticParams is kept because it is
 // still the declaration of which slugs exist, and it would start pre-rendering
 // the moment the locale stops coming from a cookie -- see MP-17.
-// Reject unknown slugs at the routing layer rather than rendering the page and
-// throwing notFound() from inside it. This did nothing in MP-30, because
-// reading the locale cookie forced every route dynamic and there was no static
-// param set to be outside of. Moving the locale into the URL made these routes
-// static, so it works now, and it is also what stops an unknown slug being
-// rendered dynamically and failing with "changed from static to dynamic".
-export const dynamicParams = false;
-
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
     CASE_STUDY_SLUGS.map((slug) => ({ locale, slug })),
