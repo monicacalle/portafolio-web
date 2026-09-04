@@ -7,6 +7,7 @@ One job: run the checks and write down what actually happened, including failure
 - Working (this run): ../02_draft/output/[slug]-implementation-plan.md, and the
   working tree as edited.
 - Reference (every run): ../../_shared/engineering/conventions.md
+- Reference (before any merge to main): ../../_shared/engineering/branching-and-review.md
 - Reference (every run): the QA workflow below, run in this order.
 
 Do NOT load: the research output, the market research, past validation reports.
