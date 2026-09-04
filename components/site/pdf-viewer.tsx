@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ChevronLeft, ChevronRight, Loader2, X, Maximize2, Minimize2 } from "lucide-react";
 import { DialogClose } from "@/components/ui/dialog";
@@ -10,7 +11,9 @@ import "react-pdf/dist/Page/TextLayer.css";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export function PdfViewer({ url }: { url: string }) {
+  const t = useTranslations("projects");
   const [numPages, setNumPages] = useState(0);
+  const [failed, setFailed] = useState(false);
   // spread = right page number (left page = spread - 1)
   const [spread, setSpread] = useState(1);
   const [pdfRatio, setPdfRatio] = useState(0); // width / height of a single pdf page
@@ -80,6 +83,16 @@ export function PdfViewer({ url }: { url: string }) {
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
     setLoading(false);
+  }
+
+  // Without this, a failed load left `loading` true forever: the spinner is
+  // absolute inset-0 z-50, so it sat on top of react-pdf's own error, which is
+  // hardcoded English at 1.22:1 contrast and invisible anyway. The result was a
+  // spinner that never stopped -- which is the original complaint, "I cannot
+  // open your graphic work", reproduced exactly.
+  function onDocumentLoadError() {
+    setLoading(false);
+    setFailed(true);
   }
 
   // Minimal shape of the react-pdf page proxy: all this needs is the
@@ -155,16 +168,16 @@ export function PdfViewer({ url }: { url: string }) {
     >
       {/* Close */}
       <div className="absolute top-[13px] right-4 z-50">
-        <DialogClose className="p-2.5 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full transition-colors">
+        <DialogClose aria-label={t("pdfClose")} className="p-2.5 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full transition-colors">
           <X className="w-4 h-4" />
         </DialogClose>
       </div>
 
       {/* Pagination badge */}
       <div className="absolute top-[13px] left-4 z-50 px-3 md:px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full text-xs md:text-sm font-medium flex items-center gap-2">
-        <span className="hidden md:inline">Portfolio gráfico y digital</span>
+        <span className="hidden md:inline">{t("pdfTitle")}</span>
         <span className="hidden md:inline opacity-50">|</span>
-        <span>{spread} de {numPages || "--"} páginas</span>
+        <span>{t("pdfPages", { page: spread, total: numPages || "--" })}</span>
       </div>
 
       {/* Book area */}
@@ -176,7 +189,13 @@ export function PdfViewer({ url }: { url: string }) {
           </div>
         )}
 
-        <Document file={url} loading={null} onLoadSuccess={onDocumentLoadSuccess}>
+        <Document
+          file={url}
+          loading={null}
+          error={null}
+          onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={onDocumentLoadError}
+        >
           {/* Hidden probe page to get aspect ratio */}
           {pdfRatio === 0 && (
             <div className="absolute opacity-0 pointer-events-none" style={{ top: 0, left: 0, width: 1, height: 1, overflow: "hidden" }}>
@@ -296,11 +315,25 @@ export function PdfViewer({ url }: { url: string }) {
           )}
         </Document>
 
+        {failed && (
+          <div className="z-40 max-w-md text-center px-6">
+            <p className="text-white text-sm md:text-base mb-4">{t("pdfError")}</p>
+            <a
+              href={url}
+              download
+              className="inline-block px-4 py-2 rounded-full bg-white text-[rgb(62,28,28)] text-sm font-bold"
+            >
+              {t("pdfLabel")}
+            </a>
+          </div>
+        )}
+
         {/* Prev arrow */}
         {numPages > 1 && (
           <button
             disabled={spread <= 1 || isAnimating}
             onClick={goPrev}
+            aria-label={t("pdfPrev")}
             className="absolute left-2 sm:left-4 z-30 p-4 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full shadow-lg disabled:opacity-20 transition-all"
             style={{ cursor: "pointer" }}
           >
@@ -313,6 +346,7 @@ export function PdfViewer({ url }: { url: string }) {
           <button
             disabled={spread >= numPages || isAnimating}
             onClick={goNext}
+            aria-label={t("pdfNext")}
             className="absolute right-2 sm:right-4 z-30 p-4 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full shadow-lg disabled:opacity-20 transition-all"
             style={{ cursor: "pointer" }}
           >
@@ -324,6 +358,7 @@ export function PdfViewer({ url }: { url: string }) {
       {/* Fullscreen */}
       <button
         onClick={toggleFullscreen}
+        aria-label={isFullscreen ? t("pdfExitFullscreen") : t("pdfFullscreen")}
         className="hidden md:block absolute bottom-4 right-4 z-50 p-3 bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/30 rounded-full shadow-sm transition-colors"
         style={{ cursor: "pointer" }}
       >

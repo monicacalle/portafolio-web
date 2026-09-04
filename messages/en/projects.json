@@ -3,6 +3,14 @@
   "title": "Projects I've worked on",
   "codeLabel": "Code",
   "pdfLabel": "Download PDF",
+  "pdfTitle": "Graphic and digital portfolio",
+  "pdfPages": "{page} of {total} pages",
+  "pdfClose": "Close",
+  "pdfPrev": "Previous page",
+  "pdfNext": "Next page",
+  "pdfFullscreen": "Fullscreen",
+  "pdfExitFullscreen": "Exit fullscreen",
+  "pdfError": "The PDF could not be loaded. Use the download link to open it.",
   "cardCursor": "View",
   "groups": [
     {

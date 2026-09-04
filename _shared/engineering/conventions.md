@@ -29,11 +29,13 @@ and the BCP-47 `OG_LOCALE` map used for `<html lang>` and OpenGraph.
   fields are a structural fallback mirroring the ES positioning.
 - Changing how Monica is labelled therefore touches **both** homes. Check
   the positioning research in the private mirror before changing a label.
-- **Pending, decided but not applied**: the real domain is `monicacalle.es`. `SITE_URL`
-  still points at `portafolio-en-espa-ol-monica-calle.vercel.app`. Flip it to
-  `https://monicacalle.es` once the domain resolves on Vercel, and sitemap, robots, the
-  canonical tag, and JSON-LD all follow from that one line. Flipping it before the
-  domain is live publishes canonical URLs that 404.
+- `SITE_URL` is `https://monicacalle.es`. Sitemap, robots, the canonical tag, og:url
+  and the JSON-LD all derive from it, so it is the only place a domain change is made.
+  The old Vercel preview 301s to the real domain, so no redirect rule is needed.
+- Case-study pages set their own `canonical` and `openGraph` in `generateMetadata`.
+  Without that they inherit the root layout's `canonical: "/"`, which makes Google
+  consolidate them into the homepage and makes every shared link preview as the
+  homepage. If you add a route, give it its own metadata.
 
 ## Copy goes through ghost
 No user-facing string ships in the wording a model first produced.

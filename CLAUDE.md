@@ -4,7 +4,7 @@ Bilingual portfolio site for Monica Calle, Product Designer (UX/UI) in Valencia.
 
 Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 + next-intl (es default, en) + React Three Fiber + motion.
 
-Built on ICM: folders carry sequencing, hierarchy carries context, files carry state. If something needs explaining, the explanation goes in that folder's CONTEXT.md.
+The working notes and planning for this site live in the private mirror, not here. See below.
 
 ## Commands
 `pnpm dev` | `pnpm lint` | `pnpm build` | `pnpm start`
@@ -42,6 +42,8 @@ component, and never ship copy that has not been through `ghost`. Why, and what 
 instead: `_shared/engineering/conventions.md`.
 
 ## The one rule
-Nothing moves to the next stage until a person has read the output of the last one.
+Nothing reaches `main` until the six review passes in
+`_shared/engineering/branching-and-review.md` have run and their findings are fixed
+or declined in writing.
 
 @AGENTS.md

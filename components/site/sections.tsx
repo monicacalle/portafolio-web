@@ -378,7 +378,7 @@ export function Projects() {
                 return m.inModalPdf ? (
                   <Dialog key={p.title}>
                     {content}
-                    <DialogContent className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
+                    <DialogContent aria-label={p.title} className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
                       <PdfViewer url={m.href} />
                     </DialogContent>
                   </Dialog>
