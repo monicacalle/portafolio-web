@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Header } from "@/components/site/header";
 import { Hero } from "@/components/site/hero";
 import {
@@ -10,9 +10,15 @@ import {
   Contact,
 } from "@/components/site/sections";
 import { SITE_URL, PERSON } from "@/lib/site";
+import { type Locale } from "@/lib/i18n/config";
 
-export default async function Home() {
-  const locale = await getLocale();
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
   const t = await getTranslations("meta");
 
   // schema.org structured data — helps search engines (and anyone Googling her

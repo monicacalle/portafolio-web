@@ -1,5 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./reveal";
 import { SplitText } from "./split-text";

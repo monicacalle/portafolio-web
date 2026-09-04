@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { notFound } from "next/navigation";
 import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
+import { type Locale } from "@/lib/i18n/config";
+import { routing } from "@/lib/i18n/routing";
+import { localePath } from "@/lib/i18n/paths";
 import { SITE_URL } from "@/lib/site";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ArrowLeft } from "lucide-react";
@@ -26,7 +31,9 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
 // still the declaration of which slugs exist, and it would start pre-rendering
 // the moment the locale stops coming from a cookie -- see MP-17.
 export function generateStaticParams() {
-  return CASE_STUDY_SLUGS.map((slug) => ({ slug }));
+  return routing.locales.flatMap((locale) =>
+    CASE_STUDY_SLUGS.map((slug) => ({ locale, slug })),
+  );
 }
 
 type CaseStudy = {
@@ -61,15 +68,17 @@ type CaseStudyUi = {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale as Locale);
   const data = await loadCase(slug);
   if (!data) return {};
   const { cs } = data;
   const title = `${cs.title} — ${cs.tagline}`;
   const description = cs.overview.product;
-  const url = `${SITE_URL}/proyectos/${slug}`;
+  const path = localePath(locale, `/proyectos/${slug}`);
+  const url = `${SITE_URL}${path}`;
   // Without these the page inherits the root layout's canonical ("/") and its
   // openGraph block, which had two consequences: Google consolidated every case
   // study into the homepage and dropped the URL, cancelling out the sitemap
@@ -79,14 +88,26 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `/proyectos/${slug}` },
+    alternates: {
+      canonical: path,
+      languages: {
+        es: `/proyectos/${slug}`,
+        en: `/en/proyectos/${slug}`,
+        "x-default": `/proyectos/${slug}`,
+      },
+    },
     openGraph: { title, description, url, type: "article" },
     twitter: { card: "summary_large_image", title, description },
   };
 }
 
-export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function CaseStudyPage({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  setRequestLocale(locale as Locale);
   const data = await loadCase(slug);
   if (!data) notFound();
   const { cs, media, ui } = data;
