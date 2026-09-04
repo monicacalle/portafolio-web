@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMotionValue, useSpring, motion, AnimatePresence } from "motion/react";
 
 /**
@@ -17,7 +17,6 @@ export function Cursor() {
   const y = useMotionValue(-100);
   const ringX = useSpring(x, { stiffness: 320, damping: 30, mass: 0.6 });
   const ringY = useSpring(y, { stiffness: 320, damping: 30, mass: 0.6 });
-  const raf = useRef(0);
 
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -25,6 +24,11 @@ export function Cursor() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (isTouch || isMobile || reduce) return;
     
+    // Feature detection has to run on the client: touch support, viewport
+    // width and the reduced-motion query do not exist during SSR. Setting
+    // state from the effect is the SSR-safe way to do that, so the compiler's
+    // cascading-render warning is accepted here on purpose.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEnabled(true);
     // Only hide the native cursor once ours is guaranteed to render.
     document.body.classList.add("has-cursor");
@@ -44,7 +48,6 @@ export function Cursor() {
     window.addEventListener("mousemove", move, { passive: true });
     return () => {
       window.removeEventListener("mousemove", move);
-      cancelAnimationFrame(raf.current);
     };
   }, [x, y]);
 
