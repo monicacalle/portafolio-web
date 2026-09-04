@@ -82,7 +82,11 @@ export function PdfViewer({ url }: { url: string }) {
     setLoading(false);
   }
 
-  function onFirstPageLoad(page: any) {
+  // Minimal shape of the react-pdf page proxy: all this needs is the
+  // viewport's intrinsic dimensions to derive an aspect ratio.
+  function onFirstPageLoad(page: {
+    getViewport: (options: { scale: number }) => { width: number; height: number };
+  }) {
     const vp = page.getViewport({ scale: 1.0 });
     setPdfRatio(vp.width / vp.height);
   }

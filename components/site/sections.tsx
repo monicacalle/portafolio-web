@@ -2,7 +2,6 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./reveal";
-import logo from "@/public/images/asset4.png";
 import { SplitText } from "./split-text";
 import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
@@ -12,7 +11,6 @@ import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
 import raiz from "@/public/images/mockupraiz.png";
 import isa from "@/public/images/mockupisa.png";
-import iphone from "@/public/images/iphone.webp";
 import grafico from "@/public/images/portafolioabierto.png";
 import luxeestate from "@/public/images/luxeestate.png";
 import selvatica from "@/public/assets/selvaticamockup.webp";
@@ -399,7 +397,6 @@ export function Projects() {
    ========================================================================= */
 export function Contact() {
   const t = useTranslations("contact");
-  const nav = useTranslations("nav");
   const tags = t.raw("tags") as string[];
 
   return (
