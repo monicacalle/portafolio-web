@@ -186,6 +186,12 @@
   border-left: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
   padding-left: 1.8rem;
 }
+/* Sits under both timeline columns, not inside either one, so it reads as
+   belonging to the whole section rather than to the work column. */
+.cv__actions {
+  display: flex;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
 .cv__item {
   position: relative;
 }
@@ -578,7 +584,8 @@
     align-items: center;
     text-align: center;
   }
-  .about__actions {
+  .about__actions,
+  .cv__actions {
     justify-content: center;
   }
   .about__media {

@@ -19,8 +19,18 @@
       "label": "Product design",
       "blurb": "Digital products end to end: research, problem definition, flows and a considered visual direction.",
       "items": [
-        { "title": "Vibe App", "tag": "Product design · Mobile app · FemTech", "action": "View project" },
-        { "title": "Voluntee App", "tag": "Product design · UX research", "action": "View project" }
+        {
+          "title": "Vibe App",
+          "tag": "Product design · Mobile app · FemTech",
+          "action": "View project",
+          "size": "23 MB"
+        },
+        {
+          "title": "Voluntee App",
+          "tag": "Product design · UX research",
+          "action": "View project",
+          "size": "20 MB"
+        }
       ]
     },
     {
@@ -28,10 +38,26 @@
       "label": "Websites I've built",
       "blurb": "Sites built with WordPress, Webflow and custom front-end, bringing together brand, functionality and visual detail.",
       "items": [
-        { "title": "Estudio Raíz", "tag": "Webflow", "action": "View site" },
-        { "title": "Isabella Mendoza", "tag": "WordPress", "action": "View site" },
-        { "title": "Luxe Estate", "tag": "Next.js · Tailwind", "action": "View site" },
-        { "title": "Selvática", "tag": "Next.js · Tailwind", "action": "View site" }
+        {
+          "title": "Estudio Raíz",
+          "tag": "Webflow",
+          "action": "View site"
+        },
+        {
+          "title": "Isabella Mendoza",
+          "tag": "WordPress",
+          "action": "View site"
+        },
+        {
+          "title": "Luxe Estate",
+          "tag": "Next.js · Tailwind",
+          "action": "View site"
+        },
+        {
+          "title": "Selvática",
+          "tag": "Next.js · Tailwind",
+          "action": "View site"
+        }
       ]
     },
     {
@@ -39,7 +65,12 @@
       "label": "Creative project",
       "blurb": "Branding and campaign pieces where I explore a more editorial, expressive and conceptual aesthetic.",
       "items": [
-        { "title": "Graphic portfolio", "tag": "Graphic design · Art direction", "action": "View project" }
+        {
+          "title": "Graphic portfolio",
+          "tag": "Graphic design · Art direction",
+          "action": "View project",
+          "size": "2.6 MB"
+        }
       ]
     }
   ]

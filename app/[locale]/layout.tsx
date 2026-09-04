@@ -13,6 +13,7 @@ import { SITE_URL, PERSON } from "@/lib/site";
 import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
+import { shareImage } from "@/lib/og/card";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -55,15 +56,11 @@ export async function generateMetadata({
     icons: {
       icon: "/assets/favicon.svg",
     },
-    openGraph: {
-      title,
-      description,
-      url: `${SITE_URL}${localePath(l, "/")}`,
-      siteName: t("ogSiteName"),
-      locale: OG_LOCALE[l],
-      type: "website",
-    },
-    twitter: { card: "summary_large_image", title, description },
+    /* No openGraph or twitter here on purpose. Every route under this layout
+       declares its own, and Next replaces those objects wholesale rather than
+       merging, so anything set at this level was silently discarded -- the
+       review gate confirmed none of it reached the HTML. The homepage's block
+       lives in page.tsx, the case studies' in their own pages. */
     robots: {
       index: true,
       follow: true,

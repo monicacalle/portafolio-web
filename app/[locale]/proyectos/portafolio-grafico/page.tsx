@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { SITE_URL } from "@/lib/site";
+import { shareImage } from "@/lib/og/card";
 import { type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
@@ -54,8 +55,19 @@ export async function generateMetadata({
         "x-default": "/proyectos/portafolio-grafico",
       },
     },
-    openGraph: { title, description, url, type: "article" },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      images: shareImage(locale, "/proyectos/portafolio-grafico", t("title")),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: shareImage(locale, "/proyectos/portafolio-grafico", t("title")),
+    },
   };
 }
 
