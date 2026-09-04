@@ -14,24 +14,27 @@ There is no test suite. `pnpm lint` and `pnpm build` are the only automated chec
 ## Route by task
 | Task | Go to | Then stop at |
 |---|---|---|
-| Understand a change and pick an approach | `stages/01_research/CONTEXT.md` | human reads the output |
-| Research approved, plan the edit | `stages/02_draft/CONTEXT.md` | human reads the plan |
-| Plan executed, check it before it ships | `stages/03_validate/CONTEXT.md` | human reads the report |
-| Asked for status | scan `stages/*/output/` | report what exists |
-| Writing or changing any user-facing copy | `ghost` first, then `stages/02_draft/` | copy passed the slop linter |
-| Setting up | `setup/questionnaire.md` | already answered 2026-09-03 |
-| Positioning, labels, copy decisions | `_shared/product/market-research.md` | -- |
 | Where copy, SEO, and components live | `_shared/engineering/conventions.md` | -- |
 | Branching, and the gate before merging to main | `_shared/engineering/branching-and-review.md` | six passes, all findings fixed |
+| Writing or changing any user-facing copy | `ghost` first | copy passed the slop linter |
+| Planning work, positioning, research, voice | the private mirror, see below | -- |
+
+## The workspace is not in this repository
+This repo is **public**. The ICM workspace (`stages/`, `setup/`, `_shared/product/`)
+and the `.ghost/` voice profile hold candid working material about Monica's job
+search: target employers, an assessment of her weaknesses, salary positioning.
+None of that belongs on a public URL under her own name, so it lives in the
+private mirror at `github.com/tomas-fw/monica-portfolio` and is gitignored here.
+
+`_shared/engineering/` stays, because coding conventions and the review gate are
+about the code and are useful to anyone reading it.
 
 ## Where things live
 | Folder | What it holds |
 |---|---|
-| `stages/` | the pipeline, in execution order |
-| `_shared/` | factory: rules and reference that never change per run |
-| `setup/` | one-time factory configuration |
+| `_shared/engineering/` | coding conventions, and the gate before merging to main |
 | `_archive/` | superseded files, kept not deleted |
-| `app/`, `components/`, `lib/`, `hooks/`, `messages/`, `public/` | product code, never restructured by this workspace |
+| `app/`, `components/`, `lib/`, `hooks/`, `messages/`, `public/` | the site itself |
 
 ## Avoid
 Never hand-edit `components/ui/` or `AGENTS.md`, never put a user-facing string in a
