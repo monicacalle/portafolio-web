@@ -6,18 +6,19 @@ import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
 // hand-listed version silently went stale: the case-study routes shipped and
 // the sitemap still claimed this was a single-page site, so neither of her two
 // strongest product pages was ever submitted to a search engine.
+// No lastModified: it was new Date(), which stamped every URL with the build
+// time on every deploy and told crawlers everything had changed whenever
+// anything did. We do not track per-page content dates, and an absent field is
+// honest where a wrong one is actively misleading.
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
   return [
     {
       url: SITE_URL,
-      lastModified,
       changeFrequency: "monthly",
       priority: 1,
     },
     ...CASE_STUDY_SLUGS.map((slug) => ({
       url: `${SITE_URL}/proyectos/${slug}`,
-      lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),

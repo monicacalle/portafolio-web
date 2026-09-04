@@ -3,6 +3,7 @@
   "title": "Projects I've worked on",
   "codeLabel": "Code",
   "pdfLabel": "Download PDF",
+  "pdfSize": "{label} ({size})",
   "pdfTitle": "Graphic and digital portfolio",
   "pdfPages": "{page} of {total} pages",
   "pdfClose": "Close",
