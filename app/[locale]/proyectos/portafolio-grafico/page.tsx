@@ -99,13 +99,19 @@ export default async function GraphicPortfolioPage({
 
           <div className="grafico__actions">
             <GraficoViewer />
-            <a className="btn" href={GRAFICO_PDF} download>
+            <a className="btn btn--solid" href={GRAFICO_PDF} download>
               {t("download")}
             </a>
           </div>
         </div>
       </main>
-      <Footer />
+      {/* The burgundy panel is not decoration: .footer colours its children
+          cream because it is designed to sit on it. Rendered bare, the
+          wordmark, the four nav links and the copyright were all cream on
+          cream, measured at 1.00:1. Matches the case-study page. */}
+      <div className="contact" style={{ overflow: "hidden" }}>
+        <Footer />
+      </div>
     </>
   );
 }

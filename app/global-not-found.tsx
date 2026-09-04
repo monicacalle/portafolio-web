@@ -29,7 +29,7 @@ export default function GlobalNotFound() {
           <p className="eyebrow">404</p>
           <h1 className="notfound__title">{es.notFound.title}</h1>
           <p className="notfound__body">{es.notFound.body}</p>
-          <Link className="btn" href="/">
+          <Link className="btn btn--solid" href="/">
             {es.notFound.cta}
           </Link>
         </main>

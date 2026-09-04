@@ -363,7 +363,7 @@
   gap: 1rem;
 }
 .notfound__title {
-  font-family: var(--font-display), serif;
+  font-family: var(--font-heading), serif;
   font-size: clamp(2rem, 6vw, 4rem);
   line-height: 1.05;
   margin: 0;
