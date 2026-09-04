@@ -2,11 +2,13 @@ import { ImageResponse } from "next/og";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/lib/i18n/routing";
 import type { Locale } from "@/lib/i18n/config";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import {
   OG_SIZE,
   OG_CONTENT_TYPE,
   ProjectCard,
-  imageDataUrl,
+  toDataUrl,
   seasonsFont,
 } from "@/lib/og/card";
 
@@ -36,10 +38,13 @@ export default async function GraficoOgImage({
 
   const t = await getTranslations("grafico");
   const og = await getTranslations("og");
-  const [font, image] = await Promise.all([
+  // Literal path, read here: a path passed as an argument defeats the file
+  // tracer and bundles all of public/ into this function. See lib/og/card.ts.
+  const [font, png] = await Promise.all([
     seasonsFont(),
-    imageDataUrl("images/portafolioabierto.png"),
+    readFile(join(process.cwd(), "public/images/portafolioabierto.png")),
   ]);
+  const image = toDataUrl(png);
 
   return new ImageResponse(
     (
