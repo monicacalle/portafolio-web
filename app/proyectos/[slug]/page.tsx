@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
@@ -16,8 +17,9 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
 };
 
 // Only case studies that have written content are pre-rendered; others 404.
+// The list lives in lib/case-studies.ts so the sitemap cannot disagree with it.
 export function generateStaticParams() {
-  return [{ slug: "vibe" }, { slug: "voluntee" }];
+  return CASE_STUDY_SLUGS.map((slug) => ({ slug }));
 }
 
 type CaseStudy = {
