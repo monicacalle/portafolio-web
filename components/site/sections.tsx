@@ -7,6 +7,7 @@ import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
 import { Footer } from "./footer";
 import { PERSON } from "@/lib/site";
+import { GRAFICO_ROUTE } from "@/lib/case-studies";
 import about from "@/public/images/about.png";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
@@ -239,7 +240,15 @@ const PROJECT_MEDIA: {
   },
   {
     items: [
-      { img: grafico, href: `${PDF_HOST}/portafolio-grafico.pdf`, wide: true, inModalPdf: true, pdfSize: "2.6 MB" },
+      {
+        img: grafico,
+        href: `${PDF_HOST}/portafolio-grafico.pdf`,
+        // Links to the page rather than opening the reader here: a modal
+        // changes no route, so there was nothing to send or index.
+        internal: GRAFICO_ROUTE,
+        wide: true,
+        pdfSize: "2.6 MB",
+      },
     ],
   },
 ];
