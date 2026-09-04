@@ -100,6 +100,10 @@ function Plane({ src, aspect }: { src: string; aspect: number }) {
   const enterTarget = useRef(0);
 
   useEffect(() => {
+    // Configuring a THREE texture means mutating it. There is no immutable
+    // form of this in three.js, and useTexture returns the shared object on
+    // purpose so the settings apply for every consumer.
+    // eslint-disable-next-line react-hooks/immutability
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.minFilter = THREE.LinearFilter;
     tex.magFilter = THREE.LinearFilter;
@@ -175,6 +179,12 @@ function Plane({ src, aspect }: { src: string; aspect: number }) {
         ref={mat}
         vertexShader={vertex}
         fragmentShader={fragment}
+        // A ref, not a memo: shaderMaterial needs one stable object whose
+        // .value fields useFrame mutates every frame. Tried useMemo first and
+        // it is worse, because the compiler then treats the object as
+        // immutable and rejects the per-frame writes that are the entire
+        // point. Reading .current here is deliberate.
+        // eslint-disable-next-line react-hooks/refs
         uniforms={uniforms.current}
         transparent
       />
@@ -191,6 +201,11 @@ export default function HeroCanvas({
 }) {
   const [gl, setGl] = useState<"pending" | "on" | "off">("pending");
   useEffect(() => {
+    // WebGL support cannot be probed during SSR: it needs a real canvas. The
+    // component renders the plain <Image> fallback first and upgrades on the
+    // client, which is the progressive enhancement described at the top of
+    // this file, so the extra render is intended.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGl(supportsWebGL() ? "on" : "off");
   }, []);
 

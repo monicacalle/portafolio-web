@@ -43,6 +43,11 @@ export function SplitText({
 
   return createElement(
     Tag,
+    // Deliberate. JSX does not type-check with a polymorphic `as` prop:
+    // TypeScript cannot resolve children for a generic ElementType and fails
+    // the build with "children prop expects type 'never'". Tried that,
+    // reverted it, so the ref is passed through createElement instead.
+    // eslint-disable-next-line react-hooks/refs
     { ref, className: `split ${className ?? ""}` },
     words.map((w, i) => (
       // The space is a sibling BETWEEN words, not inside .split__word (which is
