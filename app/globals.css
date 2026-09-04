@@ -228,11 +228,16 @@ img {
    (overflow: hidden) clips away to nothing on the project cards. This gives the
    design system its own ring, drawn inside the element so nothing can clip it.
    body.has-cursor hides the real cursor on desktop, which makes a visible focus
-   state more important here than usual, not less. */
+   state more important here than usual, not less.
+
+   No border-radius here. It was added to round the ring and does the opposite:
+   border-radius reshapes the ELEMENT, not the outline, so every pill button
+   snapped to a 2px rectangle the moment a keyboard user reached it -- .btn
+   computes 999px at rest and computed 2px while focused. An outline already
+   follows the element's own radius, so there was nothing to fix. */
 :where(a, button, [tabindex]:not([tabindex="-1"]), summary):focus-visible {
   outline: 2px solid var(--burgundy);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 /* The ring above is burgundy, which measures 1.00:1 against the burgundy
    contact panel and near-1 on the two dark project cards -- seven tab stops a
