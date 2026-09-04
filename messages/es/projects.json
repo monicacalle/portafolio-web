@@ -2,6 +2,15 @@
   "eyebrow": "Proyectos",
   "title": "En los que he trabajado",
   "codeLabel": "Código",
+  "pdfLabel": "Descargar PDF",
+  "pdfTitle": "Portafolio gráfico y digital",
+  "pdfPages": "{page} de {total} páginas",
+  "pdfClose": "Cerrar",
+  "pdfPrev": "Página anterior",
+  "pdfNext": "Página siguiente",
+  "pdfFullscreen": "Pantalla completa",
+  "pdfExitFullscreen": "Salir de pantalla completa",
+  "pdfError": "No se ha podido cargar el PDF. Usa el enlace de descarga para abrirlo.",
   "cardCursor": "Ver",
   "groups": [
     {

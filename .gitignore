@@ -44,3 +44,17 @@ next-env.d.ts
 # ICM workspace
 CLAUDE.local.md
 ghost-drafts/raw-*.txt
+ghost-drafts/*-pr-*.md
+
+# ICM workspace and voice profile.
+# This repository is PUBLIC and is Monica's deploy repo. The workspace holds
+# candid working material about her job search: target employers, an
+# assessment of her weaknesses, salary positioning, research outputs. None of
+# that belongs on a public URL under her own name.
+# It lives in the private mirror instead: github.com/tomas-fw/monica-portfolio
+CONTEXT.md
+stages/
+setup/
+.ghost/
+ghost-drafts/
+_shared/product/

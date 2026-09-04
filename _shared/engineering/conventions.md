@@ -28,12 +28,14 @@ and the BCP-47 `OG_LOCALE` map used for `<html lang>` and OpenGraph.
   and consumed by `generateMetadata` and the JSON-LD in `app/page.tsx`. The `PERSON`
   fields are a structural fallback mirroring the ES positioning.
 - Changing how Monica is labelled therefore touches **both** homes. Check
-  `_shared/product/market-research.md` before changing a label.
-- **Pending, decided but not applied**: the real domain is `monicacalle.es`. `SITE_URL`
-  still points at `portafolio-en-espa-ol-monica-calle.vercel.app`. Flip it to
-  `https://monicacalle.es` once the domain resolves on Vercel, and sitemap, robots, the
-  canonical tag, and JSON-LD all follow from that one line. Flipping it before the
-  domain is live publishes canonical URLs that 404.
+  the positioning research in the private mirror before changing a label.
+- `SITE_URL` is `https://monicacalle.es`. Sitemap, robots, the canonical tag, og:url
+  and the JSON-LD all derive from it, so it is the only place a domain change is made.
+  The old Vercel preview 301s to the real domain, so no redirect rule is needed.
+- Case-study pages set their own `canonical` and `openGraph` in `generateMetadata`.
+  Without that they inherit the root layout's `canonical: "/"`, which makes Google
+  consolidate them into the homepage and makes every shared link preview as the
+  homepage. If you add a route, give it its own metadata.
 
 ## Copy goes through ghost
 No user-facing string ships in the wording a model first produced.
@@ -41,8 +43,8 @@ No user-facing string ships in the wording a model first produced.
 1. Draft or change the Spanish. Spanish is the source; English is translated from it.
 2. Run it through `ghost` (`/ghost:write` for new copy, `/ghost:edit` for existing) so
    the slop linter catches machine-like phrasing before it reaches the site.
-3. The voice the linter measures against lives in `.ghost/voice.md`. That file is the
-   one home for tone and rhythm -- do not restate voice rules in a contract or here.
+3. The voice the linter measures against lives in the private mirror, not here.
+   That is the one home for tone and rhythm -- do not restate voice rules here.
 4. Then apply the es/en parity rules above.
 
 This is a hard gate, not a preference. The market research is explicit that what

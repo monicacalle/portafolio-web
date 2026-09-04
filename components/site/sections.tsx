@@ -2,7 +2,6 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./reveal";
-import logo from "@/public/images/asset4.png";
 import { SplitText } from "./split-text";
 import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
@@ -12,7 +11,6 @@ import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
 import raiz from "@/public/images/mockupraiz.png";
 import isa from "@/public/images/mockupisa.png";
-import iphone from "@/public/images/iphone.webp";
 import grafico from "@/public/images/portafolioabierto.png";
 import luxeestate from "@/public/images/luxeestate.png";
 import selvatica from "@/public/assets/selvaticamockup.webp";
@@ -45,7 +43,14 @@ export function About() {
             <Magnetic strength={0.5}>
               <a
                 className="btn btn--solid"
-                href="#curriculum"
+                // The CV is a real file at a real URL, so a reviewer can open
+                // it, save it, or send it on. It used to point at #curriculum,
+                // which meant the button labelled "open my CV" produced no CV.
+                // Opens in a tab rather than forcing a download: the label says
+                // "abrir", and a recruiter reading it now is the point.
+                href={t("cvHref")}
+                target="_blank"
+                rel="noopener noreferrer"
                 data-cursor={t("cvCursor")}
               >
                 {t("ctaCv")}
@@ -243,6 +248,7 @@ export function Projects() {
   const t = useTranslations("projects");
   const groups = t.raw("groups") as ProjectGroup[];
   const codeLabel = t("codeLabel");
+  const pdfLabel = t("pdfLabel");
   const cardCursor = t("cardCursor");
 
   return (
@@ -275,6 +281,12 @@ export function Projects() {
               {g.items.map((p, i) => {
                 const m = media.items[i];
                 const href = m.internal ?? m.href;
+                // Every self-hosted PDF gets its own visible, copyable link.
+                // Without this the file is reachable only by opening a modal
+                // (the graphic portfolio) or not at all (the two case-study
+                // decks, whose cards navigate to the on-site study instead),
+                // so the URL exists but nobody can find or share it.
+                const pdf = m.href.endsWith(".pdf") ? m.href : null;
                 // External links (PDFs, live sites) open in a new tab; internal
                 // case-study links navigate in place via next/link.
                 const linkAttrs = m.internal
@@ -300,7 +312,7 @@ export function Projects() {
                   
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {img}
                       </DialogTrigger>
                     );
@@ -313,7 +325,7 @@ export function Projects() {
                   const props = { className: "card__link cursor-pointer" };
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {p.action}
                       </DialogTrigger>
                     );
@@ -346,6 +358,18 @@ export function Projects() {
                             {codeLabel}
                           </a>
                         )}
+                        {pdf && (
+                          <a
+                            className="card__link card__link--muted"
+                            href={pdf}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${pdfLabel}: ${p.title}`}
+                          >
+                            {pdfLabel}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </Reveal>
@@ -354,7 +378,7 @@ export function Projects() {
                 return m.inModalPdf ? (
                   <Dialog key={p.title}>
                     {content}
-                    <DialogContent className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
+                    <DialogContent aria-label={p.title} className="!max-w-[95vw] md:!max-w-[75vw] w-[95vw] md:w-[75vw] h-[95vh] md:h-[85vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center" showCloseButton={false}>
                       <PdfViewer url={m.href} />
                     </DialogContent>
                   </Dialog>
@@ -373,7 +397,6 @@ export function Projects() {
    ========================================================================= */
 export function Contact() {
   const t = useTranslations("contact");
-  const nav = useTranslations("nav");
   const tags = t.raw("tags") as string[];
 
   return (

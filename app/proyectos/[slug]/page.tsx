@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
+import { SITE_URL } from "@/lib/site";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
@@ -16,8 +18,9 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
 };
 
 // Only case studies that have written content are pre-rendered; others 404.
+// The list lives in lib/case-studies.ts so the sitemap cannot disagree with it.
 export function generateStaticParams() {
-  return [{ slug: "vibe" }, { slug: "voluntee" }];
+  return CASE_STUDY_SLUGS.map((slug) => ({ slug }));
 }
 
 type CaseStudy = {
@@ -58,9 +61,21 @@ export async function generateMetadata({
   const data = await loadCase(slug);
   if (!data) return {};
   const { cs } = data;
+  const title = `${cs.title} — ${cs.tagline}`;
+  const description = cs.overview.product;
+  const url = `${SITE_URL}/proyectos/${slug}`;
+  // Without these the page inherits the root layout's canonical ("/") and its
+  // openGraph block, which had two consequences: Google consolidated every case
+  // study into the homepage and dropped the URL, cancelling out the sitemap
+  // entries; and pasting a case-study link anywhere rendered the homepage
+  // title, description and image. These are the two pages a hiring manager is
+  // most likely to be sent, so both mattered.
   return {
-    title: `${cs.title} — ${cs.tagline}`,
-    description: cs.overview.product,
+    title,
+    description,
+    alternates: { canonical: `/proyectos/${slug}` },
+    openGraph: { title, description, url, type: "article" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

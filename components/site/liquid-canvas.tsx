@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { observeRunnable, prefersReducedMotion } from "@/lib/motion-gate";
 
 /*
   Flowing wave field — the animated background.
@@ -89,6 +90,11 @@ export default function LiquidCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    // Decorative backdrop on every page. Under reduced motion it must not
+    // animate at all: WCAG 2.2.2 covers exactly this, motion that starts by
+    // itself and runs past five seconds.
+    if (prefersReducedMotion()) return;
 
     const noise = makeNoise(1337);
 
@@ -236,8 +242,15 @@ export default function LiquidCanvas() {
 
     raf = requestAnimationFrame(draw);
 
+    // Off-screen or backgrounded, this loop is invisible work. Stop it.
+    const stopObserving = observeRunnable(canvas, (running) => {
+      cancelAnimationFrame(raf);
+      if (running) raf = requestAnimationFrame(draw);
+    });
+
     return () => {
       cancelAnimationFrame(raf);
+      stopObserving();
       window.removeEventListener("resize", resize);
     };
   }, []);

@@ -1,11 +1,13 @@
 /**
  * Single source of truth for site-level SEO data.
  *
- * NOTE: SITE_URL is the production canonical. It currently points at the
- * existing deployment; update it to the new domain when this project is
- * deployed, and the sitemap, robots, canonical tag, and JSON-LD all follow.
+ * SITE_URL is the production canonical. The sitemap, robots.txt, the canonical
+ * tag, og:url and the JSON-LD all derive from it, so changing it here changes
+ * every one of them. Only ever set it to the domain the site is actually
+ * served from: pointing it elsewhere tells search engines to credit that other
+ * domain instead, which is what happened until 2026-09-04.
  */
-export const SITE_URL = "https://portafolio-en-espa-ol-monica-calle.vercel.app";
+export const SITE_URL = "https://monicacalle.es";
 
 export const PERSON = {
   name: "Mónica Calle",
@@ -32,7 +34,7 @@ export const PERSON = {
     "Diseño gráfico",
   ],
   alumniOf: [
-    "CEI, Escuela de Diseño y Marketing",
+    "CEI, Centro de Estudios de Innovación",
     "4Geeks Academy",
     "Unidad Central del Valle",
   ],

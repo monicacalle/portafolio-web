@@ -107,10 +107,20 @@
     padding: 0 var(--edge);
     box-shadow: 0 20px 40px -24px color-mix(in srgb, var(--ink) 40%, transparent);
     clip-path: inset(0 0 100% 0);
-    transition: clip-path 0.5s var(--ease-out-expo);
+    /* Clipped alone is not hidden: the links kept real rects and tabIndex 0, so
+       keyboard focus walked into a menu nobody could see. visibility also keeps
+       the transition, which display:none would kill. */
+    visibility: hidden;
+    transition:
+      clip-path 0.5s var(--ease-out-expo),
+      visibility 0s linear 0.5s;
   }
   .hdr__nav--open {
     clip-path: inset(0 0 0 0);
+    visibility: visible;
+    transition:
+      clip-path 0.5s var(--ease-out-expo),
+      visibility 0s;
   }
   .hdr__link {
     padding: 1rem 0;
