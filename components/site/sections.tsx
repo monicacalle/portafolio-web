@@ -158,6 +158,11 @@ function Timeline({ heading, items }: { heading: string; items: CvItem[] }) {
 
 export function Curriculum() {
   const t = useTranslations("curriculum");
+  // The CV path is locale-dependent and lives once, in the about namespace,
+  // where the other CV button already reads it. Copying it into curriculum
+  // would give the site two places to change when the file is renamed, and
+  // one of them would be missed.
+  const about = useTranslations("about");
   return (
     <section id="curriculum" className="section cv shell">
       <div className="section__head">
@@ -176,6 +181,23 @@ export function Curriculum() {
           items={t.raw("work") as CvItem[]}
         />
       </div>
+      {/* Someone who has just read the whole timeline is the likeliest person
+          on the page to want the document, and until now the only link to it
+          was a button in the section above, already scrolled past. Opens in a
+          tab rather than downloading, matching that button. */}
+      <Reveal className="cv__actions" delay={120}>
+        <Magnetic strength={0.5}>
+          <a
+            className="btn btn--ghost"
+            href={about("cvHref")}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor={t("cvCursor")}
+          >
+            {t("ctaCv")}
+          </a>
+        </Magnetic>
+      </Reveal>
     </section>
   );
 }
