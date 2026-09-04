@@ -243,6 +243,7 @@ export function Projects() {
   const t = useTranslations("projects");
   const groups = t.raw("groups") as ProjectGroup[];
   const codeLabel = t("codeLabel");
+  const pdfLabel = t("pdfLabel");
   const cardCursor = t("cardCursor");
 
   return (
@@ -275,6 +276,12 @@ export function Projects() {
               {g.items.map((p, i) => {
                 const m = media.items[i];
                 const href = m.internal ?? m.href;
+                // Every self-hosted PDF gets its own visible, copyable link.
+                // Without this the file is reachable only by opening a modal
+                // (the graphic portfolio) or not at all (the two case-study
+                // decks, whose cards navigate to the on-site study instead),
+                // so the URL exists but nobody can find or share it.
+                const pdf = m.href.endsWith(".pdf") ? m.href : null;
                 // External links (PDFs, live sites) open in a new tab; internal
                 // case-study links navigate in place via next/link.
                 const linkAttrs = m.internal
@@ -344,6 +351,18 @@ export function Projects() {
                             rel="noopener noreferrer"
                           >
                             {codeLabel}
+                          </a>
+                        )}
+                        {pdf && (
+                          <a
+                            className="card__link card__link--muted"
+                            href={pdf}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${pdfLabel}: ${p.title}`}
+                          >
+                            {pdfLabel}
                           </a>
                         )}
                       </div>
