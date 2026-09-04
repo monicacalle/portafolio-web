@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { notFound } from "next/navigation";
 import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
 import { type Locale } from "@/lib/i18n/config";

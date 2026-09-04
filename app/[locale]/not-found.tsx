@@ -1,4 +1,6 @@
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/site/header";
 

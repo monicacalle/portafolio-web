@@ -12,6 +12,7 @@ import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SITE_URL, PERSON } from "@/lib/site";
 import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
+import { localePath } from "@/lib/i18n/paths";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -38,7 +39,10 @@ export async function generateMetadata({
     creator: PERSON.name,
     keywords: t.raw("keywords") as string[],
     alternates: {
-      canonical: "/",
+      // Per locale. Pointing /en at "/" told Google the Spanish homepage was
+      // the real version of the English one, which cancels out the whole
+      // reason this restructure exists.
+      canonical: localePath(l, "/"),
       // Impossible before this change: hreflang annotates alternate URLs, and
       // with a cookie-based locale there were none.
       languages: { es: "/", en: "/en", "x-default": "/" },
@@ -49,7 +53,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: SITE_URL,
+      url: `${SITE_URL}${localePath(l, "/")}`,
       siteName: t("ogSiteName"),
       locale: OG_LOCALE[l],
       type: "website",

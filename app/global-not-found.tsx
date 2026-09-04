@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { geist, newYork } from "./fonts";
 import { DEFAULT_LOCALE } from "@/lib/i18n/config";
 import es from "@/messages/es";
@@ -28,9 +29,9 @@ export default function GlobalNotFound() {
           <p className="eyebrow">404</p>
           <h1 className="notfound__title">{es.notFound.title}</h1>
           <p className="notfound__body">{es.notFound.body}</p>
-          <a className="btn" href="/">
+          <Link className="btn" href="/">
             {es.notFound.cta}
-          </a>
+          </Link>
         </main>
       </body>
     </html>

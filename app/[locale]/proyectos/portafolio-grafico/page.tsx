@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+// Locale-aware Link: the plain next/link one drops the locale, so an English
+// visitor clicking through landed back in Spanish.
+import { Link } from "@/lib/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/site/header";
