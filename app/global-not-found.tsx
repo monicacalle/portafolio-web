@@ -1,36 +1,55 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { geist, newYork } from "./fonts";
-import { DEFAULT_LOCALE } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/paths";
 import es from "@/messages/es";
+import en from "@/messages/en";
 
 /*
   The 404 for paths that never reach a locale.
 
-  It renders its own <html> because it has to: this file bypasses layout
-  rendering by design, which is the whole reason it exists. app/[locale]/
-  not-found.tsx still handles a 404 inside a known locale, where the real
-  layout, header and footer are available.
+  It renders its own <html> because it has to: the Next docs are explicit that
+  this file is served with rendering skipped, so no layout runs and nothing
+  above it supplies <html>, the fonts or the stylesheet.
 
-  Spanish only, deliberately. There is no locale segment to read here, and
-  Spanish is the default the canonical tag and the OG image already assume.
+  That same skipped rendering means there are no route params here, so the
+  locale cannot be read the way every other route reads it. next-intl's proxy
+  resolves it during negotiation and forwards it on x-next-intl-locale, which
+  is the one locale signal that survives. Without this the page was hardcoded
+  Spanish, so /en/nope answered an English visitor in Spanish under
+  <html lang="es"> -- wrong content, and a screen reader announcing Spanish
+  text in an English voice.
 */
-export const metadata: Metadata = {
-  title: `404 — ${es.notFound.title}`,
-  description: es.notFound.body,
-};
+const MESSAGES: Record<Locale, typeof es> = { es, en };
 
-export default function GlobalNotFound() {
+async function requestLocale(): Promise<Locale> {
+  const forwarded = (await headers()).get("x-next-intl-locale");
+  return isLocale(forwarded) ? forwarded : DEFAULT_LOCALE;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { notFound } = MESSAGES[await requestLocale()];
+  return { title: `404 — ${notFound.title}`, description: notFound.body };
+}
+
+export default async function GlobalNotFound() {
+  const locale = await requestLocale();
+  const { notFound } = MESSAGES[locale];
+
   return (
-    <html lang={DEFAULT_LOCALE} className={`${geist.variable} ${newYork.variable}`}>
+    <html lang={locale} className={`${geist.variable} ${newYork.variable}`}>
       <body className="grain">
         <main className="section shell notfound">
           <p className="eyebrow">404</p>
-          <h1 className="notfound__title">{es.notFound.title}</h1>
-          <p className="notfound__body">{es.notFound.body}</p>
-          <Link className="btn btn--solid" href="/">
-            {es.notFound.cta}
+          <h1 className="notfound__title">{notFound.title}</h1>
+          <p className="notfound__body">{notFound.body}</p>
+          {/* Home in the visitor's own locale: a plain "/" sent an English
+              visitor to the Spanish homepage, losing the language twice. */}
+          <Link className="btn btn--solid" href={localePath(locale, "/")}>
+            {notFound.cta}
           </Link>
         </main>
       </body>
