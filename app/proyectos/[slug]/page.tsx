@@ -17,8 +17,14 @@ const MEDIA: Record<string, { image: StaticImageData; pdf: string }> = {
   voluntee: { image: voluntee, pdf: "/assets/voluntee-app-slides.pdf" },
 };
 
-// Only case studies that have written content are pre-rendered; others 404.
-// The list lives in lib/case-studies.ts so the sitemap cannot disagree with it.
+// The slugs that have written content. The list lives in lib/case-studies.ts so
+// the sitemap cannot disagree with it.
+//
+// Note this does NOT pre-render anything today: reading the locale cookie in
+// lib/i18n/request.ts opts every route out of static generation, so the build
+// reports this route as Dynamic. generateStaticParams is kept because it is
+// still the declaration of which slugs exist, and it would start pre-rendering
+// the moment the locale stops coming from a cookie -- see MP-17.
 export function generateStaticParams() {
   return CASE_STUDY_SLUGS.map((slug) => ({ slug }));
 }
