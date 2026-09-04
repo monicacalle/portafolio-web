@@ -45,7 +45,14 @@ export function About() {
             <Magnetic strength={0.5}>
               <a
                 className="btn btn--solid"
-                href="#curriculum"
+                // The CV is a real file at a real URL, so a reviewer can open
+                // it, save it, or send it on. It used to point at #curriculum,
+                // which meant the button labelled "open my CV" produced no CV.
+                // Opens in a tab rather than forcing a download: the label says
+                // "abrir", and a recruiter reading it now is the point.
+                href={t("cvHref")}
+                target="_blank"
+                rel="noopener noreferrer"
                 data-cursor={t("cvCursor")}
               >
                 {t("ctaCv")}
