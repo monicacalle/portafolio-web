@@ -34,7 +34,7 @@ export const PERSON = {
     "Diseño gráfico",
   ],
   alumniOf: [
-    "CEI, Escuela de Diseño y Marketing",
+    "CEI, Centro de Estudios de Innovación",
     "4Geeks Academy",
     "Unidad Central del Valle",
   ],
