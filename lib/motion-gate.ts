@@ -26,6 +26,18 @@ export function prefersReducedMotion(): boolean {
  * which is true on any touchscreen laptop with a trackpad and a real cursor,
  * so those users lost the effect for no reason. This asks the question that
  * actually matters, and the media query answers it directly.
+ *
+ * Deliberately `pointer`/`hover` (the PRIMARY input) and not `any-pointer`/
+ * `any-hover`. The `any-` forms are true when any attached mechanism
+ * qualifies, and `fine` covers a stylus as well as a mouse, so `any-pointer:
+ * fine` is true on a phone with an active stylus. This gate exists to keep
+ * negative-reveal -- a full-viewport canvas compositing mix-blend-mode:
+ * difference through an SVG goo filter -- off phones, which is what made the
+ * site lag on mobile. Widening to `any-` would put it back on exactly the
+ * devices the gate protects.
+ *
+ * The cost of choosing primary: a tablet with an attached trackpad loses a
+ * decorative cursor trail. That is the cheaper mistake.
  */
 export function hasFinePointer(): boolean {
   if (typeof window === "undefined") return false;

@@ -104,16 +104,6 @@ export default function LiquidCanvas() {
       H = 0,
       dpr = 1;
 
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = canvas.clientWidth;
-      H = canvas.clientHeight;
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
     let raf = 0;
     let startMs = 0;
 
@@ -242,8 +232,30 @@ export default function LiquidCanvas() {
       if (!still) raf = requestAnimationFrame(draw);
     };
 
-    // Always paint once, so the field exists. Only the recursion is gated.
-    draw(0);
+    // Defined after draw() so it can repaint. Assigning canvas.width or
+    // canvas.height wipes the bitmap, even when the value has not changed — the
+    // rAF loop hides that by repainting within a frame, but a still visitor has
+    // no loop, so the field vanished on the first resize. Including the one a
+    // mobile URL bar fires on scroll, which blanked the page just by scrolling.
+    // Repaint through rAF so a drag-resize paints once instead of per event,
+    // and at t=0 so every repaint is the same frame rather than a new phase.
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      if (still) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => draw(0));
+      }
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Paint once, so the field exists. Only the recursion is gated; when still,
+    // resize() has already scheduled that single frame.
+    if (!still) draw(0);
 
     return () => {
       cancelAnimationFrame(raf);
