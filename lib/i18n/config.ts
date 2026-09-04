@@ -1,6 +1,7 @@
 /**
  * i18n config — single source of truth for supported locales.
- * Cookie-based locale (no [locale] route segment), mirroring the reference setup.
+ * The locale lives in the URL under app/[locale], not in a cookie -- see
+ * lib/i18n/routing.ts for why that changed.
  */
 export const LOCALES = ["es", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
