@@ -44,3 +44,4 @@ next-env.d.ts
 # ICM workspace
 CLAUDE.local.md
 ghost-drafts/raw-*.txt
+ghost-drafts/*-pr-*.md

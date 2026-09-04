@@ -22,6 +22,7 @@ There is no test suite. `pnpm lint` and `pnpm build` are the only automated chec
 | Setting up | `setup/questionnaire.md` | already answered 2026-09-03 |
 | Positioning, labels, copy decisions | `_shared/product/market-research.md` | -- |
 | Where copy, SEO, and components live | `_shared/engineering/conventions.md` | -- |
+| Branching, and the gate before merging to main | `_shared/engineering/branching-and-review.md` | six passes, all findings fixed |
 
 ## Where things live
 | Folder | What it holds |
