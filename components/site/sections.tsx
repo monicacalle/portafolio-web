@@ -314,7 +314,7 @@ export function Projects() {
                   
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {img}
                       </DialogTrigger>
                     );
@@ -327,7 +327,7 @@ export function Projects() {
                   const props = { className: "card__link cursor-pointer" };
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {p.action}
                       </DialogTrigger>
                     );
