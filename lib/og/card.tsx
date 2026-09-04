@@ -26,15 +26,18 @@ export function seasonsFont() {
 }
 
 /**
- * A file from /public as a data URL.
+ * A PNG already read off disk, as a data URL for Satori.
  *
- * Satori will fetch an http(s) src, but that would mean the card asking the
- * running site for an asset that is sitting on the same disk -- a network hop
- * that can fail while a scraper waits. Reading it directly cannot.
+ * The read itself deliberately stays in the route files, against literal
+ * paths. This used to take a path string and do the read here, and because
+ * that argument was a runtime value Next's file tracer could not resolve it --
+ * so it gave up and bundled the whole of public/ into every function that
+ * called it: 86.66 MB each, including two 20 MB case-study PDFs and a 19 MB
+ * mockup, to draw a card that needs 2.4 MB. The literal path is what makes the
+ * trace work; see app/[locale]/opengraph-image.tsx, which traces one file.
  */
-export async function imageDataUrl(publicPath: string) {
-  const data = await readFile(join(process.cwd(), "public", publicPath));
-  return `data:image/png;base64,${data.toString("base64")}`;
+export function toDataUrl(png: Buffer) {
+  return `data:image/png;base64,${png.toString("base64")}`;
 }
 
 /**

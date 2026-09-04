@@ -56,21 +56,11 @@ export async function generateMetadata({
     icons: {
       icon: "/assets/favicon.svg",
     },
-    openGraph: {
-      title,
-      description,
-      url: `${SITE_URL}${localePath(l, "/")}`,
-      siteName: t("ogSiteName"),
-      locale: OG_LOCALE[l],
-      type: "website",
-      images: shareImage(l, "/", PERSON.name),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: shareImage(l, "/", PERSON.name),
-    },
+    /* No openGraph or twitter here on purpose. Every route under this layout
+       declares its own, and Next replaces those objects wholesale rather than
+       merging, so anything set at this level was silently discarded -- the
+       review gate confirmed none of it reached the HTML. The homepage's block
+       lives in page.tsx, the case studies' in their own pages. */
     robots: {
       index: true,
       follow: true,
