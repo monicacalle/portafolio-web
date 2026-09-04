@@ -13,6 +13,7 @@ import { SITE_URL, PERSON } from "@/lib/site";
 import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
+import { shareImage } from "@/lib/og/card";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -62,8 +63,14 @@ export async function generateMetadata({
       siteName: t("ogSiteName"),
       locale: OG_LOCALE[l],
       type: "website",
+      images: shareImage(l, "/", PERSON.name),
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: shareImage(l, "/", PERSON.name),
+    },
     robots: {
       index: true,
       follow: true,
