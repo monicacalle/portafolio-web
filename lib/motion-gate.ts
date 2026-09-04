@@ -19,43 +19,15 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
- * A touch device or a narrow viewport. Used to switch off effects that exist
- * only to follow a mouse cursor: there is no cursor to follow, so they are
- * pure cost. Mirrors the thresholds already used in components/site/cursor.tsx.
+ * Is there a real cursor that can hover?
+ *
+ * Used to switch off effects that exist only to follow a mouse pointer. The
+ * previous version asked `"ontouchstart" in window || maxTouchPoints > 0`,
+ * which is true on any touchscreen laptop with a trackpad and a real cursor,
+ * so those users lost the effect for no reason. This asks the question that
+ * actually matters, and the media query answers it directly.
  */
-export function isTouchOrSmallViewport(): boolean {
+export function hasFinePointer(): boolean {
   if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.innerWidth < 1024
-  );
-}
-
-/**
- * Calls `onChange(running)` whenever the element scrolls in or out of view, or
- * the tab is hidden or restored. Call it to drive a requestAnimationFrame loop
- * so it does no work nobody can see. Returns a cleanup function.
- */
-export function observeRunnable(
-  el: Element,
-  onChange: (running: boolean) => void,
-): () => void {
-  let onScreen = true;
-  const emit = () => onChange(onScreen && !document.hidden);
-
-  const io = new IntersectionObserver(
-    ([entry]) => {
-      onScreen = entry.isIntersecting;
-      emit();
-    },
-    { rootMargin: "128px" },
-  );
-  io.observe(el);
-  document.addEventListener("visibilitychange", emit);
-
-  return () => {
-    io.disconnect();
-    document.removeEventListener("visibilitychange", emit);
-  };
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { observeRunnable, prefersReducedMotion } from "@/lib/motion-gate";
+import { prefersReducedMotion } from "@/lib/motion-gate";
 
 /*
   Flowing wave field — the animated background.
@@ -91,10 +91,12 @@ export default function LiquidCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Decorative backdrop on every page. Under reduced motion it must not
-    // animate at all: WCAG 2.2.2 covers exactly this, motion that starts by
-    // itself and runs past five seconds.
-    if (prefersReducedMotion()) return;
+    // Decorative backdrop on every page. WCAG 2.2.2 asks that motion which
+    // starts by itself and runs past five seconds can be stopped. It does not
+    // ask for the artwork to disappear -- the previous version returned before
+    // resize() and the first draw, so a reduced-motion visitor got no contour
+    // field at all and a materially different page. One static frame instead.
+    const still = prefersReducedMotion();
 
     const noise = makeNoise(1337);
 
@@ -237,20 +239,14 @@ export default function LiquidCanvas() {
       ctx.strokeStyle = `rgba(${CONFIG.COLOR}, ${CONFIG.ALPHA})`;
       strokeContours();
 
-      raf = requestAnimationFrame(draw);
+      if (!still) raf = requestAnimationFrame(draw);
     };
 
-    raf = requestAnimationFrame(draw);
-
-    // Off-screen or backgrounded, this loop is invisible work. Stop it.
-    const stopObserving = observeRunnable(canvas, (running) => {
-      cancelAnimationFrame(raf);
-      if (running) raf = requestAnimationFrame(draw);
-    });
+    // Always paint once, so the field exists. Only the recursion is gated.
+    draw(0);
 
     return () => {
       cancelAnimationFrame(raf);
-      stopObserving();
       window.removeEventListener("resize", resize);
     };
   }, []);

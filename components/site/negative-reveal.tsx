@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import {
-  isTouchOrSmallViewport,
-  observeRunnable,
-  prefersReducedMotion,
-} from "@/lib/motion-gate";
+import { hasFinePointer, prefersReducedMotion } from "@/lib/motion-gate";
 
 /*
   Negative reveal — a small liquid, viscous cursor trail that inverts whatever
@@ -55,7 +51,7 @@ export function NegativeReveal() {
     // full-viewport SVG goo filter every frame for nothing. display:none rather
     // than an early return, because an empty canvas with mix-blend-mode still
     // costs a composite.
-    if (isTouchOrSmallViewport() || prefersReducedMotion()) {
+    if (!hasFinePointer() || prefersReducedMotion()) {
       canvas.style.display = "none";
       return;
     }
@@ -238,15 +234,8 @@ export function NegativeReveal() {
     };
     raf = requestAnimationFrame(draw);
 
-    // Stop entirely when the tab is in the background.
-    const stopObserving = observeRunnable(canvas, (running) => {
-      cancelAnimationFrame(raf);
-      if (running) raf = requestAnimationFrame(draw);
-    });
-
     return () => {
       cancelAnimationFrame(raf);
-      stopObserving();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("mouseleave", onLeave);
