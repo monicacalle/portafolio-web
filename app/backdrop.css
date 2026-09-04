@@ -72,6 +72,22 @@
   mix-blend-mode: difference;
   filter: url(#reveal-goo); /* fuse shapes into a liquid body; pinch off drops */
 }
+
+/* A modal has to clear the reveal.
+
+   Base UI renders the dialog into a portal at body level with z-index 50,
+   which is under the 55 above, so the difference blend painted straight across
+   the open flipbook and inverted the page someone was trying to read. Raising
+   the flipbook itself does nothing: it is inside that portal, and the portal
+   is what sits at 50.
+
+   The dialog component is generated (components/ui/) and must not be
+   hand-edited, so the correction lives here, next to the number it has to
+   beat. Still under the film grain at 60, which is meant to cover everything. */
+[data-slot="dialog-overlay"],
+[data-slot="dialog-content"] {
+  z-index: 56;
+}
 .reveal-defs {
   position: absolute;
   width: 0;
