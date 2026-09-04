@@ -636,3 +636,29 @@
     justify-content: center;
   }
 }
+
+/* =========================================================================
+   Dialog triggers on project cards
+   ========================================================================= */
+/* Base UI's DialogTrigger defaults to nativeButton: true and warns when the
+   render prop is not a real <button>, because a div loses native button
+   semantics. These triggers open the PDF flipbook, which is exactly what a
+   button is for, so they render a <button> and strip the user-agent chrome
+   here instead. Without this reset the trigger would not match the <a>
+   siblings sitting beside it in .card__links. */
+button.card__media,
+button.card__link {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+button.card__media {
+  width: 100%;
+}
