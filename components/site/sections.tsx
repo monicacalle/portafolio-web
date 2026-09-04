@@ -211,6 +211,9 @@ export function Curriculum() {
 // one. The bulk is 7.5 MB of Form XObjects plus 5 MB of JPEG, so Ghostscript
 // /ebook achieves nothing; it needs a re-export from the source document. Until
 // that happens the labels carry the size, so nobody starts the download blind.
+// Those sizes live in the `projects` messages, per item, because Spanish
+// writes 2,6 MB and English 2.6 MB. Still hand-kept: replacing a PDF in
+// public/assets means updating both message files.
 const PDF_HOST = "/assets";
 
 // Structural (non-copy) data — images, links, layout. Copy (label/blurb/title/
@@ -224,9 +227,6 @@ const PROJECT_MEDIA: {
     internal?: string;
     code?: string;
     wide?: boolean;
-    // Stated on the download link so nobody starts a 23 MB transfer blind.
-    // Hand-kept: if a PDF in public/assets is replaced, update this too.
-    pdfSize?: string;
   }[];
 }[] = [
   {
@@ -234,13 +234,11 @@ const PROJECT_MEDIA: {
       {
         img: vibe,
         href: `${PDF_HOST}/vibe-app-memoria.pdf`,
-        pdfSize: "23 MB",
         internal: "/proyectos/vibe",
       },
       {
         img: voluntee,
         href: `${PDF_HOST}/voluntee-app-slides.pdf`,
-        pdfSize: "20 MB",
         internal: "/proyectos/voluntee",
       },
     ],
@@ -270,7 +268,6 @@ const PROJECT_MEDIA: {
         // changes no route, so there was nothing to send or index.
         internal: GRAFICO_ROUTE,
         wide: true,
-        pdfSize: "2.6 MB",
       },
     ],
   },
@@ -280,7 +277,8 @@ type ProjectGroup = {
   n: string;
   label: string;
   blurb: string;
-  items: { title: string; tag: string; action: string }[];
+  // `size` is present only on the items that link a PDF.
+  items: { title: string; tag: string; action: string; size?: string }[];
 };
 
 
@@ -393,7 +391,7 @@ export function Projects() {
                             rel="noopener noreferrer"
                             aria-label={`${pdfLabel}: ${p.title}`}
                           >
-                            {m.pdfSize ? pdfSize(m.pdfSize) : pdfLabel}
+                            {p.size ? pdfSize(p.size) : pdfLabel}
                           </a>
                         )}
                       </div>
@@ -449,7 +447,9 @@ export function Contact() {
             href={PERSON.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            data-cursor={t("mailCursor")}
+            // Not mailCursor: this link is not an email, and the cursor read
+            // "Escríbeme" over it.
+            data-cursor={t("linkedinCursor")}
           >
             {t("linkedin")}
           </a>

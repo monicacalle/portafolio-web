@@ -244,3 +244,18 @@
   gap: 0.9rem;
   margin-bottom: 3rem;
 }
+
+/* This page borrows .cs__head, .cs__title and .cs__tagline, which the case
+   study block above already centres on mobile -- so the heading was centred
+   and everything under it stayed left, on the same screen. Same breakpoint,
+   so the two halves of the page cannot drift apart again. */
+@media (max-width: 768px) {
+  .grafico__body,
+  .grafico__meta {
+    text-align: center;
+    margin-inline: auto;
+  }
+  .grafico__actions {
+    justify-content: center;
+  }
+}

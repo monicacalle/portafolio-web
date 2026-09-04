@@ -19,8 +19,18 @@
       "label": "Diseño de producto",
       "blurb": "Productos digitales de principio a fin: investigación, definición del problema, flujos y una dirección visual cuidada.",
       "items": [
-        { "title": "Vibe App", "tag": "Diseño de producto · App móvil · FemTech", "action": "Ver proyecto" },
-        { "title": "Voluntee App", "tag": "Diseño de producto · Investigación UX", "action": "Ver proyecto" }
+        {
+          "title": "Vibe App",
+          "tag": "Diseño de producto · App móvil · FemTech",
+          "action": "Ver proyecto",
+          "size": "23 MB"
+        },
+        {
+          "title": "Voluntee App",
+          "tag": "Diseño de producto · Investigación UX",
+          "action": "Ver proyecto",
+          "size": "20 MB"
+        }
       ]
     },
     {
@@ -28,10 +38,26 @@
       "label": "Sitios web que he creado",
       "blurb": "Webs desarrolladas con WordPress, Webflow y front-end a medida, para unir marca, funcionalidad y detalle visual.",
       "items": [
-        { "title": "Estudio Raíz", "tag": "Webflow", "action": "Ver sitio" },
-        { "title": "Isabella Mendoza", "tag": "WordPress", "action": "Ver sitio" },
-        { "title": "Luxe Estate", "tag": "Next.js · Tailwind", "action": "Ver sitio" },
-        { "title": "Selvática", "tag": "Next.js · Tailwind", "action": "Ver sitio" }
+        {
+          "title": "Estudio Raíz",
+          "tag": "Webflow",
+          "action": "Ver sitio"
+        },
+        {
+          "title": "Isabella Mendoza",
+          "tag": "WordPress",
+          "action": "Ver sitio"
+        },
+        {
+          "title": "Luxe Estate",
+          "tag": "Next.js · Tailwind",
+          "action": "Ver sitio"
+        },
+        {
+          "title": "Selvática",
+          "tag": "Next.js · Tailwind",
+          "action": "Ver sitio"
+        }
       ]
     },
     {
@@ -39,7 +65,12 @@
       "label": "Proyecto creativo",
       "blurb": "Piezas de branding y campaña donde exploro una estética más editorial, expresiva y conceptual.",
       "items": [
-        { "title": "Portafolio gráfico", "tag": "Diseño gráfico · Dirección visual", "action": "Ver proyecto" }
+        {
+          "title": "Portafolio gráfico",
+          "tag": "Diseño gráfico · Dirección visual",
+          "action": "Ver proyecto",
+          "size": "2,6 MB"
+        }
       ]
     }
   ]
