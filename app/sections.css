@@ -646,8 +646,11 @@
    button is for, so they render a <button> and strip the user-agent chrome
    here instead. Without this reset the trigger would not match the <a>
    siblings sitting beside it in .card__links. */
-button.card__media,
-button.card__link {
+/* :where() zeroes the selector's specificity, so this reset loses to
+   .card__link (0,1,0) and the design system keeps its own typography. The
+   plain form `button.card__link` is (0,1,1) and won, which silently stripped
+   the trigger to 18px/400 body copy next to a 14.4px/800 link. */
+button:where(.card__media, .card__link) {
   appearance: none;
   -webkit-appearance: none;
   border: 0;
@@ -657,8 +660,9 @@ button.card__link {
   font: inherit;
   color: inherit;
   text-align: inherit;
+  text-rendering: inherit;
   cursor: pointer;
 }
-button.card__media {
+button:where(.card__media) {
   width: 100%;
 }
