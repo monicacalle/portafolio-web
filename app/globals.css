@@ -157,9 +157,18 @@ img {
   color: var(--burgundy);
 }
 
-/* Scroll-reveal: elements start hidden, .in-view releases them.
-   Falls back to visible when JS/observer is unavailable via .no-js. */
-[data-reveal] {
+/* Scroll-reveal, as progressive enhancement.
+
+   The finished state is the DEFAULT. The start state only exists under
+   html.motion, which an inline script in app/[locale]/layout.tsx adds before
+   paint, and only when the visitor has not asked for reduced motion.
+
+   It used to be the other way round -- opacity: 0 unconditionally, released by
+   an IntersectionObserver -- so a JS error, a blocked script, a failed
+   hydration or an observer that never fired left every revealed element
+   invisible for good. The comment here claimed a .no-js fallback and nothing
+   in the repository ever set that class. */
+html.motion [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
   transition:
@@ -169,18 +178,13 @@ img {
   will-change: opacity, transform;
 }
 
-[data-reveal].in-view {
+html.motion [data-reveal].in-view {
   opacity: 1;
   transform: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
+/* No prefers-reduced-motion block is needed here any more: the gate above
+   never adds html.motion in that case, so the start state is never applied. */
 
 /* Film grain — the premium "print" texture used across the page. */
 .grain::after {
