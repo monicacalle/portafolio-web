@@ -83,6 +83,27 @@ export default async function RootLayout({
 
   return (
     <html lang={l} className={`${geist.variable} ${newYork.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Progressive enhancement, inline and before paint.
+
+            [data-reveal] used to be opacity: 0 unconditionally, so any failure --
+            a JS error anywhere in the bundle, a blocked script, a hydration
+            mismatch, an observer that never fires -- left the whole page blank.
+            A comment claimed a .no-js fallback; nothing set it.
+
+            The default HTML is now the finished page. This adds the class that
+            opts INTO animation, and only when motion is wanted. It has to be
+            inline in <head> rather than an effect: an effect runs after paint,
+            so it flashes, and it does not run at all in the hydration-failure
+            case this exists to survive. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
+              "document.documentElement.classList.add('motion')}catch(e){}",
+          }}
+        />
+      </head>
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
           <Backdrop />
