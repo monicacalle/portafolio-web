@@ -157,9 +157,18 @@ img {
   color: var(--burgundy);
 }
 
-/* Scroll-reveal: elements start hidden, .in-view releases them.
-   Falls back to visible when JS/observer is unavailable via .no-js. */
-[data-reveal] {
+/* Scroll-reveal, as progressive enhancement.
+
+   The finished state is the DEFAULT. The start state only exists under
+   html.motion, which an inline script in app/[locale]/layout.tsx adds before
+   paint, and only when the visitor has not asked for reduced motion.
+
+   It used to be the other way round -- opacity: 0 unconditionally, released by
+   an IntersectionObserver -- so a JS error, a blocked script, a failed
+   hydration or an observer that never fired left every revealed element
+   invisible for good. The comment here claimed a .no-js fallback and nothing
+   in the repository ever set that class. */
+html.motion [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
   transition:
@@ -169,16 +178,27 @@ img {
   will-change: opacity, transform;
 }
 
-[data-reveal].in-view {
+html.motion [data-reveal].in-view {
   opacity: 1;
   transform: none;
 }
 
+/* The gate above is read once, before paint. A visitor who turns reduced
+   motion ON mid-session keeps html.motion, and every element not yet observed
+   stays at opacity: 0 with a 0.9s transition still armed -- animation the user
+   has just asked to stop. The media query is live where the class is not, so
+   it neutralises the start state the moment the preference flips, matching
+   what .split__inner already does in award.css and what Lenis already does
+   through useSyncExternalStore in components/site/smooth-scroll.tsx.
+
+   Note this sets the FINISHED state, not display: none: reduced motion means
+   less movement, not less content. */
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
+  html.motion [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
+    will-change: auto;
   }
 }
 

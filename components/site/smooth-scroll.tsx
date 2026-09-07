@@ -1,8 +1,16 @@
 "use client";
 
 import { ReactLenis, useLenis } from "lenis/react";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "@/lib/i18n/navigation";
+import { prefersReducedMotion } from "@/lib/motion-gate";
+
+/** The OS setting can be toggled while the page is open, so it is a store, not a snapshot. */
+function subscribeToReducedMotion(onChange: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
 
 /*
   Land at the top of the page you navigated to.
@@ -38,6 +46,22 @@ function ScrollToTop() {
  * expensive glide rather than a snappy default.
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
+  // Someone who has asked their operating system for reduced motion gets native
+  // scrolling. Inertial scroll-hijacking is the specific thing that setting
+  // exists to prevent -- it is motion from interaction under WCAG 2.3.3, and
+  // for a vestibular disorder it is not a stylistic preference. Native scroll
+  // is the correct behaviour here, not a degraded one.
+  //
+  // useSyncExternalStore rather than useState + effect: the first client render
+  // must already know, or Lenis mounts for a frame before we take it away.
+  const reduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    () => prefersReducedMotion(),
+    () => false,
+  );
+
+  if (reduced) return <>{children}</>;
+
   return (
     <ReactLenis
       root
