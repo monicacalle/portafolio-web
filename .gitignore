@@ -58,3 +58,6 @@ setup/
 .ghost/
 ghost-drafts/
 _shared/product/
+
+# local asset-prep scratch (not part of the site)
+/tmp/
