@@ -1,7 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-
 /**
  * The "back to navigation" escape control — brief section 76.
  *
