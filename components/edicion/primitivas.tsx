@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useLenis } from "lenis/react";
 import { Link } from "@/lib/i18n/navigation";
 
 /**
@@ -74,20 +75,42 @@ export function Modal({
      more transition while the panel scales back down and the backdrop fades. */
   const [cerrando, setCerrando] = useState(false);
   const salida = useRef<number | null>(null);
+  /* Undefined outside the provider, which is the reduced-motion branch — there
+     Lenis is not mounted and the browser owns the scroll, so there is nothing
+     to stop. */
+  const lenis = useLenis();
 
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
     d.showModal();
-    // showModal() alone leaves the page behind it scrollable on some engines,
-    // and a scrolling background under a full-screen overlay is disorienting.
+    /*
+      §26: "lock background scrolling while open". TWO LOCKS, because on this
+      page the first one does nothing.
+
+      `document.body.style.overflow = "hidden"` is the standard remedy and it
+      only works against the browser's own scroller. Lenis runs in root mode
+      here: its wheel listener is on `window`, it calls `preventDefault()` and
+      then `window.scrollTo({ behavior: "instant" })`, which an overflow rule
+      does not block. Measured at 1440x900 with the dialog open and the body at
+      `overflow-y: hidden`: a wheel of deltaY 600 dispatched on the dialog came
+      back `defaultPrevented: true` and the page went from 8,842 to 9,442 —
+      600px of background scroll under an open modal, on the default path for
+      every reader who has not asked for reduced motion. It affected both
+      modals, the film's and the five drawings'.
+
+      `lenis.stop()` is the lock that matters; the overflow line stays for the
+      reduced-motion branch, where Lenis is not mounted at all.
+    */
     const previo = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    lenis?.stop();
     return () => {
       document.body.style.overflow = previo;
+      lenis?.start();
       if (salida.current !== null) window.clearTimeout(salida.current);
     };
-  }, []);
+  }, [lenis]);
 
   /*
     EVERY ROUTE OUT GOES THROUGH HERE, and the dialog is not closed until the

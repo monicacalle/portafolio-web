@@ -65,12 +65,16 @@
 }
 html[data-nav-theme="dark"] {
   --edicion-nav-fg: #f6f3ef;
+  /* The world the header is standing in, for anything that has to INVERT
+     against the foreground rather than sit on it. See the CTA's hover. */
+  --edicion-nav-bg: #120f0e;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
   --edicion-velo: rgba(8, 6, 6, 0.55);
   --edicion-rail-suelo: #120f0e;
 }
 html[data-nav-theme="light"] {
   --edicion-nav-fg: #17100c;
+  --edicion-nav-bg: #f4f2f0;
   --edicion-nav-fg-suave: rgba(23, 16, 12, 0.6);
   --edicion-velo: rgba(244, 242, 240, 0.72);
   --edicion-rail-suelo: #f4f2f0;
@@ -95,6 +99,7 @@ html[data-nav-theme="light"] {
    `transparent` rather than `none` because a colour is what interpolates. */
 html:not([data-nav-theme]) {
   --edicion-nav-fg: #f6f3ef;
+  --edicion-nav-bg: #120f0e;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
   --edicion-velo: transparent;
   --edicion-rail-suelo: #120f0e;
@@ -199,9 +204,25 @@ html:not([data-nav-theme]) {
   font-weight: 600;
   transition: background-color var(--t-micro) var(--ease-salida), color var(--t-micro) var(--ease-salida);
 }
+/*
+  THE INVERSION NEEDS BOTH HALVES THEMED, and only one of them was.
+
+  The pill inverts on hover: the foreground becomes the fill and the ground
+  becomes the label. `--edicion-nav-fg` follows §5's theme switch;
+  `--edicion-negro` is a fixed #120f0e. In the dark world that is cream on
+  near-black, 17.25:1. In the LIGHT world the fill becomes #17100c and the
+  label stays #120f0e — two near-blacks, computed contrast 1.014:1 — so
+  "Escríbeme" vanished into its own pill on hover over every chapter's
+  editorial body, which is most of the page's scroll. The border goes with it,
+  because it is `currentColor`.
+
+  `--edicion-nav-bg` is the other half of the pair, switched by the same three
+  blocks that switch the foreground: 17.25:1 in the dark world and 16.85:1 in
+  the light one.
+*/
 .edicion-cabecera__cta:hover {
   background: var(--edicion-nav-fg);
-  color: var(--edicion-negro);
+  color: var(--edicion-nav-bg);
 }
 
 /* Section 7. Each item begins translated up by its own height at opacity 0 and
