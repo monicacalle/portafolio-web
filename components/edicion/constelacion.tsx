@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useProgreso } from "@/lib/edicion/use-progreso";
 import { medidas } from "@/lib/edicion/medidas";
+import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gate";
 
 /**
  * The constellation — brief sections 29 and 30.
@@ -48,8 +49,28 @@ export function Constelacion() {
   const ref = useRef<HTMLDivElement>(null);
   useProgreso(ref, "--c");
 
+  /*
+    SELF-ARMING, the same contract as the media reveal and the state sequence.
+
+    The scrub used to be declared unconditionally in CSS against `--c`, which
+    only this component writes. With JavaScript off at 1024px and up, --c fell
+    back to 0, every card's opacity resolved to 0, and chapter I's entire
+    editorial body — all five drawings — rendered invisible. §100 lists exactly
+    that as a condition that makes the result unacceptable. The resting state
+    is "arrived" now, and this attribute is what adds the motion.
+  */
+  const armado = useSyncExternalStore(
+    subscribeToReducedMotion,
+    () => !prefersReducedMotion(),
+    () => false,
+  );
+
   return (
-    <div className="edicion-constelacion" ref={ref}>
+    <div
+      className="edicion-constelacion"
+      ref={ref}
+      {...(armado ? { "data-scrub": "" } : {})}
+    >
       {CARTAS.map((c) => (
         <figure
           key={c.slug}

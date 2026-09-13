@@ -42,17 +42,20 @@ html[data-nav-theme="dark"] {
   --edicion-nav-fg: #f6f3ef;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
   --edicion-nav-velo: linear-gradient(to bottom, rgba(8, 6, 6, 0.55), transparent);
+  --edicion-rail-suelo: #120f0e;
 }
 html[data-nav-theme="light"] {
   --edicion-nav-fg: #17100c;
   --edicion-nav-fg-suave: rgba(23, 16, 12, 0.6);
   --edicion-nav-velo: linear-gradient(to bottom, rgba(244, 242, 240, 0.72), transparent);
+  --edicion-rail-suelo: #f4f2f0;
 }
 /* Before the first sentinel fires, the page is the hero, and the hero is dark. */
 html:not([data-nav-theme]) {
   --edicion-nav-fg: #f6f3ef;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
   --edicion-nav-velo: none;
+  --edicion-rail-suelo: #120f0e;
 }
 
 .edicion {
@@ -173,7 +176,13 @@ html:not([data-nav-theme]) {
      and leaving the upper rail open. */
   justify-content: flex-start;
   padding: calc(var(--edicion-cabecera-h) + 0.9rem) 1.1rem 1.1rem;
-  color: var(--edicion-crema);
+  /* §5: "the global header AND DESKTOP SIDEBAR must automatically switch
+     foreground colour", and §19 asks for the same in its own words. This was a
+     hard-coded `var(--edicion-crema)`, so the rail alone never switched: on
+     chapter VI's light intro it painted a near-black slab with cream type
+     against a cream page. It reads the same token the header does now. */
+  color: var(--edicion-nav-fg);
+  transition: color var(--t-menu) var(--ease-salida);
   pointer-events: none;
 }
 /* Section 3: the rail is a desktop device. Below the large breakpoint the main
@@ -321,6 +330,18 @@ html:not([data-nav-theme]) {
 /* Section 4: oversized and architectural. Little text occupying a very large
    physical area. The six titles are 6-11 characters in both locales, so the
    measure barely shifts between ES and EN at this size. */
+/* THE LIGHT CHAPTER'S INTRO NEEDS DARK INK.
+
+   Chapter VI is the only chapter §23 sends into the light world, and its intro
+   paints `--cap-fondo: #F4F2F0` while the title and standfirst inherited
+   `--edicion-crema: #f4f2f0` from `.edicion`. Measured 1.00:1: OFICIO is set
+   at up to 8.5rem and the whole closing chapter opened on a blank cream
+   screen. The only `--edicion-tinta` rule was on the editorial BODY, which
+   this intro is not. */
+.edicion-capitulo[data-tema="claro"] .edicion-capitulo__intro {
+  color: var(--edicion-tinta);
+}
+
 .edicion-capitulo__titulo {
   margin: 0;
   font-family: var(--font-display, var(--font-sans));
@@ -779,15 +800,17 @@ html:not([data-nav-theme]) {
   .edicion-hero__marco { transform: translateY(-50%); }
 }
 
-/* The rail sits over her artwork, and four of the five plates are light. White
-   text on a white ground is not a contrast bug to tune, it is unreadable — so
-   the rail carries its own ground rather than depending on what is behind it.
-   A gradient, not a panel: it has to read as part of the art direction, which
-   is what brief section 18 asks for. */
-/* Opaque during editorial passages: the fixed canvas is full-viewport, so a
-   translucent rail let a cinematic scene ghost through its 336px gutter while
-   the reader was in a light reading section. */
-html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
+/* The rail sits over her artwork, and four of the five plates are light. Type
+   on a ground of unknown value is not a contrast bug to tune, it is a coin
+   toss — so the rail carries its own ground rather than depending on what is
+   behind it. A gradient, not a panel: it has to read as part of the art
+   direction, which is what brief section 18 asks for.
+
+   The ground TAKES THE THEME TOO. It was a fixed near-black, which is why the
+   foreground could not switch: cream type over near-black was the only
+   readable pair available. Both move together now, so the rail is dark over
+   the cinematic world and cream over the editorial one, which is what §5 and
+   §19 ask for and what the page looks like anyway. */
 .edicion-rail::before {
   content: "";
   position: absolute;
@@ -795,9 +818,9 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
   z-index: -1;
   background: linear-gradient(
     to right,
-    var(--edicion-negro) 0%,
-    var(--edicion-negro) 62%,
-    color-mix(in srgb, var(--edicion-negro) 72%, transparent) 86%,
+    var(--edicion-rail-suelo) 0%,
+    var(--edicion-rail-suelo) 62%,
+    color-mix(in srgb, var(--edicion-rail-suelo) 72%, transparent) 86%,
     transparent 100%
   );
 }
@@ -1402,10 +1425,22 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
 }
 .edicion-lienzo[data-listo] { opacity: 1; }
 
-/* The chapter intros sit above the canvas; their plates stay as the fallback
-   underneath and fade back as the live scene takes over. */
+/* The chapter intros sit above the canvas; their plates are the fallback and
+   they HIDE once the live scene has taken over — §82's own words are "then
+   remove or hide fallback".
+
+   It used to leave them at 0.18, and the plate is ABOVE the canvas (the intro
+   carries z-index 1 and the canvas 0), so what shipped on a WebGL desktop was
+   her own artwork double-imaged: a full-width ghost of the plate washing over
+   the sharper planes of the same work, with the plate's own rectangle edges
+   visible across the composition. Measured side by side at 1440x900 on chapter
+   II with a real WebGL2 context.
+
+   Hidden, not removed: the canvas can lose its context at any moment, and the
+   plate has to be there to come back. The 700ms is §82's crossfade, run in
+   both directions. */
 .edicion-capitulo__intro { z-index: 1; }
-html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0.18; }
+html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0; }
 .edicion-capitulo__escena img { transition: opacity 700ms ease-in-out; }
 
 /* Section 86: mobile switches scenes entirely to optimized static images.
@@ -1491,19 +1526,25 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
 .edicion-video.animate-show-media,
 .edicion-plancha.animate-show-media { transition-delay: 110ms; }
 
-/* Without JS, or with motion reduced, media is simply present. §78 also warns
-   against over-animating the white content, which is why this is the only
-   reveal on the editorial side.
+/* THE UNCONDITIONAL COPY OF THIS RULE KILLED THE WHOLE REVEAL.
 
-   Two separate rules: a media query cannot sit inside a selector list, and
-   writing it that way silently voids the whole block -- which would have left
-   every card at opacity 0 for anyone with reduced motion on. */
-.animate-show-media {
-  opacity: 1;
-  transform: none;
-  clip-path: none;
-  transition: none;
-}
+   There used to be two of these, one inside the media query and one outside
+   it. The one outside sat after the rule above at equal specificity, so it won
+   on source order — and a CSS transition reads its duration from the AFTER
+   change style. The moment the observer added `data-visible`, the armed
+   (0,3,0) selector stopped matching and the style that took over carried
+   `transition: none`. Every card, film, plancha and statement on the page
+   snapped from opacity 0 to 1: §28's 700ms, §25's media reveal, §27's
+   copy-before-media stagger, §40's and §42's reveals, all inert, while every
+   number the brief names sat correct in the file above.
+
+   It was there for the no-JS case, which does not need it: nothing is ever
+   hidden without `data-armado`, and `Revelar` is the only thing that writes
+   it. Reduced motion does need it, because an armed element must still not
+   animate, and that copy is the one that stays.
+
+   §78 also warns against over-animating the white content, which is why this
+   is the only reveal on the editorial side. */
 @media (prefers-reduced-motion: reduce) {
   .animate-show-media {
     opacity: 1;
@@ -2236,13 +2277,23 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
 
 /* Step 7: the geometry outside the sidebar fades, while the part of it inside
    the sidebar survives a moment longer -- which is what makes the grid read as
-   having BECOME the frame rather than simply switching off. */
-@media (prefers-reduced-motion: no-preference) {
+   having BECOME the frame rather than simply switching off.
+
+   IT WAS DEAD CODE. The second stop read `calc(var(--edicion-rail) * 1px)` and
+   `--edicion-rail` is already a length (line 16), so that is length x length,
+   which is invalid at computed-value time and drops the whole declaration.
+   `mask-image` resolved to `none` and the geometry faded uniformly, which is
+   exactly the "simply switching off" this step exists to avoid.
+
+   Gated to 1024px as well, because the rail itself is: below that there is no
+   sidebar for the geometry to survive inside, and the mask would have held a
+   240px band at full strength against nothing. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .edicion-geometria {
     mask-image: linear-gradient(
       to right,
       rgba(0, 0, 0, 1) 0,
-      rgba(0, 0, 0, 1) calc(var(--edicion-rail) * 1px),
+      rgba(0, 0, 0, 1) var(--edicion-rail),
       rgba(0, 0, 0, calc(1 - var(--m, 0))) calc(var(--edicion-rail) + 1px),
       rgba(0, 0, 0, calc(1 - var(--m, 0))) 100%
     );
@@ -2275,25 +2326,47 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   top: var(--cy);
   width: 22%;
   margin: 0;
-  /* Section 29's reveal, in three overlapping bands driven by one value. */
-  --aparecer: clamp(0, calc((var(--c, 0) - 0.20 - var(--fase, 0)) / 0.13), 1);
-  --opaco: clamp(0, calc((var(--c, 0) - 0.40 - var(--fase, 0)) / 0.13), 1);
-  /* Slightly different parallax rates, per the section's last line. */
-  --deriva: calc((var(--c, 0) - 0.5) * var(--par, 0.1) * -260px);
+  /* THE RESTING STATE IS "ARRIVED", and that is the whole point of declaring
+     these here rather than only in the scrubbed rule below.
+
+     They used to be declared once, as `clamp(0, calc((var(--c, 0) - …)), 1)`,
+     and `--c` is written only by `useProgreso` from constelacion.tsx. With
+     JavaScript off at 1024px and up, `--c` fell back to 0, `--opaco` resolved
+     to 0, and every one of chapter I's five drawings rendered at opacity 0 —
+     the whole editorial body of a chapter, invisible, which §100 names as a
+     condition that makes the result unacceptable. The scrub is added under
+     [data-scrub], which the component writes only once it is running. */
+  --aparecer: 1;
+  --opaco: 1;
+  --deriva: 0px;
+  /* Peripheral cards stay partly transparent; the primary reaches 1. */
+  --base: 0.78;
+  /* §30's "surrounding cards lose 5–15% emphasis", as a multiplier rather than
+     a flat value — a flat 0.62 took the peripherals down 21% and the primary
+     38%, both outside the band. */
+  --atenuacion: 1;
   transform:
     translateY(var(--deriva))
     scale(calc(var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)));
-  /* Peripheral cards stay partly transparent; the primary reaches 1. */
-  opacity: calc(var(--opaco) * 0.78);
+  opacity: calc(var(--opaco) * var(--base) * var(--atenuacion));
   transition:
     transform var(--t-hover) var(--ease-cine),
     opacity var(--t-hover) var(--ease-cine),
     filter var(--t-hover) var(--ease-cine);
   will-change: transform, opacity;
 }
+/* Section 29's reveal, in three overlapping bands driven by one value. --c is
+   the block's own scroll progress and --fase staggers each card's slice of it,
+   which is what "expanding outward from their individual origins" means. */
+[data-scrub] .edicion-carta {
+  --aparecer: clamp(0, calc((var(--c, 0) - 0.20 - var(--fase, 0)) / 0.13), 1);
+  --opaco: clamp(0, calc((var(--c, 0) - 0.40 - var(--fase, 0)) / 0.13), 1);
+  /* Slightly different parallax rates, per the section's last line. */
+  --deriva: calc((var(--c, 0) - 0.5) * var(--par, 0.1) * -260px);
+}
 .edicion-carta[data-primaria] {
   width: 30%;
-  opacity: var(--opaco);
+  --base: 1;
   z-index: 2;
 }
 
@@ -2319,12 +2392,19 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
    surrounding cards lose emphasis, the shadow increases, over 250–350ms.
    Explicitly NOT a rearrangement of the cloud -- the section forbids that. */
 .edicion-constelacion:hover .edicion-carta,
-.edicion-constelacion:focus-within .edicion-carta { filter: saturate(0.88); opacity: 0.62; }
+.edicion-constelacion:focus-within .edicion-carta {
+  filter: saturate(0.88);
+  /* 12% off, inside §30's 5–15% band, and relative to whatever the card's own
+     resting opacity is rather than a flat value that ignores it. */
+  --atenuacion: 0.88;
+}
 .edicion-carta:hover,
 .edicion-carta:focus-within {
   z-index: 3;
-  filter: none !important;
-  opacity: 1 !important;
+  filter: none;
+  /* §30: the active card's opacity reaches 1 whatever it was resting at. */
+  --atenuacion: 1;
+  --base: 1;
   transform:
     translateY(var(--deriva))
     scale(calc((var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)) * 1.055));

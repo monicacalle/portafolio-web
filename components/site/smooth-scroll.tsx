@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactLenis, useLenis } from "lenis/react";
-import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "@/lib/i18n/navigation";
 import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gate";
 
@@ -29,28 +29,75 @@ import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gat
   immediate: true skips the easing in both branches. There is nothing to
   animate between two different pages, and the animation was the whole problem.
 */
+/** Where each path was left, for the back button. Session-scoped on purpose:
+ *  a position restored a week later is not where the reader was. */
+const GUARDADO = "edicion:scroll";
+
 function ScrollToTop() {
   const lenis = useLenis();
   const pathname = usePathname();
+  /* Set by popstate, which fires before React re-renders, so the landing
+     effect below can tell a back/forward navigation from a fresh one. */
+  const volviendo = useRef(false);
+
+  useEffect(() => {
+    const alVolver = () => {
+      volviendo.current = true;
+    };
+    window.addEventListener("popstate", alVolver);
+    return () => window.removeEventListener("popstate", alVolver);
+  }, []);
+
+  /*
+    §84: "restore scroll position when possible… do not always reset the long
+    experience to zero."
+
+    Recorded on the way OUT, in the cleanup, because that is the last moment
+    the old path's position is still true. Lenis owns the number, so it is
+    Lenis that is asked for it — `window.scrollY` lags its animated value.
+  */
+  useEffect(() => {
+    if (!lenis) return;
+    const clave = `${GUARDADO}:${pathname}`;
+    return () => {
+      try {
+        sessionStorage.setItem(clave, String(Math.round(lenis.scroll)));
+      } catch {
+        // Private mode, quota, a browser that has none. Losing the position is
+        // the old behaviour, which is survivable; throwing here is not.
+      }
+    };
+  }, [pathname, lenis]);
 
   useEffect(() => {
     if (!lenis) return;
+
     // A hash is an explicit request for somewhere else on the page -- the
     // "volver a proyectos" link is /#projects, and the header's chapter jumps
     // are /#producto and its five siblings.
     const hash = window.location.hash;
-    if (!hash) {
-      lenis.scrollTo(0, { immediate: true });
+    if (hash) {
+      let destino: Element | null = null;
+      try {
+        destino = document.querySelector(hash);
+      } catch {
+        // A fragment that is not a valid selector is not ours to honour.
+        return;
+      }
+      if (destino) lenis.scrollTo(destino as HTMLElement, { immediate: true });
       return;
     }
-    let destino: Element | null = null;
-    try {
-      destino = document.querySelector(hash);
-    } catch {
-      // A fragment that is not a valid selector is not ours to honour.
-      return;
+
+    if (volviendo.current) {
+      volviendo.current = false;
+      const guardado = Number(sessionStorage.getItem(`${GUARDADO}:${pathname}`));
+      if (Number.isFinite(guardado) && guardado > 0) {
+        lenis.scrollTo(guardado, { immediate: true });
+        return;
+      }
     }
-    if (destino) lenis.scrollTo(destino as HTMLElement, { immediate: true });
+
+    lenis.scrollTo(0, { immediate: true });
   }, [pathname, lenis]);
 
   return null;
@@ -87,6 +134,14 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         smoothWheel: true,
         wheelMultiplier: 1,
         touchMultiplier: 1.6,
+        /* §19: "anchor links should smooth-scroll to the beginning of their
+           chapter." Every in-page jump on this page is an anchor -- the rail,
+           the header's chapter list, the hero index, the mobile menu -- and
+           they were all hard cuts: `html.lenis { scroll-behavior: auto }`
+           switches the browser's own smooth scroll off (it has to, or two
+           scrollers animate the same property), and nothing replaced it.
+           Lenis handles the click itself with this on. */
+        anchors: true,
       }}
     >
       <ScrollToTop />

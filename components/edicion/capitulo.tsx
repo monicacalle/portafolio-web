@@ -40,6 +40,10 @@ export function Capitulo({
       className="edicion-capitulo"
       data-section-id={capitulo.anclaje}
       data-section-index={indice}
+      // The intro's theme, as a styling hook. MarcaTema below carries the same
+      // fact to the state machine, but it is a 1px marker read by an observer,
+      // not something CSS can select an ancestor from.
+      data-tema={capitulo.tema}
       {...(escena ? {} : { "data-sin-escena": "" })}
       style={
         {
