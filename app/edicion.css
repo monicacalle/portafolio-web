@@ -3430,9 +3430,25 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    shrank it: "El cuello" goes from 1 to 0.686, a 31% collapse, over 300ms.
    Matched specificity, placed after, so the tie resolves on source order. */
 @media (max-width: 1023px) {
+  /*
+    §30's cloud state does not exist here, and it was half-applying.
+
+    Below 1024px the constellation is §31's snap rail, whose own active state
+    is `filter: opacity()` on the rail's children. §30's hover rules set
+    `filter` too — `saturate(0.88)` on the siblings at (0,3,0) and `none` on
+    the active card at (0,4,0) — so a TAP, which sets and keeps :hover, replaced
+    the rail's dim with a saturation change and the six cards stopped reading as
+    a carousel. The transform was already neutralised here for the same reason
+    (a tap used to shrink a full-width card by 31%); the filter goes with it,
+    and `--atenuacion` with both, since nothing reads it at this width.
+  */
+  .edicion-constelacion:hover .edicion-carta,
+  .edicion-constelacion:focus-within .edicion-carta,
   .edicion-constelacion:hover .edicion-carta:hover,
   .edicion-constelacion:focus-within .edicion-carta:focus-within {
     transform: none;
+    filter: opacity(var(--carril-opacidad, 1));
+    --atenuacion: 1;
   }
 }
 
