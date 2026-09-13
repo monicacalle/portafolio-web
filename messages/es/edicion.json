@@ -78,6 +78,43 @@
           "titulo": "Voluntee · Filtros avanzados",
           "nota": "Diez grupos de filtros en una sola pantalla: tipo, categoría, experiencia, organización, días, horario, familia y edad. Nada se esconde detrás de un acordeón."
         }
+      },
+      "metodo": {
+        "titulo": "Cómo llegué hasta ahí",
+        "filas": {
+          "desk": {
+            "q": "Desk research",
+            "a": "Punto de partida en los dos proyectos: entender el problema antes de mirar una sola pantalla."
+          },
+          "netnografia": {
+            "q": "Netnografía",
+            "a": "Leer lo que la gente ya dice en foros y redes, en lugar de preguntarles qué creen que harían."
+          },
+          "benchmarking": {
+            "q": "Benchmarking",
+            "a": "Siete plataformas analizadas en Voluntee. No para copiarlas: para saber qué ya está resuelto."
+          },
+          "dafo": {
+            "q": "Matriz DAFO",
+            "a": "En los dos casos. Obliga a escribir las debilidades, que es la parte que se salta sola."
+          },
+          "encuesta": {
+            "q": "Encuesta",
+            "a": "69 personas en Vibe. Suficiente para ver un patrón, no para fingir significancia estadística."
+          },
+          "entrevistas": {
+            "q": "Entrevistas",
+            "a": "En Voluntee, además de la encuesta. Lo que la gente cuenta en voz alta no cabe en un formulario."
+          },
+          "personas": {
+            "q": "User personas",
+            "a": "Dos por proyecto, con sus mapas de empatía. Marina llega por recomendación; Carlos exige información."
+          },
+          "journeys": {
+            "q": "Customer journeys",
+            "a": "Para encontrar dónde se cae la gente, que casi nunca es donde yo esperaba."
+          }
+        }
       }
     },
     "impreso": {

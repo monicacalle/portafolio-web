@@ -6,6 +6,7 @@ import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
 import { Triptico } from "./triptico";
+import { ListaCompacta } from "./lista-compacta";
 
 /**
  * Chapter I's editorial body — the five drawings, each with what she says
@@ -90,6 +91,7 @@ export function CuerpoProducto() {
         href="/proyectos/voluntee"
         verLabel={t("cta.ver")}
       />
+      <ListaCompacta />
     </>
   );
 }

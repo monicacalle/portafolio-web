@@ -1451,3 +1451,50 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   .edicion-beat__fijo { position: static; min-height: 0; padding-block: 2rem; }
   .edicion-beat__objeto img { transform: none; }
 }
+
+/* =============================================== the compact update list
+   Measured off the live reference: two columns, bold label left, grey sentence
+   right, many rows, on a warm paper ground. Section 37 asks for this register
+   after a dense section, and section 78 forbids animating it -- this is the
+   breathing mechanism, so it is a table you read, not a thing that performs. */
+.edicion-lista {
+  grid-column: span 6;
+  margin-top: clamp(1.5rem, 4vw, 3.5rem);
+  /* The warm paper the reference sets these on. */
+  background: color-mix(in srgb, var(--edicion-crema) 78%, #d9cfc2);
+  padding: clamp(1.2rem, 3vw, 2.6rem);
+  border-radius: 4px;
+}
+.edicion-lista h3 {
+  margin: 0 0 1.2rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(23, 16, 12, 0.55);
+}
+.edicion-lista dl { margin: 0; display: grid; gap: 0; }
+.edicion-lista__fila {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.2rem 2rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(23, 16, 12, 0.1);
+}
+.edicion-lista__fila:first-child { border-top: 0; }
+@media (min-width: 760px) {
+  .edicion-lista__fila { grid-template-columns: minmax(9rem, 15rem) 1fr; }
+}
+.edicion-lista dt {
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+.edicion-lista dd {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(23, 16, 12, 0.7);
+  max-width: 62ch;
+}
+@media (max-width: 767px) { .edicion-lista { grid-column: auto; } }

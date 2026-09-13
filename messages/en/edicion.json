@@ -78,6 +78,43 @@
           "titulo": "Voluntee · Advanced filters",
           "nota": "Ten filter groups on one screen: type, category, experience, organisation, days, schedule, family and age. Nothing hidden behind an accordion."
         }
+      },
+      "metodo": {
+        "titulo": "How I got there",
+        "filas": {
+          "desk": {
+            "q": "Desk research",
+            "a": "The starting point in both projects: understand the problem before looking at a single screen."
+          },
+          "netnografia": {
+            "q": "Netnography",
+            "a": "Reading what people already say in forums and feeds, instead of asking them what they think they would do."
+          },
+          "benchmarking": {
+            "q": "Benchmarking",
+            "a": "Seven platforms analysed for Voluntee. Not to copy them: to know what is already solved."
+          },
+          "dafo": {
+            "q": "SWOT matrix",
+            "a": "In both cases. It forces you to write down the weaknesses, which is the part that skips itself."
+          },
+          "encuesta": {
+            "q": "Survey",
+            "a": "69 people for Vibe. Enough to see a pattern, not enough to pretend statistical significance."
+          },
+          "entrevistas": {
+            "q": "Interviews",
+            "a": "For Voluntee, alongside the survey. What people say out loud does not fit in a form."
+          },
+          "personas": {
+            "q": "User personas",
+            "a": "Two per project, with empathy maps. Marina arrives on a recommendation; Carlos demands information."
+          },
+          "journeys": {
+            "q": "Customer journeys",
+            "a": "To find where people fall off, which is almost never where I expected."
+          }
+        }
       }
     },
     "impreso": {
