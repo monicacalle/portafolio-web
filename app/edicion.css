@@ -3192,7 +3192,10 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   line-height: 1.35;
 }
 .edicion-carta figcaption strong { font-weight: 700; }
-.edicion-carta figcaption span { color: rgba(23, 16, 12, 0.58); font-variant-numeric: tabular-nums; }
+/* 0.62, not 0.58: at 13.68px this is normal text under WCAG and the old value
+   measured 4.45:1 on the cream ground against AA's 4.5. It is the line that
+   carries every drawing's dimensions and signature date. */
+.edicion-carta figcaption span { color: rgba(23, 16, 12, 0.62); font-variant-numeric: tabular-nums; }
 
 /* §30: the active card moves forward, scale rises 4–7%, opacity reaches 1, the
    surrounding cards lose emphasis, the shadow increases, over 250–350ms.
