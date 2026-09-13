@@ -501,8 +501,18 @@ html:not([data-nav-theme]) {
   text-shadow: 0 1px 24px rgba(0, 0, 0, 0.4);
 }
 @media (prefers-reduced-motion: no-preference) {
+  /*
+    The label stays VISIBLE through the whole morph and only hands over at the
+    very end, as the rail arrives underneath it showing the same words.
+
+    It used to fade out between 28% and 52% -- before the morph even starts at
+    35% -- so the title vanished and the rail appeared separately, which is the
+    cut section 17 forbids. The whole point is that the reader sees the opening
+    artwork BECOME the navigation, and they cannot see that if the artwork is
+    gone before it moves.
+  */
   .edicion-hero__marco {
-    opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.28) / 0.24), 1));
+    opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.88) / 0.12), 1));
   }
 }
 
@@ -1440,7 +1450,10 @@ a.edicion-ficha {
 /* ===================================================================== §92
    The page state machine, expressed as data attributes on <html> so CSS can
    respond to a phase without a component re-rendering. */
-html[data-fase="hero"] .edicion-rail { opacity: 0; pointer-events: none; }
+/* During the hero the rail's opacity belongs to the section 17 morph below,
+   not to a flat zero -- this rule used to hard-zero it at a specificity the
+   morph could not beat, so the rail never arrived at all. */
+html[data-fase="hero"] .edicion-rail { pointer-events: none; }
 html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 .edicion-rail { transition: opacity var(--t-menu) var(--ease-cine); }
 
@@ -1723,4 +1736,86 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
 @media (max-width: 767px) {
   .edicion-capitulo__cuerpo { padding-inline: 1.2rem; }
   .edicion-ficha { transition: opacity var(--t-hover) var(--ease-salida); }
+}
+
+/* ================================================================ §17
+   THE HERO → SIDEBAR MORPH.
+
+   Section 17 calls this "one of the defining transitions" and ends with the
+   instruction that decides the implementation: "Do not cut from hero to
+   sidebar. The user should subconsciously understand that the opening artwork
+   has transformed into the navigation system."
+
+   Before this, the rail simply faded in while the hero faded out. Two elements
+   crossfading is precisely the cut the section forbids -- and it is the same
+   trap the retablo fold exists to avoid: identical at both endpoints, wrong in
+   the middle.
+
+   So there is ONE object. The hero's label travels into the rail's column and
+   the rail only takes over once the two are in the same place showing the same
+   words, which is not a handover a reader can see.
+
+   --m is the morph's own 0->1 across the section's scrub window, 35% -> 90%. */
+@media (min-width: 1024px) {
+  .edicion-hero { --m: clamp(0, calc((var(--p, 0) - 0.35) / 0.55), 1); }
+
+  /* Steps 1, 2 and 5: the title reduces in scale, the visual centre migrates
+     to the left fifth, and it settles inside the navigation frame.
+     transform-origin is the top-left so the block collapses TOWARDS the rail
+     rather than shrinking about its own middle. */
+  .edicion-hero__marco {
+    transform-origin: left top;
+    --morfo-x: calc((1.1rem - var(--edicion-rail) - clamp(1rem, 2vw, 2.2rem)) * var(--m, 0));
+    --morfo-y: calc(-50% + (var(--m, 0) * -18svh));
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .edicion-hero__marco {
+    transform:
+      translate(var(--morfo-x), var(--morfo-y))
+      scale(calc(1 - var(--m, 0) * 0.26));
+  }
+}
+
+/* Step 4: a rectangular Renaissance proportion frame becomes the sidebar
+   boundary. 340:464 is the section's own ratio -- it is 1:1.365, close to the
+   √2 of a printed page, which is why the sidebar reads as a page rather than a
+   panel. It draws in as the morph completes and stays as the rail's edge. */
+.edicion-rail__frame {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  top: calc(var(--edicion-cabecera-h) + 0.9rem);
+  aspect-ratio: 340 / 464;
+  border: 1px solid currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-medio) var(--ease-cine);
+}
+html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
+
+/* Steps 6 and 8: the chapter links become legible and the rail takes over as
+   the fixed navigation while the 80% column becomes the storytelling surface.
+   The rail arrives LATE and fast, at the point where it is already sitting on
+   top of the hero label showing the same six words -- so there is nothing to
+   see crossing over. */
+@media (min-width: 1024px) {
+  html[data-fase="hero"] .edicion-rail {
+    opacity: clamp(0, calc((var(--hp, 0) - 0.86) / 0.14), 1);
+  }
+}
+
+/* Step 7: the geometry outside the sidebar fades, while the part of it inside
+   the sidebar survives a moment longer -- which is what makes the grid read as
+   having BECOME the frame rather than simply switching off. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-geometria {
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0,
+      rgba(0, 0, 0, 1) calc(var(--edicion-rail) * 1px),
+      rgba(0, 0, 0, calc(1 - var(--m, 0))) calc(var(--edicion-rail) + 1px),
+      rgba(0, 0, 0, calc(1 - var(--m, 0))) 100%
+    );
+  }
 }

@@ -27,6 +27,10 @@ export function Rail() {
       // landmark; the wrapper must not, or screen readers announce two.
       aria-hidden={false}
     >
+      {/* Section 17 step 4: the Renaissance proportion frame that becomes the
+          sidebar boundary. 340:464 is the section's own ratio. */}
+      <div className="edicion-rail__frame" aria-hidden />
+
       <div className="edicion-rail__marca">
         {/* The wordmark is three lines at a small size, like the reference's
             "The Ren(ai)ssance Edition". Split in the message so the accent can

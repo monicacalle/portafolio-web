@@ -57,6 +57,9 @@ export function Hero() {
       const recorrido = r.height - window.innerHeight;
       const p = recorrido <= 0 ? 0 : Math.min(1, Math.max(0, -r.top / recorrido));
       el.style.setProperty("--p", p.toFixed(4));
+      // Published to <html> as well, because the rail is a SIBLING of the hero
+      // rather than a descendant and still has to follow the same morph.
+      document.documentElement.style.setProperty("--hp", p.toFixed(4));
     };
     const alScroll = () => {
       if (pendiente) return;
