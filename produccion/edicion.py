@@ -441,3 +441,25 @@ _big = _vibemock.resize((round(_vibemock.width * _esc), round(_vibemock.height *
 _amp.paste(_big, ((1280 - _big.width) // 2, (796 - _big.height) // 2))
 guardar(ImageEnhance.Brightness(_amp.filter(ImageFilter.GaussianBlur(18))).enhance(0.62),
         'cap-producto', 1280, q=58)
+
+
+# Chapter IV's scene planes: DETAILS of her screens, not the whole capture.
+# A 141px chapter title over a full app screen lands on legible body copy, which
+# breaks the same rule that took the wordmarks out from behind the titles.
+for _src, _nombre, _caja in [
+    ('plancha-vibe.avif',     'detalle-vibe',     (0.06, 0.02, 0.94, 0.20)),
+    ('plancha-voluntee.avif', 'detalle-voluntee', (0.04, 0.06, 0.96, 0.34)),
+]:
+    _p = os.path.join(OUT, _src)
+    if not os.path.exists(_p):
+        print(f'  {_nombre:20s} SKIP'); continue
+    _im = Image.open(_p).convert('RGB')
+    _w, _h = _im.size
+    _c = _im.crop((int(_w*_caja[0]), int(_h*_caja[1]), int(_w*_caja[2]), int(_h*_caja[3])))
+    # Blurred to ABSTRACTION, not to softness. At 1.2px the labels were still
+    # legible and a 141px chapter title was sitting on readable UI, which is the
+    # same defect that took her wordmarks out from behind the other titles. At
+    # this radius her interface reads as colour, rhythm and structure -- which is
+    # what a chapter ground is for, and it is still recognisably her screen.
+    _c = _c.filter(ImageFilter.GaussianBlur(_c.width * 0.02))
+    guardar(ImageEnhance.Brightness(_c).enhance(0.66), _nombre, 900, q=52)

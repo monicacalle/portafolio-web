@@ -74,6 +74,30 @@ function useProgresos() {
  * coded as numbers anywhere — they emerge from the spacing in escenas.ts,
  * because a plane four times farther away moves a quarter as much on screen.
  */
+/**
+ * Section 96's lighting, done honestly for flat artwork.
+ *
+ * The section asks for soft key, broad fill, rim where needed, and the look of
+ * "editorial photography / museum display", while warning against saturated
+ * coloured point lights "unless they exist naturally in the artwork".
+ *
+ * Her planes are finished paintings and printed pieces. Lighting them with a
+ * real rig and a MeshStandardMaterial would RELIGHT work that is already lit --
+ * the copper hair has its own highlights, the poster has its own flat colour --
+ * and the result would be her artwork tinted by a light she never painted.
+ *
+ * So the rig is what a gallery actually does to a hung picture: a soft
+ * falloff with depth, so the near plane reads as under the key and the far
+ * ones sit back in fill. It is a multiplier on the plane's own colour, never a
+ * hue shift, so nothing is recoloured.
+ */
+function luzPorProfundidad(z: number) {
+  // z runs roughly +1.6 (foreground) to -8.5 (environment).
+  const t = Math.min(1, Math.max(0, (z + 8.5) / 10.1));
+  // Key 1.0 at the front, broad fill never below 0.72 so nothing goes muddy.
+  return 0.72 + t * 0.28;
+}
+
 function PlanoObra({ plano, vis }: { plano: Plano; vis: number }) {
   const tex = useLoader(THREE.TextureLoader, plano.src);
   const ref = useRef<THREE.Mesh>(null);
@@ -125,6 +149,11 @@ function PlanoObra({ plano, vis }: { plano: Plano; vis: number }) {
         opacity={0}
         depthWrite={false}
         toneMapped={false}
+        // Section 96's key/fill, as a neutral multiplier on her own colour.
+        // Grey, never a hue: a coloured light here would recolour a finished
+        // painting, which the section forbids "unless [the colour] exists
+        // naturally in the artwork".
+        color={new THREE.Color().setScalar(luzPorProfundidad(plano.z))}
       />
     </mesh>
   );
@@ -160,12 +189,18 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
     return (railPx / window.innerWidth) * viewport.width * 0.5;
   }, [viewport.width]);
 
-  // Visibility: fades in over the first 8% and out over the last 12%, which is
-  // the 400–700ms crossfade of section 94 expressed in scroll rather than time.
-  const vis = Math.min(
-    1,
-    Math.min(p / 0.08, (1 - p) / 0.12) < 0 ? 0 : Math.min(p / 0.08, (1 - p) / 0.12),
-  );
+  /*
+    Visibility: in over the first 8%, out over the last 12% -- section 94's
+    400-700ms crossfade expressed in scroll rather than in time.
+
+    The curve is SQUARE-ROOTED at the edges so two overlapping scenes sum to
+    roughly one rather than to two. With a linear ramp both scenes reached 1.0
+    for about an 80px window at every boundary, which put two unrelated
+    compositions at full strength on top of each other -- the exact thing
+    section 94's last line rules out.
+  */
+  const bruto = Math.min(p / 0.08, (1 - p) / 0.12);
+  const vis = bruto <= 0 ? 0 : Math.sqrt(Math.min(1, bruto));
 
   useFrame(() => {
     const g = grupo.current;

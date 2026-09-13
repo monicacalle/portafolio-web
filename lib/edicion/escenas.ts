@@ -102,8 +102,15 @@ export const ESCENAS: readonly Escena[] = [
     clave: "producto",
     fondo: "#141019",
     planos: [
-      { src: "/edicion/plancha-vibe.avif", z: 1.1, ancho: 1.3, x: -1.5, deriva: 0.005 },
-      { src: "/edicion/plancha-voluntee.avif", z: -0.6, ancho: 1.1, x: 1.4, y: 0.2, deriva: 0.005 },
+      /*
+        DETAILS, not whole screens. These were the full-length captures, so a
+        141px chapter title landed on a wall of legible Spanish body copy and
+        dozens of readable UI labels -- which contradicts this build's own rule
+        that no chapter plate may be lettering. The planchas show the screens
+        entire, in the editorial body below, at a size where they can be read.
+      */
+      { src: "/edicion/detalle-vibe.avif", z: 0.6, ancho: 1.7, x: -1.9, y: -0.2, deriva: 0.005 },
+      { src: "/edicion/detalle-voluntee.avif", z: -1.4, ancho: 1.5, x: 2.0, y: 0.4, opacidad: 0.9, deriva: 0.005 },
       { src: "/edicion/plano-iv-bg.avif", z: -7, ancho: 13, opacidad: 0.28, deriva: 0.002 },
     ],
     camara: { dollyZ: -0.8, truckX: 0.4, pedestalY: 0.3, giro: 1.6 },
