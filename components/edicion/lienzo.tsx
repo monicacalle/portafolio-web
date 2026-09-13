@@ -11,6 +11,7 @@ import {
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { ESCENAS, type Escena, type Plano } from "@/lib/edicion/escenas";
+import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gate";
 
 /**
  * The persistent cinematic canvas — brief sections 20, 21, 22, 82, 94, 95.
@@ -434,9 +435,24 @@ export function Lienzo() {
     is exactly what it is for.
   */
   const conContexto = useSyncExternalStore(sinCambios, haySoporte, () => false);
-  /* Both conditions, and the width is the one that was missing. */
   const anchoSuficiente = useSyncExternalStore(suscribirAncho, hayAncho, () => false);
-  const soportado = conContexto && anchoSuficiente;
+  /*
+    THREE CONDITIONS, and two of them were missing.
+
+    `.edicion-lienzo { display: none }` appears twice in the stylesheet — once
+    below 1024px for §86 and once under `prefers-reduced-motion: reduce` for
+    §87, whose comment reads "with reduced motion there is no canvas at all".
+    Hiding a wrapper does not stop React mounting the `<Canvas>` inside it, so
+    both readers still got a WebGL context, R3F's loop and, through
+    `usePrecarga`, the scene textures. The width went first; this is the other
+    one. §87's own words are the test: no canvas at all.
+  */
+  const conMovimiento = useSyncExternalStore(
+    subscribeToReducedMotion,
+    () => !prefersReducedMotion(),
+    () => false,
+  );
+  const soportado = conContexto && anchoSuficiente && conMovimiento;
   usePrecarga(progresos, soportado);
 
   useEffect(() => {
@@ -610,9 +626,10 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
   */
   useEffect(() => {
     // Nothing to warm for a canvas that will not mount. `soportado` now means
-    // BOTH a WebGL context and a viewport at or above 1024px — it used to mean
-    // only the first, so this guard let 184kB of plate through to every phone
-    // while this comment said it did not.
+    // a WebGL context AND a viewport at or above 1024px AND a reader who has
+    // not asked for reduced motion — it used to mean only the first, so this
+    // guard let 184kB of plate through to every phone while this comment said
+    // it did not.
     if (!soportado) return;
     const primera = ESCENAS[0];
     if (!primera || hecho.current.has(primera.clave)) return;

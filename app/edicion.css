@@ -1812,10 +1812,16 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
    frame 0-15%, divisions 10-30%, diagonals 20-45%, circles and spiral 30-60%.
    Staggered so it feels constructed by hand rather than switched on. */
 .edicion-geometria__g { stroke-dasharray: 1; }
-.edicion-geometria__g[data-fase="marco"]       { --g: clamp(0, calc(var(--p, 0) / 0.15), 1); }
-.edicion-geometria__g[data-fase="divisiones"]  { --g: clamp(0, calc((var(--p, 0) - 0.10) / 0.20), 1); }
-.edicion-geometria__g[data-fase="diagonales"]  { --g: clamp(0, calc((var(--p, 0) - 0.20) / 0.25), 1); }
-.edicion-geometria__g[data-fase="circulos"]    { --g: clamp(0, calc((var(--p, 0) - 0.30) / 0.30), 1); }
+/* THE RESTING STATE IS DRAWN. `--g` falls back to 1 — dashoffset 0 — so with
+   JavaScript off the construction is simply finished, the way it is under
+   reduced motion. The four windows below are the scrub, and they are added
+   only once the hero is writing `--p`: they read `var(--p, 0)`, so declared
+   unconditionally they resolved to 0 and left every group at dashoffset 1,
+   which is an SVG present in the DOM and never inked. */
+[data-scrub] .edicion-geometria__g[data-fase="marco"]       { --g: clamp(0, calc(var(--p, 0) / 0.15), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="divisiones"]  { --g: clamp(0, calc((var(--p, 0) - 0.10) / 0.20), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="diagonales"]  { --g: clamp(0, calc((var(--p, 0) - 0.20) / 0.25), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="circulos"]    { --g: clamp(0, calc((var(--p, 0) - 0.30) / 0.30), 1); }
 .edicion-geometria__g * { stroke-dashoffset: calc(1 - var(--g, 1)); }
 
 /* The construction fades as the retablo folds away, so it never competes with

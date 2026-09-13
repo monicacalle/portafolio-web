@@ -68,6 +68,17 @@ export function Hero() {
     };
 
     leer();
+    /*
+      SELF-ARMING, the same contract as the constellation, the sequence and the
+      triptych. Anything that only makes sense once `--p` is being written hangs
+      off this attribute rather than off the value itself.
+
+      §15's geometry needed it: `--g` is declared unconditionally from
+      `var(--p, 0)`, so with JavaScript off it resolved to 0, every group's
+      `stroke-dashoffset` stayed at 1 and the whole construction was invisible —
+      drawn, present in the DOM, and never inked.
+    */
+    el.dataset.scrub = "";
     window.addEventListener("scroll", alScroll, { passive: true });
     window.addEventListener("resize", alScroll);
     return () => {
