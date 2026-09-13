@@ -37,6 +37,27 @@ export const useEdicion = () => useContext(Ctx);
 const LINEA_FRACCION = 0.45;
 
 /*
+  §5's line is a DIFFERENT line, and using §93's for both was a real defect.
+
+  §93 decides which chapter is ACTIVE, and it is explicit that the test is a
+  weighted centre near 40-50% of the viewport. §5 decides what colour the header
+  and the rail wear, and its test is the block "under them" — which for a 50px
+  header means the first 50px of the viewport, not the 405px mark.
+
+  One line was doing both jobs, so at every theme boundary the header switched
+  its foreground up to 405px before the thing under it changed colour. Measured
+  by walking the page in 100px steps at 1440x900: 32 of 280 positions, 3,200px
+  of scroll in twelve bands, had the header printing the wrong world. At y=9000
+  that is dark ink over chapter III's navy intro — the nav links measured
+  1.77:1 against what was actually behind them.
+
+  The header line is the header's own height plus a few pixels of margin, so
+  the marker that decides the colour is the one the header is genuinely sitting
+  on. The chapter machine below keeps §93's line untouched.
+*/
+const MARGEN_CABECERA = 8;
+
+/*
   Section 93 also says: "Avoid jitter around boundaries. Use hysteresis."
 
   A single threshold flickers when a marker sits within a pixel or two of the
@@ -102,18 +123,28 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
       // Last marker at or above the weighted line wins. Markers are in
       // document order, so this is a single pass with no sorting.
       const linea = window.innerHeight * LINEA_FRACCION;
+      /* §5's line, see above. Read from the token rather than hard-coded: it is
+         50px on desktop and 60px below 1024, per §3. */
+      const alto = parseFloat(
+        getComputedStyle(raiz).getPropertyValue("--edicion-cabecera-h"),
+      );
+      const lineaCabecera = (Number.isFinite(alto) ? alto : 50) + MARGEN_CABECERA;
       let tema: string | null = null;
       let cap: string | null = null;
       let sub: string | null = null;
+      /* Both jobs in ONE pass, which they can share because the header's line
+         is always above §93's: a marker that has cleared the header line is a
+         prefix of the ones that have cleared the weighted line, so the theme
+         accumulates on the way to the break that ends the chapter test. */
       for (const m of marcas) {
         const top = m.getBoundingClientRect().top;
+        if (top <= lineaCabecera) tema = m.dataset.marcaTema ?? tema;
         // Hysteresis: a marker that is not already active must clear the line
         // by HISTERESIS before it can take over.
         const umbral = m.dataset.marcaCapitulo === activoRef.current
           ? linea + HISTERESIS
           : linea;
         if (top > umbral) break;
-        tema = m.dataset.marcaTema ?? tema;
         cap = m.dataset.marcaCapitulo ?? null;
         sub = m.dataset.marcaSubfase ?? sub;
       }

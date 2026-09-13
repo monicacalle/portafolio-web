@@ -129,8 +129,8 @@ html:not([data-nav-theme]) {
      The transition is on the COLOUR inside the gradient, not on the gradient:
      `background-image` is not animatable and the 300ms was decorative. The
      property is inherited from <html>, so what changes here is this element's
-     own computed value, which is what a transition can act on. */
-  background-image: linear-gradient(to bottom, var(--edicion-velo), transparent);
+     own computed value, which is what a transition can act on — and what the
+     ::after below inherits, frame by frame, from this element. */
   transition: color 300ms var(--ease-salida), --edicion-velo 300ms var(--ease-salida);
 }
 
@@ -160,7 +160,21 @@ html:not([data-nav-theme]) {
 .edicion-cabecera__edicion { font-size: 0.72rem; color: var(--edicion-nav-fg-suave); }
 
 .edicion-cabecera__salto {
-  opacity: 0.72;
+  /*
+    0.82, not 0.72, and the number is a contrast floor rather than a taste.
+
+    The header floats over her artwork and §8 gives it only "a very subtle top
+    gradient" to stand on, so the resting opacity of these six links is the
+    last variable between them and the plate behind. Measured at thirteen
+    scroll positions on a 1440x900 screen, taking the composited background
+    under each link's own box and the link's effective colour after its own
+    alpha: at 0.72 the worst link was 4.07:1, over chapter II's editorial foot,
+    against WCAG AA's 4.5:1 for 14px text. At 0.80 it is 4.75 and at 0.82 it
+    clears with margin; every other position measured 4.76 to 9.31 either way.
+    Hover still goes to 1, so the resting state is still visibly the quieter
+    one.
+  */
+  opacity: 0.82;
   transition: opacity 200ms var(--ease-salida);
 }
 .edicion-cabecera__salto:hover { opacity: 1; }
@@ -219,22 +233,30 @@ html:not([data-nav-theme]) {
      chapter VI's light intro it painted a near-black slab with cream type
      against a cream page. It reads the same token the header does now. */
   color: var(--edicion-nav-fg);
-  /* One transition declaration for the rail, and it has to be one: there was a
-     second `.edicion-rail { transition: opacity ... }` nine hundred lines
-     below at the same specificity, which won on source order and silently
-     deleted this colour fade. The rail's type has been snapping between cream
-     and near-black at every boundary for as long as both rules have existed,
-     with the comment above claiming the opposite.
+  /*
+    THE RAIL'S THEME SWAP IS INSTANT, AND IT HAS TO BE.
 
-     --edicion-rail-suelo is here rather than on `::before`, which is where it
-     is used: a pseudo-element does not run a transition for a custom property
-     it merely INHERITS — measured, it snapped through all seven samples of a
-     420ms window. Transitioning it on the rail animates the rail's own
-     computed value and the pseudo-element inherits the animated one. */
-  transition:
-    color var(--t-menu) var(--ease-salida),
-    --edicion-rail-suelo var(--t-menu) var(--ease-salida),
-    opacity var(--t-menu) var(--ease-cine);
+    There were two `transition` declarations for `.edicion-rail`, nine hundred
+    lines apart and at the same specificity: this one, for `color`, and one for
+    `opacity` below. The later replaced rather than extended it, so the colour
+    fade this comment used to claim had never run. Making it run — and adding
+    the ground to it, so the two would move together — produced a worse page
+    than either. Measured over a dark→light flip at 1440x900, sampling every
+    frame: the type and the ground cross through the same luminance on the way
+    past each other, and the contrast between them bottoms out at 1.24:1 at
+    68ms. The rail's six chapter names and its legal line disappear for about
+    ninety milliseconds, eleven times down the page.
+
+    There is no timing that fixes that. Going from light type on a dark ground
+    to dark type on a light ground passes through equal luminance whenever both
+    move continuously, and staggering them only moves the window. Swapping both
+    in one frame is the one arrangement with no window in it, so that is what
+    this does: `opacity` is the only thing here that animates, for §17's
+    handover. §5 asks the rail to switch its foreground with the block under it
+    and does not ask for a duration; §8's 300ms is about the header's gradient,
+    and the header keeps it.
+  */
+  transition: opacity var(--t-menu) var(--ease-cine);
   pointer-events: none;
 }
 /* Section 3: the rail is a desktop device. Below the large breakpoint the main
@@ -945,9 +967,11 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* The ground is built from the same registered colour the rail transitions,
-     so the words and the thing that makes them legible cross over together.
-     The transition itself is on `.edicion-rail`; see the note there. */
+  /* The ground is a registered `<color>` so it COULD be transitioned; it
+     deliberately is not. See the note on `.edicion-rail` and the 1.24:1 it
+     measured. The registration still earns its place: it is what makes the
+     value a colour the engine parses rather than an opaque token, which is
+     what `color-mix()` two lines down needs. */
   background: linear-gradient(
     to right,
     var(--edicion-rail-suelo) 0%,
@@ -2641,7 +2665,41 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 }
 
 /* ===================================================================== §8
-   Nothing here any more, and the deletion is the fix.
+   THE VEIL IS TALLER THAN THE HEADER, because that is where the words are.
+
+   §8's gradient is "as readability requires", and painted inside the header's
+   own 50px box it was not enough. A `to bottom, colour, transparent` gradient
+   across 50px is at half its alpha by the header's vertical centre, which is
+   exactly where the nav links sit: 0.275 effective over her artwork. Measured
+   by screenshotting the links, hiding them, and comparing the glyph cores
+   against the pixels behind them at seven scroll positions, the median link
+   contrast ran 3.57:1 to 5.61:1 — four of the seven below WCAG's 4.5:1 for
+   normal text, over chapters II, III and IV's intro plates.
+
+   Height 220% and a pseudo-element, so the gradient spans 110px and the fade
+   tail runs well past the header's foot. At the link baseline it is now about
+   four fifths of full alpha rather than half, and the visual is SOFTER rather
+   than harder: the falloff is spread over twice the distance, which is the
+   opposite of "an obvious solid navbar". The colour is the registered custom
+   property, inherited from the header, so it still crosses over in 300ms.
+
+   The block that used to be here did something different and only half worked:
+   it animated the pseudo-element's OPACITY, which fades the veil up as the
+   hero hands over to chapter I and does nothing at the other eleven
+   boundaries, where the opacity is pinned at 1 and the two gradients swapped
+   in a single frame. */
+.edicion-cabecera::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 220%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, var(--edicion-velo), transparent);
+}
+
+/* -----------------------------------------------------------------------
+   Nothing else here any more, and the deletion is the fix.
 
    This block used to move the veil onto a pseudo-element and animate its
    OPACITY, on the reasoning that `background-image` snaps and opacity does
