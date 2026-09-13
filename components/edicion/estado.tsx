@@ -81,6 +81,24 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
         cap = m.dataset.marcaCapitulo ?? null;
       }
       if (tema) raiz.dataset.navTheme = tema;
+
+      /*
+        Section 92's page state machine, as a data attribute rather than React
+        state. The brief models the page as BOOT -> HERO_LOADING -> HERO_ACTIVE
+        -> SIDEBAR_TRANSITION -> CHAPTER_* -> END, with each chapter carrying
+        its own INTRO_ENTER / INTRO_ACTIVE / CONTENT_TRANSITION /
+        EDITORIAL_ACTIVE / INTRO_EXIT.
+
+        Written to <html> so CSS owns every response to a phase change and no
+        component re-renders for one. The rail reads `hero` vs `capitulos` to
+        stay out of the way until the retablo has handed over, which is the
+        SIDEBAR_TRANSITION step of section 17.
+      */
+      raiz.dataset.fase = cap ? "capitulos" : "hero";
+      if (cap) raiz.dataset.capitulo = cap;
+      else delete raiz.dataset.capitulo;
+      // The sub-phase: which half of the chapter the reader is in.
+      raiz.dataset.subfase = tema === "light" ? "editorial" : "intro";
       // setActivo with an unchanged value is a no-op in React, so the common
       // case -- scrolling within one chapter -- costs nothing.
       setActivo(cap);

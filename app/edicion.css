@@ -1337,3 +1337,39 @@ a.edicion-ficha {
 }
 .edicion-capitulo__cuerpo,
 .edicion-capitulo__intro { position: relative; }
+
+/* ===================================================================== §76
+   The keyboard escape control. Hidden by TRANSFORM, never by display or
+   visibility: both would drop it out of the tab order, which is the one thing
+   this control exists to be in. */
+.edicion-volver {
+  position: absolute;
+  left: clamp(1rem, 4vw, 3.5rem);
+  bottom: 0;
+  z-index: 20;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(calc(100% + 2px));
+  transition: transform var(--t-micro) var(--ease-salida);
+}
+.edicion-volver:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--edicion-crema);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .edicion-volver { transition-duration: 1ms; }
+}
+
+/* ===================================================================== §92
+   The page state machine, expressed as data attributes on <html> so CSS can
+   respond to a phase without a component re-rendering. */
+html[data-fase="hero"] .edicion-rail { opacity: 0; pointer-events: none; }
+html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
+.edicion-rail { transition: opacity var(--t-menu) var(--ease-cine); }

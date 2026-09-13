@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import type { Capitulo as DatosCapitulo } from "@/lib/edicion/capitulos";
 import { MarcaTema } from "./estado";
+import { VolverNav } from "./volver-nav";
 
 /**
  * A chapter: a cinematic dark intro, then a light editorial body.
@@ -57,6 +58,7 @@ export function Capitulo({
           <h2 className="edicion-capitulo__titulo">{t(`capitulos.${a}.titulo`)}</h2>
           <p className="edicion-capitulo__entradilla">{t(`capitulos.${a}.entradilla`)}</p>
         </div>
+        <VolverNav etiqueta={t("marca.volver")} />
       </div>
 
       {children ? (
