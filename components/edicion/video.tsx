@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "./primitivas";
+import { MODAL_MS, Modal } from "./primitivas";
 
 /**
  * VideoFeature and VideoModal — brief sections 25, 26 and 40.
@@ -178,13 +178,26 @@ function VideoModal({
   etiquetaCerrar: string;
   onCerrar: () => void;
 }) {
+  /*
+    §26: "playback begins when transition ends." `autoPlay` starts it at mount,
+    which is 320ms too early — the film's first third played while the panel
+    was still scaling up behind a backdrop that had not finished fading.
+  */
+  const medio = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      void medio.current?.play().catch(() => {});
+    }, MODAL_MS);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <Modal etiqueta={titulo} etiquetaCerrar={etiquetaCerrar} onCerrar={onCerrar}>
       <video
+        ref={medio}
         className="edicion-modal__medio"
         poster={poster}
         controls
-        autoPlay
         playsInline
         preload="auto"
       >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@/lib/i18n/navigation";
 
 /**
@@ -40,6 +40,10 @@ import { Link } from "@/lib/i18n/navigation";
  * the top layer, the backdrop, Escape, and the focus trap, all of which are
  * easy to hand-roll incorrectly and tedious to hand-roll well.
  */
+/** §26's entrance and exit both run for this long. The section gives 250–350ms
+ *  for the backdrop and says the close is the reverse. */
+export const MODAL_MS = 320;
+
 export function Modal({
   etiqueta,
   etiquetaCerrar,
@@ -50,9 +54,17 @@ export function Modal({
   etiqueta: string;
   etiquetaCerrar: string;
   onCerrar: () => void;
+  /** Called once the entrance has finished, for anything that should not start
+   *  during it — §26: "playback begins when transition ends". */
+  onAbierto?: () => void;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  /* §26: "close: reverse". A React unmount is instantaneous, so the exit needs
+     a state of its own — the dialog stays in the top layer for one more
+     transition while the panel scales back down and the backdrop fades. */
+  const [cerrando, setCerrando] = useState(false);
+  const salida = useRef<number | null>(null);
 
   useEffect(() => {
     const d = ref.current;
@@ -64,17 +76,22 @@ export function Modal({
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previo;
+      if (salida.current !== null) window.clearTimeout(salida.current);
     };
   }, []);
 
   // <dialog> fires `close` for Escape as well as for close(), so one handler
   // covers both routes out and the parent's state cannot drift from the DOM's.
-  const alCerrar = useCallback(() => onCerrar(), [onCerrar]);
+  const alCerrar = useCallback(() => {
+    setCerrando(true);
+    salida.current = window.setTimeout(onCerrar, MODAL_MS);
+  }, [onCerrar]);
 
   return (
     <dialog
       ref={ref}
       className="edicion-modal"
+      {...(cerrando ? { "data-cerrando": "" } : {})}
       aria-label={etiqueta}
       onClose={alCerrar}
       // Clicking the backdrop closes it. The dialog element itself IS the

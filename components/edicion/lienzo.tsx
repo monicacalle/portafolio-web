@@ -365,6 +365,36 @@ export function Lienzo() {
 function usePrecarga(progresos: Record<string, number>) {
   const hecho = useRef<Set<string>>(new Set());
 
+  /*
+    §90's Priority 2: "after hero becomes stable, preload the first chapter's
+    scene". The loop below only ever warms ESCENAS[i + 1] from a scene that is
+    already half-played, so ESCENAS[0] could never be warmed by it — the first
+    chapter's textures were requested on arrival, which is the one arrival the
+    reader has no patience for because the hero has just handed over.
+
+    Idle, not immediate: the hero's own retablo and the fonts are what matter
+    for the first paint, and this is explicitly the priority below them.
+  */
+  useEffect(() => {
+    const primera = ESCENAS[0];
+    if (!primera || hecho.current.has(primera.clave)) return;
+    hecho.current.add(primera.clave);
+    const calentar = () => {
+      primera.planos.forEach((pl) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.src = pl.src;
+      });
+    };
+    const ric = window.requestIdleCallback;
+    if (ric) {
+      const id = ric(calentar, { timeout: 2500 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const t = window.setTimeout(calentar, 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     ESCENAS.forEach((e, i) => {
       const p = progresos[e.clave] ?? 0;

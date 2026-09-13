@@ -124,12 +124,40 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
         its own INTRO_ENTER / INTRO_ACTIVE / CONTENT_TRANSITION /
         EDITORIAL_ACTIVE / INTRO_EXIT.
 
+        WHAT IS ACTUALLY HERE is two of those axes, and the mapping is written
+        down in edicion-declinaciones.md rather than implied:
+
+          data-fase      hero | capitulos            HERO_ACTIVE, CHAPTER_*
+          data-subfase   intro | editorial           INTRO_ACTIVE, EDITORIAL_ACTIVE
+          data-capitulo  the anchor                  which CHAPTER_*
+
+        BOOT and HERO_LOADING have no equivalent because there is no loading
+        state to be in: the page is server-rendered complete and the canvas
+        fades in over it (§82). SIDEBAR_TRANSITION is `--hp`, a continuous
+        value, because §17 asks for a scrub rather than a step. The three
+        transitional per-chapter states (INTRO_ENTER, CONTENT_TRANSITION,
+        INTRO_EXIT) are not built.
+
         Written to <html> so CSS owns every response to a phase change and no
         component re-renders for one. The rail reads `hero` vs `capitulos` to
         stay out of the way until the retablo has handed over, which is the
         SIDEBAR_TRANSITION step of section 17.
       */
       raiz.dataset.fase = cap ? "capitulos" : "hero";
+      /*
+        `data-capitulo` is the machine's per-chapter output, published on <html>
+        so anything can respond to it without a render.
+
+        NOTHING IN THE STYLESHEET READS IT TODAY, and that is worth stating
+        rather than leaving to be discovered. The one place that needs to know
+        which chapter is active is the rail's index, and it cannot use this:
+        `aria-current` is an ARIA property, not a CSS one, so the rail takes
+        the same fact from React state below and pays one render per chapter
+        change — six over the whole page — to keep the index announced
+        correctly to a screen reader. The attribute stays because it is the
+        state, and because the alternative to publishing a state is a component
+        that owns it privately.
+      */
       if (cap) raiz.dataset.capitulo = cap;
       else delete raiz.dataset.capitulo;
       // The sub-phase: which half of the chapter the reader is in.

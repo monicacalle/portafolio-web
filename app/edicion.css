@@ -342,6 +342,23 @@ html:not([data-nav-theme]) {
   color: var(--edicion-tinta);
 }
 
+/* §23: "the H2 itself uses an opacity transition around 300ms when
+   hiding/showing during state changes", and §1 step 6 is the state change this
+   page has: "the next chapter title enters".
+
+   It rides the shared §28 observer so there is one reveal system, but with
+   §23's own duration and WITHOUT the translate and the clip-path — the section
+   asks for an opacity transition and a 141px title sliding 24px is a different
+   thing. */
+.edicion-capitulo__portada.animate-show-media[data-armado]:not([data-visible]) {
+  transform: none;
+  clip-path: none;
+}
+.edicion-capitulo__portada.animate-show-media,
+.edicion-capitulo__portada.animate-show-media[data-armado]:not([data-visible]) {
+  transition-duration: var(--t-menu);
+}
+
 .edicion-capitulo__titulo {
   margin: 0;
   font-family: var(--font-display, var(--font-sans));
@@ -924,22 +941,48 @@ html:not([data-nav-theme]) {
 /* Section 31: replace the desktop card constellation with a horizontal snap
    carousel. A six-column grid collapsed to one column on a phone turns a
    chapter into a very long single file of pictures; a snap rail keeps the
-   editorial rhythm and the scroll length honest. */
-@media (max-width: 767px) {
+   editorial rhythm and the scroll length honest.
+
+   Every number here is §31's and four of them were wrong: cards snapped to
+   `start` rather than `center`, the width was 78% rather than ~65vw, there was
+   no tablet size at all (the carousel stopped at 767px, so the ~50% case never
+   existed), and the first and last cards had no room to reach the centre.
+   The padding is what gives them that room: half the difference between the
+   scrollport and one card, on each side. */
+@media (max-width: 1023px) {
   .edicion-capitulo__cuerpo {
+    --carrusel: 65vw;
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: 78%;
+    grid-auto-columns: var(--carrusel);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 1.2rem;
+    padding-inline: calc((100% - var(--carrusel)) / 2);
+    scroll-padding-inline: calc((100% - var(--carrusel)) / 2);
     /* The scrollbar is a horizontal band across an editorial page; the snap
        points and the partially-visible next card are the affordance. */
     scrollbar-width: none;
   }
+  /* §31: "≈50% on larger tablet widths". */
+  @media (min-width: 768px) {
+    .edicion-capitulo__cuerpo { --carrusel: 50vw; }
+  }
   .edicion-capitulo__cuerpo::-webkit-scrollbar { display: none; }
-  .edicion-ficha { scroll-snap-align: start; grid-column: auto; }
+  .edicion-ficha { scroll-snap-align: center; grid-column: auto; }
+
+  /* §31's active state. The centred card is at 1 and the rest at 0.7, and the
+     `data-activo` that decides which is written by the observer in
+     capitulo.tsx as the snap changes — CSS has no way to ask which item a
+     scroll container is snapped to. */
+  .edicion-capitulo__cuerpo > * {
+    opacity: 0.7;
+    transition: opacity var(--t-menu) var(--ease-cine);
+  }
+  .edicion-capitulo__cuerpo > *[data-activo] { opacity: 1; }
+  /* Until the observer has run, nothing is dimmed: a carousel that arrives at
+     0.7 with JS off would be §100's "inaccessible without JavaScript" again. */
+  .edicion-capitulo__cuerpo:not([data-carrusel]) > * { opacity: 1; }
 
   /* These are reading structures, not galleries, so they opt out of the
      carousel. The triptych especially: it measured 1634px inside a 375px
@@ -1113,7 +1156,7 @@ html:not([data-nav-theme]) {
    entirely past the right edge. The header CTA is hidden at this width and
    there is no footer on the homepage, so that swipe WAS the contact path.
    A closing chapter is a reading column. */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   /* Chapters whose body is a READING STRUCTURE opt out of the carousel
      wholesale. grid-column: auto is not enough: under grid-auto-flow: column
      every child becomes its own auto-sized column, so the triptych still
@@ -1365,6 +1408,19 @@ html:not([data-nav-theme]) {
 @keyframes edicion-modal-entra {
   from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
+}
+/* §26: "close: reverse." The dialog stays in the top layer for one more
+   transition while the panel scales back down and the backdrop fades out; the
+   component holds the unmount for the same 320ms. Without it the overlay
+   vanished in a frame, which is the hard cut the entrance spec exists to
+   avoid, applied to the other end. */
+.edicion-modal[data-cerrando]::backdrop {
+  animation: edicion-fondo-entra var(--t-hover) var(--ease-cine) reverse both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-modal[open][data-cerrando] .edicion-modal__panel {
+    animation: edicion-modal-entra 320ms var(--ease-salida) reverse both;
+  }
 }
 .edicion-modal__cerrar {
   position: fixed;
@@ -2351,13 +2407,13 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
 .edicion-lista dd a:hover,
 .edicion-triptico__texto a:hover { border-bottom-color: currentColor; }
 
-/* ===================================================================== §31
-   The mobile carousel: the next card peeks so the swipe is discoverable, and
-   inactive cards sit back slightly so the current one reads as current. */
-@media (max-width: 767px) {
-  .edicion-capitulo__cuerpo { padding-inline: 1.2rem; }
-  .edicion-ficha { transition: opacity var(--t-hover) var(--ease-salida); }
-}
+/* §31's two leftovers. The `padding-inline: 1.2rem` that used to live here
+   was overriding the centring padding declared with the carousel itself --
+   later in the file, same specificity -- so the first and last cards could
+   never reach the middle and every card snapped 40px off centre. The comment
+   above it claimed the inactive-card state it never implemented; that state is
+   with the rest of the carousel now, where it can be read beside the rule that
+   decides which card is active. */
 
 /* ================================================================ §17
    THE HERO → SIDEBAR MORPH.
