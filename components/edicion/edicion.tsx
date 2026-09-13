@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
 import { EstadoEdicion } from "./estado";
 import { Espina } from "./espina";
@@ -75,6 +76,22 @@ function Cuerpo({ anclaje }: { anclaje: string }) {
   if (anclaje === "oficio") return <Oficio />;
   if (anclaje === "ilustracion") return <CuerpoIlustracion />;
   if (anclaje === "producto") return <CuerpoProducto />;
+  return <CuerpoPlacas anclaje={anclaje} />;
+}
+
+/**
+ * The three chapters whose body is her statement followed by a plate wall.
+ * Kept apart from Cuerpo so the hook below is not called conditionally, which
+ * the rules of hooks forbid and which the earlier shape would have done as soon
+ * as a translator was needed here.
+ */
+function CuerpoPlacas({ anclaje }: { anclaje: string }) {
+  const t = useTranslations("edicion");
+  const DECLARACION: Record<string, string> = {
+    marca: t("capitulos.marca.declaracion"),
+    campana: t("capitulos.campana.declaracion"),
+    impreso: t("capitulos.impreso.declaracion"),
+  };
 
   const OBRAS: Record<string, { src: string; ancho: "completo" | "medio" | "tercio" | "dos-tercios" }[]> = {
     marca: [
@@ -97,8 +114,14 @@ function Cuerpo({ anclaje }: { anclaje: string }) {
   };
 
   const obras = OBRAS[anclaje] ?? [];
+  const declaracion = DECLARACION[anclaje];
   return (
     <>
+      {declaracion ? (
+        <div className="edicion-declaracion">
+          <p>{declaracion}</p>
+        </div>
+      ) : null}
       {obras.map((o, i) => (
         <Ficha key={o.src + i} ancho={o.ancho}>
           {/* alt is empty on purpose: every plate here is decorative repetition

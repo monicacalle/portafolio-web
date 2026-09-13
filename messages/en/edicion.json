@@ -49,11 +49,13 @@
     },
     "marca": {
       "titulo": "BRAND",
-      "entradilla": "An identity is a system other people have to use without me."
+      "entradilla": "Three identities, and the first one is mine.",
+      "declaracion": "A brand does not end at the logo: it ends when someone else can use it without calling me. Estudio Raíz is my own studio, so I was the client and the designer at once, and that is where you find out fast which decisions hold."
     },
     "campana": {
       "titulo": "CAMPAIGN",
-      "entradilla": "A drawing that works in the street, at bus-shelter scale."
+      "entradilla": "A drawing of mine ended up at bus-shelter scale.",
+      "declaracion": "Ceguera Digital is a public-service campaign about looking at your phone and missing your stop. The illustration that opens this portfolio belongs to it, and here you see it where it was meant to be: in the street, at a person's height."
     },
     "producto": {
       "titulo": "PRODUCT",
@@ -72,11 +74,12 @@
     },
     "impreso": {
       "titulo": "PRINT",
-      "entradilla": "Things that fold, and that you hold."
+      "entradilla": "Thirty A4 pages you turn with your hand.",
+      "declaracion": "Paper does not let you take it back. A cover, a poster and thirty laid-out pages force you to settle the hierarchy before it prints, and that discipline is what I bring to a screen afterwards."
     },
     "oficio": {
       "titulo": "PRACTICE",
-      "entradilla": "Where I've worked, what I use, and how to write to me."
+      "entradilla": "Where I have worked, what I use, and how to write to me."
     }
   },
   "pie": {

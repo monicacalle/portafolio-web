@@ -49,11 +49,13 @@
     },
     "marca": {
       "titulo": "MARCA",
-      "entradilla": "Una identidad es un sistema que otros tienen que poder usar sin mí."
+      "entradilla": "Tres identidades, y la primera es la mía.",
+      "declaracion": "Una marca no termina en el logotipo: termina cuando otra persona puede usarla sin llamarme. Estudio Raíz es mi propio estudio, así que fui a la vez clienta y diseñadora, y ahí se nota enseguida qué decisiones aguantan."
     },
     "campana": {
       "titulo": "CAMPAÑA",
-      "entradilla": "Un dibujo que trabaja en la calle, a tamaño de marquesina."
+      "entradilla": "Un dibujo mío acabó a tamaño de marquesina.",
+      "declaracion": "Ceguera Digital es una campaña de servicio público sobre mirar el móvil y perder la parada. La ilustración que abre este portafolio es suya, y aquí la ves donde tenía que estar: en la calle, a la altura de una persona."
     },
     "producto": {
       "titulo": "PRODUCTO",
@@ -72,7 +74,8 @@
     },
     "impreso": {
       "titulo": "IMPRESO",
-      "entradilla": "Cosas que se doblan y se tienen en la mano."
+      "entradilla": "Treinta páginas A4 que se pasan con la mano.",
+      "declaracion": "El papel no deja rectificar. Una portada, un cartel y treinta páginas maquetadas obligan a decidir la jerarquía antes de imprimir, y esa disciplina es la que llevo después a una pantalla."
     },
     "oficio": {
       "titulo": "OFICIO",
