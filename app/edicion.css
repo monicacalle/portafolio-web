@@ -1263,6 +1263,32 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
        way; centring it would cut her face at the frame edge. */
     object-position: 38% 42%;
   }
+  /*
+    A POSTER DOES NOT CLOSE LIKE AN ALTARPIECE, and it was trying to.
+
+    The fold is `translateX(calc(var(--f) * -18%)) rotateY(...) scale(calc(1 -
+    var(--f) * 0.28))`, declared with no width limit. The centre panel carries
+    `--dir: 0` so the hinge sits out on a phone — but the shift and the scale
+    did not. Measured at 390x844 with the hero at 150svh: by --p = 0.90 the
+    poster is drawn at 0.72 and moved 67.5px left, which is exactly 18% of the
+    375px stage, leaving 120px of empty column on the right (32% of the width)
+    and 118px bands above and below, all of them the page's own #120f0e.
+
+    The shift's stated reason is in the comment beside it — "ending where the
+    rail begins" — and below 1024px there is no rail: `.edicion-rail` is
+    `display: none` and only `display: flex` inside `(min-width: 1024px)`. §17's
+    frame morph and §15's geometry mask, the other two effects aimed at the
+    rail, are both already gated to 1024; this one was the only one that was
+    not.
+
+    What replaces it is a scrubbed move that cannot expose the ground: a slow
+    6% push-in across the same range. §1.2 still gets its scroll-tied
+    cinematic moment, the anachronism still walks, and the poster still covers
+    the frame at every value of --f.
+  */
+  .edicion-hero__panel[data-eje="center"] {
+    transform: scale(calc(1 + var(--f) * 0.06));
+  }
   .edicion-hero__escena::after {
     content: "";
     position: absolute;
