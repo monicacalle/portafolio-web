@@ -83,7 +83,10 @@ html:not([data-nav-theme]) {
 .edicion-cabecera {
   position: fixed;
   inset: 0 0 auto 0;
-  z-index: 60;
+  /* The §88 token, not a second number. This was a literal 60 that only lost
+     to the token's 9999 on source order, which is exactly the "randomly
+     increase z-index" the section is about. */
+  z-index: var(--z-cabecera);
   height: var(--edicion-cabecera-h);
   display: flex;
   align-items: center;
@@ -445,13 +448,18 @@ html:not([data-nav-theme]) {
    Section 87. Nothing here is decorative-only: with motion off the page must
    still be the whole page, just still. So transitions collapse rather than
    elements disappearing. */
+/* §87: "keep simple 150–250ms fades". These were 1ms, which is not a reduced
+   fade, it is no fade — and the section asks for the opposite of that. What
+   reduced motion removes here is travel, not colour: every one of these is a
+   colour or an opacity change, so it keeps its transition at the short end of
+   the section's own band. */
 @media (prefers-reduced-motion: reduce) {
   .edicion-cabecera,
   .edicion-rail__guia,
   .edicion-rail__indice a,
   .edicion-cabecera__salto,
   .edicion-cabecera__cta {
-    transition-duration: 1ms;
+    transition-duration: var(--t-micro);
   }
   .edicion-rail__indice li[data-activo] .edicion-rail__guia { opacity: 0.5; transform: none; }
 }
@@ -908,6 +916,14 @@ html:not([data-nav-theme]) {
   transition: grid-template-rows 300ms var(--ease-salida);
 }
 .edicion-movil__panel[data-abierto] { grid-template-rows: 1fr; }
+/* §11: "content opacity transitions simultaneously". The rows animate the
+   height; without this the links are at full strength inside a box that is
+   still one pixel tall, which reads as a clip rather than an opening. */
+.edicion-movil__panel > * {
+  opacity: 0;
+  transition: opacity var(--t-menu) var(--ease-salida);
+}
+.edicion-movil__panel[data-abierto] > * { opacity: 1; }
 /* Section 11: the menu fills the available viewport below the 60px header
    rather than sitting at its content height. */
 .edicion-movil__panel[data-abierto] .edicion-movil__interior {
@@ -996,9 +1012,39 @@ html:not([data-nav-theme]) {
   .edicion-declaracion { grid-column: auto; }
 }
 
+/* §87 again: the panel's height still opens instantly, because that is the
+   large translate the section asks to drop, but the content fades over 200ms
+   so the menu does not appear as a hard cut. */
 @media (prefers-reduced-motion: reduce) {
   .edicion-movil__panel,
   .edicion-movil__barras i { transition-duration: 1ms; }
+  .edicion-movil__panel > * { transition-duration: var(--t-micro); }
+}
+
+/* §14 at time 0: "main composition already exists but feels partially
+   obscured". The scrim that did this was inside the mobile block, so at
+   1024px and up the retablo painted at full strength from the first frame and
+   the hero had no first-paint state at all — it was simply finished.
+
+   It lifts on the hero's own progress rather than on a timer, so the
+   composition clears as the reader starts rather than after a wait they did
+   not ask for, and it is gone by 18% of the hero, well before the fold begins
+   at 35%. Under it the panels are already there, which is the difference
+   between obscured and loading. */
+@media (min-width: 1024px) {
+  .edicion-hero__escena::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 46%,
+      rgba(10, 8, 8, 0.28) 0%,
+      rgba(10, 8, 8, 0.52) 62%,
+      rgba(10, 8, 8, 0.74) 100%
+    );
+    opacity: clamp(0, calc(1 - var(--p, 0) / 0.18), 1);
+  }
 }
 
 /* ------------------------------------------------- the hero, recomposed
@@ -1068,7 +1114,25 @@ html:not([data-nav-theme]) {
   .edicion-cabecera { gap: 0.5rem; }
   .edicion-cabecera__izq { min-width: 0; }
   .edicion-cabecera__nombre { font-size: 0.82rem; }
-  .edicion-cabecera__edicion { display: none; }
+  /* §6 lists "brand/edition label" for the mobile header as well as the
+     desktop one, and it was hidden outright. It is STACKED here rather than
+     shrunk: side by side it pushed the hamburger to x=396 on a 390px viewport,
+     off the header entirely, which is what hiding it was avoiding. Two lines
+     of 15px and 11px sit inside a 60px header with room to spare. */
+  .edicion-cabecera__marca {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1.12;
+  }
+  .edicion-cabecera__edicion {
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
 }
 
 /* Chapter I's statement: it opens the editorial body, at reading size, before
@@ -1741,8 +1805,16 @@ a.edicion-ficha {
   outline: 2px solid var(--edicion-crema);
   outline-offset: 2px;
 }
+/* The skip link travels on a transform, which is the thing §87 drops — but it
+   is also the only cue that it has appeared, so it keeps a 200ms fade. */
 @media (prefers-reduced-motion: reduce) {
-  .edicion-volver { transition-duration: 1ms; }
+  .edicion-volver {
+    transition-property: opacity;
+    transition-duration: var(--t-micro);
+    transform: none;
+  }
+  .edicion-volver:not(:focus-visible) { opacity: 0; }
+  .edicion-volver:focus-visible { opacity: 1; }
 }
 
 /* ===================================================================== §92
@@ -2362,8 +2434,21 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
    The z-index system, as named tokens on the scale the brief specifies.
 
    Section 88's closing line is "Never randomly increase z-index to fix bugs",
-   which is only possible if the layers have names. Every z-index on this page
-   now comes from here. */
+   which is only possible if the layers have names. These are the six the
+   section specifies, at the values it gives.
+
+   THEY ARE THE PAGE'S LAYERS, NOT ITS EVERY z-index, and the earlier version
+   of this comment claimed otherwise. Fourteen raw values survive, and all of
+   them are local stacking inside a component -- a panel over its own scrim, a
+   caption over its own image, a card lifted over its own siblings -- where the
+   number means "above the thing next to me" and a global token would say less
+   than the digit does. The tokens exist for the cross-component decisions,
+   which are the ones that get fixed by guessing a bigger number.
+
+   `--z-media` has no consumer today. It is kept because the band between it
+   and `--z-media-alta` is what the raw values inside components are implicitly
+   working in, and naming the floor of that band is what makes the next
+   cross-component question answerable. */
 :root {
   --z-escena: 0;       /* the cinematic canvas and chapter grounds */
   --z-media: 10;       /* editorial media */

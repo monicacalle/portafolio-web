@@ -210,20 +210,35 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
     // than arriving — "camera settles" in section 21's words.
     const entrada = Math.min(1, p / 0.2);
     const e = 1 - Math.pow(1 - entrada, 3);
-    // Exit ramp: 0 until 70%, 1 at 100%.
-    const salida = Math.max(0, (p - 0.7) / 0.3);
+    /*
+      Exit ramp: 0 until 70%, 1 at 100%, EASED.
+
+      §22's last line is "use cinematic easing even though timeline is scrubbed
+      by scroll", and this was `(p - 0.7) / 0.3` applied raw to position,
+      rotation and scale — a linear ramp, which is the one thing a cinematic
+      exit is not. A cubic in-out gives it a departure and an arrival.
+    */
+    const rampa = Math.max(0, (p - 0.7) / 0.3);
+    const salida =
+      rampa < 0.5 ? 4 * rampa * rampa * rampa : 1 - Math.pow(-2 * rampa + 2, 3) / 2;
 
     const { dollyZ, truckX, pedestalY, giro } = escena.camara;
 
-    // Enter: begins farther from the camera and offset, arrives at rest.
-    // Exit: the group drifts and separates in depth.
-    g.position.z = (1 - e) * -2.2 + salida * dollyZ * 2.4;
-    g.position.x = desplazeRail + (1 - e) * 0.7 + salida * truckX;
-    g.position.y = (1 - e) * -0.35 + salida * pedestalY;
+    /*
+      §22's band is "camera position delta: 5–15% of scene scale", and these
+      numbers were outside it. A scene here is about 12 world units across its
+      deepest axis; the entrance began 2.2 units back (18%) and the exit ran to
+      dollyZ x 2.4, up to 3.6 units (30%). Measured against 12: the entrance is
+      7.5% now and the deepest exit 11%, both inside the band, and the two
+      never overlap — the entrance is spent by 20% and the exit starts at 70%.
+    */
+    g.position.z = (1 - e) * -0.9 + salida * dollyZ * 0.9;
+    g.position.x = desplazeRail + (1 - e) * 0.45 + salida * truckX;
+    g.position.y = (1 - e) * -0.25 + salida * pedestalY;
     g.rotation.z = ((1 - e) * -0.6 + salida * giro) * GRADOS;
     // Depth separation increases on exit: the group scales slightly, which
     // pushes near planes out of frame faster than far ones.
-    const s = 1 + salida * 0.16;
+    const s = 1 + salida * 0.1;
     g.scale.setScalar(s);
   });
 

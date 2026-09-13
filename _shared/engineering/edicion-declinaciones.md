@@ -58,6 +58,12 @@ portfolio. These sections have no equivalent to build.
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
 | 9 | Editions dropdown | The reference's menu switches between separately published editions. There is one of these. A menu that opens to reveal a single item is theatre; the six chapters are in the header, the rail and the hero index instead. |
 | 10 | Search | Six chapters and roughly forty pieces of work is not a corpus to search. **This one is a genuine gap rather than a clean adaptation** — §10 describes a find-and-jump interaction, and the build supplies the jump without the find. |
+| 18 | The rail's middle standfirst, and Terms / Privacy links | The reference's sidebar carries a second line of copy and two legal links. There are no such routes on this site and inventing a Terms page for a personal portfolio would be furniture. The standfirst it would carry is the hero's own `entradilla`, a screen above; repeating it in the rail is the same sentence twice on one viewport. |
+| 20 | A Theatre.js timeline per chapter | `@theatre/core` is installed and Apache-2.0, and it is imported nowhere. The camera moves are hand-written deltas in `lib/edicion/escenas.ts`, which is five scenes of four numbers each — a timeline runtime to hold twenty numbers is machinery for its own sake, and `@theatre/studio`, the part that would make authoring them worth it, is AGPL-3.0 and declined above. The dependency should come out; it is recorded here rather than quietly left in. |
+| 66 | "3D environment should transition toward a brighter technical world" | Chapter VI has no scene at all, which is a different thing from a scene that brightens. §23 sends the closing chapter into the light world and a cinematic ground under contact details would fight it; the brightening is the cut itself. |
+| 81 | A portrait fallback plate per chapter | Each chapter has one landscape plate serving both orientations, repositioned rather than recropped on a phone. A portrait cut per chapter is five more plates from the same sources, and the sources are hers: it is work that should happen, not a decision against it. |
+| 85 | Mobile intro heights varying 70–90svh by content | All six are a flat 70svh below 768px, which is the floor the section gives. The tablet band (110svh) and the desktop band (140svh) are the section's numbers. |
+| 86 | Simplified mobile 3D | The canvas is removed below 1024px rather than simplified, which is the first of §86's six bullets ("switch some scenes entirely to optimized static images") applied to all of them. Tablets between 768 and 1023 get the static path too, although §85 gives them 110svh of intro specifically for 3D choreography. Lower-resolution textures and reduced environmental layers are not built. |
 | 92 | Three of the per-chapter sub-states, and two of the page-level ones | The machine publishes `data-fase` (hero / capitulos), `data-subfase` (intro / editorial) and `data-capitulo`. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
@@ -159,6 +165,18 @@ document link was labelled "Abrir el CV completo" / "Open the full CV" and
 opened the graphic portfolio. Both documents have their own card and their own
 correct destination now, and the "Herramientas y fortalezas" heading sits over
 the tool tags rather than over `contact.tags`, which are the service lines.
+
+**§45 against §97 — the dark beat ends chapter III, and the next chapter is
+dark too.** §97 says "never place cinematic scene after cinematic scene with no
+informational relief". §45 places its second dark beat "near the end" of a
+chapter and then says "once finished, move into Retail" — and §46 opens Retail
+with a dark cinematic intro. The reference does the thing §97 forbids, in the
+section that describes it. This build follows §45, which is the specific
+instruction for this placement, over §97, which is the general rhythm; the beat
+is the last block in chapter III and hands into chapter IV's dark intro. The
+alternative was moving it to the middle of the chapter, which satisfies §97 and
+breaks §45's "near the end", and turns an unexpected second beat into an
+extension of the first.
 
 **§42 — the four states are Vibe's, not Rollouts'.** The section is built:
 `components/edicion/secuencia.tsx`, a pinned stage in chapter IV where four
