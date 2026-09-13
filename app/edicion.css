@@ -1591,9 +1591,15 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
 /* The horizontal scrollers are keyboard-reachable. Chrome does not make an
    overflow container focusable on its own, and the plate walls contain no
    focusable children at all, so the work inside them was unreachable without a
-   pointer. WCAG 2.1.1. */
-[data-carril]:focus-visible,
-.edicion-plancha__marco:focus-visible {
+   pointer. WCAG 2.1.1.
+
+   `.edicion-plancha__marco:focus-visible` used to be grouped here and could
+   never match: the frame has no `tabIndex` and has never had one, and it is
+   `overflow: hidden`, so it is not a scroll container either. It read as a
+   focus affordance §43's demonstration does not have. The plancha IS
+   keyboard-reachable, through its own CTA, which is where the focus ring
+   belongs. */
+[data-carril]:focus-visible {
   outline: 2px solid var(--edicion-acento);
   outline-offset: 3px;
 }
@@ -1667,8 +1673,12 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
 
 /* §72: push out / pop in. The arrow leaves its own container diagonally and
    fades as it goes; a second one enters from the opposite corner and fades in.
-   300ms, inside the section's 250–350 band, and snappier than the card's own
-   hover because §72 says it may be.
+   300ms, inside the section's 250–350 band. §72 says the icon "can be snappier
+   than the card" and here it is not: the two cards this arrow lives on run the
+   same 300ms — the document sheet's image scale, and the plancha's frame and
+   title. The permission is not an obligation, and one duration across a
+   component is the calmer reading; what was wrong was the comment claiming a
+   contrast the file does not have.
 
    This was a 2px nudge of a single glyph, which is none of the four steps the
    section lists. The container is 1em square with overflow hidden, so "out of
@@ -2114,7 +2124,12 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
 .edicion-declaracion.animate-show-media { transition-delay: 0ms; }
 .edicion-ficha.animate-show-media,
 .edicion-video.animate-show-media,
-.edicion-plancha.animate-show-media { transition-delay: 110ms, 110ms, 110ms, 0s; }
+.edicion-plancha.animate-show-media,
+/* Chapter VI's document pair is a copy→media block like the rest and was
+   missing from this list: `.edicion-documentos__titulo` is the copy and the two
+   `.edicion-documento` cards are the media, and all three arrived in the same
+   frame. §42's sequence was already handled; this one was not. */
+.edicion-documento.animate-show-media { transition-delay: 110ms, 110ms, 110ms, 0s; }
 
 /* THE UNCONDITIONAL COPY OF THIS RULE KILLED THE WHOLE REVEAL.
 
@@ -2236,13 +2251,20 @@ a.edicion-ficha {
    by name while IV, V and VI kept their bands. The body is a reading column at
    every width now and clips nothing, so that reason has expired.
 
-   The cuts stay on the intro anyway, and this is the reason that replaces it:
-   the two placements are not equivalent at this width. A scrim hung outside
-   the body's top edge covers the last 101px of the intro, and on a 390x844
-   phone the standfirst's own foot is 89px above that edge — the band would
-   land on the words. On a 1440x900 desktop the same standfirst sits 520px
-   clear of a 108px band, which is why the outside placement is fine there and
-   wrong here: a 70svh intro has no air where a 140svh one has half a screen.
+   The cuts stay on the intro anyway, and the reason is smaller than the one
+   that used to be written here. That version argued the two placements are not
+   equivalent — that a scrim hung outside the body's top edge lands on the
+   standfirst where one attached to the intro's foot does not. They cover the
+   identical region: `.edicion-capitulo` is a flex column with no gap and the
+   body is the intro's immediate sibling, so `intro.bottom` IS `body.top`, and
+   both bands are the same `clamp(90px, 12vh, 190px)` ending at that line. Same
+   pixels, same words underneath.
+
+   What is left is placement hygiene, and it is enough. The body is the element
+   whose overflow behaviour has changed twice in this file's history; the intro
+   is `overflow: clip` and stable. Hanging the mobile cuts off the stable box
+   means the next time something needs to clip the body they do not silently
+   disappear, which is exactly how they disappeared the first time.
 
    So: cut B at the intro's foot, rising into the light body that follows, and
    cut C at its head, arriving out of the light body above. Chapter I is exempt
@@ -2328,12 +2350,6 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    same selector at the same specificity, so it did not add a transition — it
    replaced the colour fade next to it. */
 
-/* ================================================================ §47 / §48
-   The three-part sticky story.
-
-   Three beats of 165svh, each holding a viewport-height block pinned at
-   top: 110px, so the browser scrolls through the parent while the story stays
-   put. The brief's numbers, not approximations of them. */
 /* ============================================================= §47 / §48
    THE STICKY STORY. One artifact, three readings, never reset.
 
@@ -2399,9 +2415,14 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 /*
   THE PINNED BLOCK HAS TO FIT THE VIEWPORT, and between 1024 and ~1150px wide
   it did not. `min-height: calc(100svh - 110px)` is a floor, not a ceiling, and
-  the readings column is the tallest thing in the row: at 1024px wide it is 42%
-  of 1008px, so the third reading — the one carrying §49's five spec rows —
-  wraps to 695px against a 590px stage. Measured at 1024x700 the pinned child
+  the readings column is the tallest thing in the row: it is 42% of the flex
+  row, and at a 1024px viewport that row is the chapter body less the rail and
+  its padding — about 702px, so the column is roughly 295px and the third
+  reading, the one carrying §49's five spec rows, wraps to 695px against a
+  590px stage. (An earlier version of this note put the row at 1008px and the
+  column at 423px, which is the viewport's content width rather than the
+  body's; the overflow it measured is the same, but the number someone would
+  re-derive the 46/54 split from was 44% too wide.) Measured at 1024x700 the pinned child
   spanned y = 110 to 805, 105px below the fold for the whole pin; 18px at
   1100x700; clean from 1152 up. §49's last row reveals inside that overhang, so
   its entire 0→1 ramp played off screen.
@@ -3062,12 +3083,17 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    card lifted over its own siblings — where the number means "above the thing
    next to me" and a global token would say less than the digit does.
 
-   The twelfth is `.edicion-capitulo__intro { z-index: 1 }`, and it is a
-   cross-component relation: it holds the static plate above the canvas, which
-   is `--z-escena: 0`. It stays a raw 1 rather than taking `--z-media`, because
-   the chapter body's two §77 scrims sit at 2 and 3 in the same stacking
-   context and a 10 here would paint the intro over both of them. Named here
-   instead, which is the part that was missing.
+   Two of the twelve are cross-component, and an earlier version of this
+   paragraph named one and got its neighbour's value wrong:
+
+   `.edicion-capitulo__intro { z-index: 1 }` holds the static plate above the
+   canvas, which is `--z-escena: 0`. `.edicion-capitulo__cuerpo::before` and
+   `::after` share `z-index: 3` — both of them, in one declaration; the only
+   §77 scrim at 2 is on the INTRO's pseudo-elements below 1024px, which are
+   children of a z-index: 1 element and therefore in a different stacking
+   context entirely. The intro stays a raw 1 rather than taking `--z-media`
+   because the body's scrims are at 3 in the same context and a 10 would paint
+   the intro over them.
 
    The tokens exist for the cross-component decisions, which are the ones that
    get fixed by guessing a bigger number.

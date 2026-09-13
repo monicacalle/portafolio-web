@@ -176,8 +176,10 @@ function PlanoObra({ plano, vis }: { plano: Plano; vis: number }) {
  *                    increases, background loses dominance
  *
  * Explicitly not a spin: section 21 forbids "spinny 3D showcase" animation and
- * section 22 forbids full rotations, so the only rotation here is a fraction of
- * a degree of roll applied to the group, inside the 1–6 degree band.
+ * section 22 forbids full rotations, so the only rotation is a roll applied to
+ * the group, inside §22's 1–6 degree band — −0.6° on entry to between 1.6° and
+ * 3.2° on exit, per scene. This used to call that "a fraction of a degree",
+ * which is a different claim and not one the numbers support.
  */
 function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
   const grupo = useRef<THREE.Group>(null);
@@ -222,8 +224,13 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
     is 166px at the ilustracion→marca handover and 88px at marca→campana: two
     unrelated compositions at full strength on top of each other, which §94's
     last line rules out by name. Setting both to 0.15 makes the expression
-    negative for any pair of chapters at or above about 1.2 viewport-heights
-    each, and every chapter here is at least 1.9.
+    negative once `hA + hB` reaches `0.7 / 0.15 = 4.67` viewport-heights —
+    about 2.33 each. An earlier version of this note said 1.2, which is half the
+    real bound: at 1.2 each the overlap is still +0.34 vh, and at the 1.9 it
+    cited as the check it is still +0.13 vh. The chapters that have scenes
+    measure 300 / 343 / 375 / 661 / 773 svh, all above 2.33, so the page is
+    clear today — but the number a future reader would shorten a chapter
+    against has to be the true one.
 
     It cannot open a gap either: a scene reaches 0 at p = 1, and at that moment
     the next one's own p is vh / (hB + vh) — 0.23 for the shortest pair, well
@@ -651,14 +658,17 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
   const hecho = useRef<Set<string>>(new Set());
 
   /*
-    §90's Priority 2: "after hero becomes stable, preload the first chapter's
-    scene". The loop below only ever warms ESCENAS[i + 1] from a scene that is
-    already half-played, so ESCENAS[0] could never be warmed by it — the first
-    chapter's textures were requested on arrival, which is the one arrival the
-    reader has no patience for because the hero has just handed over.
+    §90's ladder has four rungs and this covers the first two of them:
+    "Priority 2: Sidekick scene" and "after hero becomes stable: preload
+    Agentic" — the first chapter's scene and the one after it. The comment here
+    used to present those as a single quotation, welding two rungs together and
+    assigning chapter I to both; the effect below then warmed chapter II's
+    scene only once the reader was halfway through chapter I, which is a rung
+    later than §90 asks.
 
     Idle, not immediate: the hero's own retablo and the fonts are what matter
-    for the first paint, and this is explicitly the priority below them.
+    for the first paint, and this is explicitly the priority below them. The
+    loop further down covers the other two rungs, one chapter ahead.
   */
   useEffect(() => {
     // Nothing to warm for a canvas that will not mount. `soportado` now means
@@ -667,15 +677,17 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
     // guard let 184kB of plate through to every phone while this comment said
     // it did not.
     if (!soportado) return;
-    const primera = ESCENAS[0];
-    if (!primera || hecho.current.has(primera.clave)) return;
-    hecho.current.add(primera.clave);
+    const iniciales = ESCENAS.slice(0, 2).filter((e) => !hecho.current.has(e.clave));
+    if (iniciales.length === 0) return;
+    for (const e of iniciales) hecho.current.add(e.clave);
     const calentar = () => {
-      porCalentar(primera).forEach((pl) => {
-        const img = new Image();
-        img.decoding = "async";
-        img.src = pl.src;
-      });
+      iniciales.forEach((e) =>
+        porCalentar(e).forEach((pl) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.src = pl.src;
+        }),
+      );
     };
     const ric = window.requestIdleCallback;
     if (ric) {

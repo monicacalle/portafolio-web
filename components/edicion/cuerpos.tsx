@@ -75,16 +75,6 @@ export function CuerpoIlustracion() {
 }
 
 /**
- * Chapter IV's editorial body, in the brief's own order: section 42's
- * state-to-state sequence first, then section 43's demonstration.
- *
- * They are two different things and the sequence exists because reading 43 as
- * covering both was wrong. The sequence swaps STATES behind a frame that never
- * moves; the planchas PAN one long delivered screen through the same frame.
- * The handover is deliberate too — the sequence ends on the Agenda, and the
- * first plancha is that screen at full length, where it can be read.
- */
-/**
  * The editorial plate wall — brief section 103's `mediaCards`, with its
  * `layout` field.
  *
@@ -193,6 +183,19 @@ export function CuerpoMarca() {
   );
 }
 
+/**
+ * Chapter IV's editorial body, in the brief's own order: section 42's
+ * state-to-state sequence first, then section 43's demonstration.
+ *
+ * They are two different things and the sequence exists because reading 43 as
+ * covering both was wrong. The sequence swaps STATES behind a frame that never
+ * moves; the planchas PAN one long delivered screen through the same frame.
+ * The handover is deliberate too — the sequence ends on the Agenda, and the
+ * first plancha is that screen at full length, where it can be read.
+ *
+ * This block used to sit a hundred lines up, above `ParedDeObras`, which is
+ * none of those things — accurate prose attached to the wrong export.
+ */
 export function CuerpoProducto() {
   const t = useTranslations("edicion");
   return (

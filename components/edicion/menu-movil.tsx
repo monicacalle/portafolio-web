@@ -13,12 +13,15 @@ import { CAPITULOS } from "@/lib/edicion/capitulos";
  * it is `position: fixed`, 784px of a 844px viewport, on #120f0e.
  *
  * This paragraph used to call it "a disclosure, not an overlay… which keeps
- * the chapter you were reading visible behind it", which is neither what it
- * looks like nor what §11 asks for: the section wants the panel to slide down
- * from the header and the six links to stagger in, and says nothing about
- * keeping the page visible. The MECHANISM below is still a disclosure's — a
- * grid-template-rows animation rather than a transform — and that part of the
- * comment was always the useful half.
+ * the chapter you were reading visible behind it", which is not what it looks
+ * like. What §11 actually asks for is the mechanism, not the appearance:
+ * "unfold using layout animation rather than simple display:block",
+ * `grid-template-rows: 0fr → 1fr`, about 300ms, ease-out — and one clause that
+ * rules out the obvious embellishment, "content opacity transitions
+ * simultaneously", so no per-link stagger. The code does all of that; an
+ * earlier correction of this comment credited §11 with a slide and a stagger
+ * it does not ask for and half forbids, which is the kind of note that invites
+ * someone to break a compliant implementation.
  *
  * The open/close animation is grid-template-rows 0fr → 1fr. Animating height to
  * a fixed value means guessing the content's height and being wrong in the other

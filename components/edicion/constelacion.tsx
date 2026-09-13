@@ -41,8 +41,11 @@ import { Modal } from "./primitivas";
  * measurement is the reason: six of those ten sources are 900px or smaller
  * against a modal panel of min(92vw, 1400px), so "see it larger" would show
  * them upscaled up to 1.56x — a control making a promise the file cannot keep.
- * There is 7–11x of her own headroom behind every one of these five and none
- * behind those ten.
+ * There is 6–13x of her own headroom behind every one of these five and none
+ * behind those ten: at 1440 the primary card renders at 312px against a 2000px
+ * file and the smallest at 149px. The "7–11x" this used to claim matched
+ * neither end, and the declinations record the same decision with the right
+ * range.
  */
 /*
   `fase` is each card's offset into section 29's windows, and the numbers matter.

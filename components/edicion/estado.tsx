@@ -62,8 +62,13 @@ const MARGEN_CABECERA = 8;
 
   A single threshold flickers when a marker sits within a pixel or two of the
   line and the scroll oscillates -- which a trackpad does constantly at rest.
-  The incoming chapter has to cross the line by this margin before it takes
-  over, so a boundary is crossed once rather than argued over.
+  The margin goes to the marker that is ALREADY active, not to the incoming
+  one: `umbral` is `linea + HISTERESIS` for the current chapter and a bare
+  `linea` for every other, so a new chapter takes over exactly at the 45% line
+  on the way down and the outgoing one holds 56px longer on the way back up.
+  Either direction gives the dead band §93 asks for; this comment used to
+  describe the opposite asymmetry, which is the one a reader would try to
+  re-derive from it.
 */
 const HISTERESIS = 56;
 
@@ -212,14 +217,17 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
 
         ITS OWN ATTRIBUTE, because it used to overwrite `data-fase` — and END
         is not an alternative to CHAPTER_*, it is something true AT THE SAME
-        TIME as the last chapter. Two stylesheet rules key off the value it was
-        replacing, and one of them matters: `html[data-fase="capitulos"]
-        .edicion-rail__frame { opacity: 0.18 }` against a base of `opacity: 0`
-        with a 700ms transition. So the moment the reader reached chapter VI's
-        body the rail's frame — §17 step 4's "draws in as the morph completes
-        and stays as the rail's edge" — faded to nothing and never came back,
-        for the whole of the closing chapter. `data-fase` stays "capitulos" now
-        and END is `data-final`.
+        TIME as the last chapter. Overwriting it stopped
+        `html[data-fase="capitulos"]` matching, and at the time that selector
+        carried the rail's frame at 0.18 against a base of 0, so the frame —
+        §17 step 4's "draws in as the morph completes and stays as the rail's
+        edge" — faded to nothing the moment the reader reached chapter VI's
+        body and never came back.
+
+        The frame has since moved off `data-fase` entirely: §17's own fix ties
+        it to `--hp` so it draws during the morph rather than a state later.
+        The reasoning for a separate attribute is unchanged and the evidence
+        is now history, which is why it is written as history.
       */
       const ultimo = CAPITULOS[CAPITULOS.length - 1]?.anclaje;
       if (cap === ultimo && raiz.dataset.subfase === "editorial") {
