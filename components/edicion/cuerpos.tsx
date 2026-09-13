@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Ficha } from "./capitulo";
+import { Plancha } from "./plancha";
 
 /**
  * Chapter I's editorial body — the five drawings, each with what she says
@@ -52,6 +53,35 @@ export function CuerpoIlustracion() {
           </p>
         </Ficha>
       ))}
+    </>
+  );
+}
+
+/**
+ * Chapter IV's editorial body — the two apps, demonstrated by her own screens
+ * rather than by a rebuilt mock. See plancha.tsx for why this is not Rive.
+ */
+export function CuerpoProducto() {
+  const t = useTranslations("edicion");
+  return (
+    <>
+      <div className="edicion-declaracion">
+        <p>{t("capitulos.producto.planchasTitulo")}</p>
+      </div>
+      <Plancha
+        src="/edicion/plancha-vibe.avif"
+        ancho={428}
+        alto={3012}
+        titulo={t("capitulos.producto.planchas.vibe.titulo")}
+        nota={t("capitulos.producto.planchas.vibe.nota")}
+      />
+      <Plancha
+        src="/edicion/plancha-voluntee.avif"
+        ancho={375}
+        alto={1471}
+        titulo={t("capitulos.producto.planchas.voluntee.titulo")}
+        nota={t("capitulos.producto.planchas.voluntee.nota")}
+      />
     </>
   );
 }

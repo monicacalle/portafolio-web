@@ -849,3 +849,56 @@ html:not([data-nav-theme]) {
   /* The statement is prose, so it stays out of the snap carousel. */
   .edicion-declaracion { grid-column: auto; scroll-snap-align: start; }
 }
+
+/* ------------------------------------------------------------ las planchas
+   Chapter IV's product demonstrations: her delivered screen travelling through
+   a phone-sized frame, driven by one scroll value. See plancha.tsx for why this
+   is not Rive. */
+.edicion-plancha {
+  grid-column: span 3;
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+@media (max-width: 767px) { .edicion-plancha { grid-column: auto; } }
+
+.edicion-plancha__marco {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 22rem;
+  border-radius: 14px;
+  /* A frame, not a device mockup. A drawn iPhone bezel round someone else's
+     screenshot is the oldest tell in a junior portfolio, and her screens are
+     real, so they do not need a prop to look real. */
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 18px 40px -24px rgba(23, 16, 12, 0.45);
+}
+
+.edicion-plancha__pantalla {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  /* --s is 0 -> 1 across the plancha's travel through the viewport; --recorrido
+     is how much of the capture sits below the frame, computed from its real
+     pixel height in the component so no number is guessed here. */
+  transform: translateY(calc(var(--s, 0) * var(--recorrido) * -1));
+  will-change: transform;
+}
+
+.edicion-plancha__pie h3 { margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 700; }
+.edicion-plancha__pie p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72);
+  max-width: 38ch;
+}
+
+/* Motion off: the screen rests at its top. A still of a real interface is a
+   fair fallback; a blank frame waiting for a scroll value is not. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-plancha__pantalla { transform: none; }
+}

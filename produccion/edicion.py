@@ -192,3 +192,64 @@ for f in ['Untitled_Artwork 3.png', 'Untitled_Artwork 6.png',
           'Untitled_Artwork 8.png']:
     g = fondo(Image.open(os.path.join(ILUS, f)))
     print(f'  {f:26} #{g[0]:02X}{g[1]:02X}{g[2]:02X}')
+
+# ---------------------------------------------------------------- PLANCHAS
+# Chapter IV's product demonstrations.
+#
+# The brief names Rive for these (sections 79 and 105). Rive is out: exporting a
+# .riv needs a paid plan, and the terms for a locally built one are documented
+# nowhere -- an undocumented grant is not a grant. Its runtime is also 882kB
+# gzip before any content, it bakes text out of messages/ and out of ghost, and
+# it draws a blank rectangle with JS off.
+#
+# What replaces it is better than a rebuilt mock: her OWN full-length delivered
+# screens, scrubbed through a phone-sized frame. The moving thing is her work.
+#
+# These are extracted rather than rebuilt for a specific reason. Every proposal
+# wanted a four-phase Vibe state machine -- menstrual, folicular, ovulatoria,
+# lutea -- but only FASE LUTEA exists at high fidelity in the 51-page memoria;
+# the other three are medium-fidelity wireframes on one page. Building that demo
+# would mean writing three phases of health advice about a real product she
+# shipped, under her name. The same rule that governs chapter I forbids it.
+import subprocess, glob, tempfile
+
+def planchas():
+    # (pdf, page, exact height, out name, note)
+    #
+    # The height is EXACT, not a minimum, and for Voluntee that matters. Page 41
+    # holds two tall captures: 375x2085 and 375x1471. The taller one is the
+    # obvious pick and it is the wrong one -- it still carries Lorem ipsum and a
+    # card reading "Reorganizar algo, porque esto es un texto de prueba". Running
+    # placeholder copy full-size and scrubbed on her portfolio would show
+    # unfinished work as finished, which is worse than showing nothing. The
+    # 1471px capture is the delivered Filtros Avanzados screen, complete.
+    fuentes = [
+        ('vibe-app-memoria.pdf',      43, 3012, 'plancha-vibe',     'AGENDA, full scroll'),
+        ('voluntee-app-slides.pdf',   41, 1471, 'plancha-voluntee', 'Filtros avanzados'),
+    ]
+    orig = os.path.join(RAIZ, 'produccion', 'originales')
+    for pdf, pagina, alto_exacto, nombre, nota in fuentes:
+        ruta = os.path.join(orig, pdf)
+        if not os.path.exists(ruta):
+            print(f'  {nombre:20s} SKIP (source not on disk)')
+            continue
+        with tempfile.TemporaryDirectory() as tmp:
+            subprocess.run(['pdfimages', '-f', str(pagina), '-l', str(pagina), '-png',
+                            ruta, os.path.join(tmp, 'x')], check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            mejor = None
+            for f in sorted(glob.glob(os.path.join(tmp, '*.png'))):
+                im = Image.open(f)
+                # Tall and narrow: a scrolling capture, not a page illustration.
+                if im.height == alto_exacto and im.height / im.width > 3:
+                    mejor = im.copy()
+                    break
+            if mejor is None:
+                print(f'  {nombre:20s} SKIP (no {alto_exacto}px capture on p{pagina})')
+                continue
+            # Not upscaled, ever -- the small-art law. 428px is her export width.
+            guardar(mejor, nombre, None, q=58)
+            print(f'  {"":20s} {nota}')
+
+print('\nPLANCHAS — her delivered screens, for chapter IV')
+planchas()

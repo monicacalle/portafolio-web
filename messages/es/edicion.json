@@ -57,7 +57,18 @@
     },
     "producto": {
       "titulo": "PRODUCTO",
-      "entradilla": "Dos aplicaciones, y la investigación que decidió cómo son."
+      "entradilla": "Dos aplicaciones, y la investigación que decidió cómo son.",
+      "planchasTitulo": "El producto que entregué",
+      "planchas": {
+        "vibe": {
+          "titulo": "Vibe · Agenda semanal",
+          "nota": "La pantalla entera tal y como la entregué, no un trozo. Traduce la fase del ciclo en qué priorizar y qué limitar esa semana."
+        },
+        "voluntee": {
+          "titulo": "Voluntee · Filtros avanzados",
+          "nota": "Diez grupos de filtros en una sola pantalla: tipo, categoría, experiencia, organización, días, horario, familia y edad. Nada se esconde detrás de un acordeón."
+        }
+      }
     },
     "impreso": {
       "titulo": "IMPRESO",

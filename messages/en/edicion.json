@@ -57,7 +57,18 @@
     },
     "producto": {
       "titulo": "PRODUCT",
-      "entradilla": "Two apps, and the research that decided what they are."
+      "entradilla": "Two apps, and the research that decided what they are.",
+      "planchasTitulo": "The product I delivered",
+      "planchas": {
+        "vibe": {
+          "titulo": "Vibe · Weekly agenda",
+          "nota": "The whole screen as I delivered it, not a crop. It turns the cycle phase into what to prioritise and what to limit that week."
+        },
+        "voluntee": {
+          "titulo": "Voluntee · Advanced filters",
+          "nota": "Ten filter groups on one screen: type, category, experience, organisation, days, schedule, family and age. Nothing hidden behind an accordion."
+        }
+      }
     },
     "impreso": {
       "titulo": "PRINT",

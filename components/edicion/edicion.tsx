@@ -8,7 +8,7 @@ import { Rail } from "./rail";
 import { Hero } from "./hero";
 import { Capitulo, Ficha } from "./capitulo";
 import { Oficio } from "./oficio";
-import { CuerpoIlustracion } from "./cuerpos";
+import { CuerpoIlustracion, CuerpoProducto } from "./cuerpos";
 
 /**
  * The Edition — the whole homepage.
@@ -74,6 +74,7 @@ function Escena({ anclaje }: { anclaje: string }) {
 function Cuerpo({ anclaje }: { anclaje: string }) {
   if (anclaje === "oficio") return <Oficio />;
   if (anclaje === "ilustracion") return <CuerpoIlustracion />;
+  if (anclaje === "producto") return <CuerpoProducto />;
 
   const OBRAS: Record<string, { src: string; ancho: "completo" | "medio" | "tercio" | "dos-tercios" }[]> = {
     marca: [
@@ -87,13 +88,6 @@ function Cuerpo({ anclaje }: { anclaje: string }) {
       { src: "/cine/a3-ingres.avif", ancho: "tercio" },
       { src: "/trabajo/t-nespresso.avif", ancho: "medio" },
       { src: "/trabajo/t-ilustracion.avif", ancho: "medio" },
-    ],
-    producto: [
-      { src: "/trabajo/t-vibe.avif", ancho: "medio" },
-      { src: "/trabajo/t-voluntee.avif", ancho: "medio" },
-      { src: "/images/iphone.webp", ancho: "tercio" },
-      { src: "/images/vibe.png", ancho: "tercio" },
-      { src: "/images/voluntee.png", ancho: "tercio" },
     ],
     impreso: [
       { src: "/trabajo/t-libro.avif", ancho: "medio" },
