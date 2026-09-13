@@ -22,6 +22,18 @@ import { useEffect } from "react";
  */
 export function Revelar() {
   useEffect(() => {
+    /*
+      Under reduced motion nothing is armed AT ALL, so nothing is ever hidden.
+
+      A CSS override could not carry this: the armed selector is
+      `.animate-show-media[data-armado]:not([data-visible])` at (0,3,0) and any
+      reasonable reduced-motion rule loses to it on specificity, which left
+      three fifths of a chapter's media at opacity 0 for exactly the readers who
+      asked for less movement. Deciding it here means there is no specificity
+      race to lose.
+    */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const objetivos = document.querySelectorAll<HTMLElement>(
       ".animate-show-media:not([data-visible])",
     );
