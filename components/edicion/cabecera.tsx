@@ -18,9 +18,12 @@ import { MenuMovil } from "./menu-movil";
  * ease-out cubic, each item dropping in from minus its own height) is a fixed
  * sequence with no state, so an effect would only add a frame of delay and a
  * flash of the finished position before it starts. Declaring it in CSS also
- * means it is gated by the `.motion` class the layout sets inline before paint —
- * so with reduced motion on, or with JS broken, the header is simply already
- * there, which is the correct fallback rather than a degraded one.
+ * means it is gated by `@media (prefers-reduced-motion: no-preference)` and by
+ * nothing else — this used to say "the `.motion` class the layout sets inline
+ * before paint", which has not existed since the flag was removed for being
+ * stripped by hydration. With reduced motion on, or with JS broken, the header
+ * is simply already there, which is the correct fallback rather than a
+ * degraded one.
  */
 export function Cabecera() {
   const t = useTranslations("edicion");

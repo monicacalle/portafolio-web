@@ -52,7 +52,12 @@
    A gradient does not interpolate; a COLOUR inside one does, once it is
    registered with a syntax the engine can parse. So the token is the veil's
    top colour rather than the whole gradient, the gradient is built where it is
-   used, and both grounds cross-fade. */
+   used. THE HEADER'S VEIL CROSSES OVER; the rail's ground does not, and that
+   is deliberate — see the note on `.edicion-rail`, which measured 1.24:1
+   halfway through a cross-fade between light type on a dark ground and dark
+   type on a light one. The registration still earns its place there: it is
+   what makes the value a colour `color-mix()` can parse. This sentence used to
+   say "both", which the rail's own comment contradicts outright. */
 @property --edicion-velo {
   syntax: "<color>";
   inherits: true;
@@ -264,10 +269,15 @@ html:not([data-nav-theme]) {
    drops into place. The stagger is the reference's, measured: 500ms for the
    brand then 40ms per item. --i carries the index from the component.
 
-   Gated on .motion, which the layout's inline script adds before paint ONLY
-   when reduced motion is off. So this is opt-in animation over a finished
-   header, not a hidden header waiting for JS -- if the script never runs, the
-   header is simply already in place. */
+   Gated on `@media (prefers-reduced-motion: no-preference)` and nothing else.
+   This used to say ".motion, which the layout's inline script adds before
+   paint", and there is no such script and no such class: the flag was removed
+   because React owns <html> and hydration strips it about 10ms into every
+   load, which `app/[locale]/layout.tsx` records in as many words. The
+   CONCLUSION was right and is still right — the animation is opt-in over a
+   finished header rather than a hidden header waiting for JS — because the
+   start state is `animation-...: backwards` inside a media query, so with the
+   query unmatched the header is simply already in place. */
 @media (prefers-reduced-motion: no-preference) {
   .edicion-cabecera [style*="--i"] {
     animation: edicion-entrada var(--t-entrada) var(--ease-salida) backwards;
@@ -2128,7 +2138,7 @@ a.edicion-ficha {
   Three things on this page are pressable cards, and each gets §71's rules
   where its own section does not already say otherwise:
 
-    .edicion-plancha      the two case studies      image scale + CTA arrow
+    .edicion-plancha      the two case studies      frame depth + CTA arrow
     .edicion-documento    the portfolio and the CV  see its own block above
     .edicion-carta        the five drawings         §30's 4-7%, not §71's 1.5%
 
@@ -3012,13 +3022,23 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    which is only possible if the layers have names. These are the six the
    section specifies, at the values it gives.
 
-   THEY ARE THE PAGE'S LAYERS, NOT ITS EVERY z-index, and the earlier version
-   of this comment claimed otherwise. Fourteen raw values survive, and all of
-   them are local stacking inside a component -- a panel over its own scrim, a
-   caption over its own image, a card lifted over its own siblings -- where the
-   number means "above the thing next to me" and a global token would say less
-   than the digit does. The tokens exist for the cross-component decisions,
-   which are the ones that get fixed by guessing a bigger number.
+   THEY ARE THE PAGE'S LAYERS, NOT ITS EVERY z-index. Twelve raw values
+   survive: eleven in this file and one inline in `secuencia.tsx`, where the
+   number is the state's own index. This paragraph used to say fourteen, and
+   used to say all of them were local stacking inside a component. Eleven of
+   the twelve are — a panel over its own scrim, a caption over its own image, a
+   card lifted over its own siblings — where the number means "above the thing
+   next to me" and a global token would say less than the digit does.
+
+   The twelfth is `.edicion-capitulo__intro { z-index: 1 }`, and it is a
+   cross-component relation: it holds the static plate above the canvas, which
+   is `--z-escena: 0`. It stays a raw 1 rather than taking `--z-media`, because
+   the chapter body's two §77 scrims sit at 2 and 3 in the same stacking
+   context and a 10 here would paint the intro over both of them. Named here
+   instead, which is the part that was missing.
+
+   The tokens exist for the cross-component decisions, which are the ones that
+   get fixed by guessing a bigger number.
 
    `--z-media` has no consumer today. It is kept because the band between it
    and `--z-media-alta` is what the raw values inside components are implicitly

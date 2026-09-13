@@ -67,7 +67,7 @@ portfolio.
 | 75 | Product / merch modal | There is no merchandise. |
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
 | 9 | Editions dropdown | The reference's menu switches between separately published editions. There is one of these. A menu that opens to reveal a single item is theatre; the six chapters are in the header, the rail and the hero index instead. |
-| 18 | The rail's middle standfirst, and Terms / Privacy links | The reference's sidebar carries a second line of copy and two legal links. There are no such routes on this site and inventing a Terms page for a personal portfolio would be furniture. The standfirst it would carry is the hero's own `entradilla`, a screen above; repeating it in the rail is the same sentence twice on one viewport. |
+| 18 | The rail's middle standfirst, Terms / Privacy links, and the index inside the frame | The reference's sidebar carries a second line of copy and two legal links. There are no such routes on this site and inventing a Terms page for a personal portfolio would be furniture. The standfirst it would carry is the hero's own `entradilla`, a screen above; repeating it in the rail is the same sentence twice on one viewport. The third is a composition call and it is measured: §18 asks for the "navigation composition centered vertically inside a roughly 340:464 frame", and only the wordmark is inside it. At 1440x900 the frame occupies y 66→405 and the chapter index y 669→845, so the six chapters sit 264px below its foot; at 1280x768, 537→713 against a frame ending at 339. The frame is the right ratio and the right place — it is §17 step 4's endpoint, the thing the hero's wordmark morphs into — and filling it with the index would mean either shrinking a 100svh rail's navigation into its top third or floating the index in the vertical middle of the column, where it crosses whatever artwork is behind it. The index is pushed to just above the legal line instead, which is what the live reference does (referencia-shopify.md) and what keeps the upper rail open for the morph to land in. |
 | 66 | "3D environment should transition toward a brighter technical world" | Chapter VI has no scene at all, which is a different thing from a scene that brightens. §23 sends the closing chapter into the light world and a cinematic ground under contact details would fight it; the brightening is the cut itself. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
@@ -84,7 +84,7 @@ These could be built on this content. Each row says what was weighed.
 | 86 | A distinct mobile 3D build | Five of §86's six bullets are met and the sixth has nothing to simplify. "Switch some scenes entirely to optimized static images" is applied to ALL of them: the canvas is removed below 1024px, which is also why tablets between 768 and 1023 get the static path although §85 gives them 110svh of intro for 3D choreography. "Preserve DOM product animations" and "retain dark/light chapter transitions" hold at every width. "Use lower-resolution textures" and "reduce environmental layers" are built, but on the low end of the range where the canvas actually runs rather than on a phone — the background plates are capped at a 512px long edge (55.7–58.1 dB against the originals, 24.69 MiB of VRAM down to 3.68) and every plane marked `ambiental` stops rendering when the adaptive DPR verdict drops to 1. "Simplify 3D objects" has no content here: every object in the scene is one quad. What is genuinely NOT built is a second, separate mobile scene graph, and the reason is that there is no mobile scene graph at all to simplify. |
 | 1 | Step 2 of §1.1's grammar, "text begins to leave" | Six of the seven steps are built; this is the one that is not. The chapter title enters (step 6) and never exits. The reason is §78, which is the section that governs the thing an exit would have to animate: it calls the light editorial blocks "a breathing mechanism" and warns against scroll-scrubbing them, so `Revelar` unobserves after revealing and NOTHING on this page animates on the way out. An exit for the chapter titles alone would be the only outbound animation in the build, and it would run on a title the reader has already scrolled past — a second scrubbed value per chapter, six of them, for a moment nobody is looking at. What §1.1 is protecting, "never make each section look like an independent rectangular webpage module", is carried by steps 3, 4 and 5: §77's three scrubbed cuts, which are what actually dissolve one chapter into the next. |
 | 32 | An action on the ten plate-wall cards (the other half of §32 is built) | Title and description are built everywhere. So is the action, on every card that has somewhere to go: the planchas, the two documents, and — since the §30 work — the five constellation cards, which open her own painting at 2000px. The ten plate-wall cards in chapters II, III and V get none, and the file sizes are the reason. The shared modal panel is `min(92vw, 1400px)` wide. Six of the ten sources are 900 × 640, so "see it larger" would put them on screen at 1.56x upscale; a seventh, the Isabella poster, is 596px wide and would sit at 2.35x. They would be bigger and visibly worse — a control that promises more detail and delivers interpolation. Behind each of the five constellation cards there is a 2000px file against a card that renders at 146–307px, which is 7–14x of real headroom and no upscale at any viewport. The split is by whether the pixels exist, not by which chapter the card is in. |
-| 92 | Three of the per-chapter transitional sub-states | The machine publishes `data-fase` (hero / capitulos / fin), `data-subfase` (intro / editorial, carried explicitly by each block rather than inferred from its colour) and `data-capitulo`. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
+| 92 | Three of the per-chapter transitional sub-states | The machine publishes `data-fase` (hero / capitulos), `data-final` for END, `data-subfase` (intro / editorial, carried explicitly by each block rather than inferred from its colour) and `data-capitulo`. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
 
 ---
 
@@ -103,8 +103,14 @@ would put shapes on her page that are not hers. AVIF textures over
 ### `@theatre/studio`
 
 AGPL-3.0-only, in a public repository with no licence of its own. It is the
-dev-only editor and nothing here needs it. `@theatre/core` is Apache-2.0 and
-installed.
+dev-only editor and nothing here needs it.
+
+`@theatre/core` is Apache-2.0, so the licence was never the reason it went —
+and it has gone. This paragraph used to end "and installed", contradicting the
+§20 row twenty-three lines above it, which records that it was imported nowhere
+for the whole build and removed rather than left in a public repository as a
+dependency nothing uses. `grep -rn theatre package.json pnpm-lock.yaml` returns
+nothing.
 
 ---
 
@@ -126,9 +132,13 @@ stacked pseudo-elements cross-fading" — true of gradients, and beside the
 point: a COLOUR inside a gradient interpolates perfectly well once it is
 registered with `@property { syntax: "<color>" }`. The veil is one now, the
 gradient is built where it is used, and it crosses over in 300ms, which is the
-number §8 asks for. The same registration fixed the rail's ground, which was
-snapping from #120f0e to #f4f2f0 while the type it carries faded across on its
-own timing. Two defects turned up underneath: `transition: background-image
+number §8 asks for. The same registration was applied to the rail's ground and then
+deliberately NOT transitioned: light type on a dark ground going to dark type
+on a light one passes through equal luminance, and sampling every frame the
+contrast between them bottomed out at 1.24:1 at 68ms. The rail's ground and its
+type swap in one frame, which is the one arrangement with no window in it. The
+registration still earns its place there — it is what makes the token a colour
+`color-mix()` can parse. Two defects turned up underneath: `transition: background-image
 300ms` had been decorative for the whole build, because `background-image` is
 not an animatable property, and a second `.edicion-rail { transition: opacity }`
 nine hundred lines below the first had been silently replacing the rail's

@@ -18,7 +18,7 @@ import { CTA } from "./primitivas";
  *
  * What replaces it is not a rebuilt mock of her work; it IS her work. These are
  * the full-length scrolling captures embedded in her own delivered decks —
- * 428×3012 of the Vibe AGENDA, 375×2085 of Voluntee's filter flow — moving
+ * 428×3012 of the Vibe AGENDA, 375×1471 of Voluntee's filter flow — moving
  * through a frame. Nothing is redrawn, so nothing can drift from what she
  * actually shipped, and the fidelity problem every alternative had disappears.
  *

@@ -15,10 +15,13 @@ import { useEffect } from "react";
  * scroll-scrubbing every sentence, so these reveal once and then stay put
  * rather than animating again on the way back up.
  *
- * The class is added by CSS-less markup and the initial hidden state is gated
- * on `.motion`, so with JS broken or motion reduced everything is simply
- * visible -- the same progressive-enhancement contract the rest of the site
- * uses.
+ * The hidden state is gated on `data-armado`, which this component writes per
+ * element, so with JS broken everything is simply visible — the same
+ * progressive-enhancement contract the rest of the site uses. This paragraph
+ * used to say `.motion`, a global class on <html>, and the comment twelve
+ * lines below it already explains why that was removed: React owns <html> and
+ * hydration strips the flag. Two accounts of the same gate in one file, one of
+ * them describing code that no longer exists.
  */
 export function Revelar() {
   useEffect(() => {

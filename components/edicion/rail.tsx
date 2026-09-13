@@ -7,10 +7,18 @@ import { useEdicion } from "./estado";
 /**
  * The desktop story rail — the left 20% of the composition.
  *
- * Art direction, not a dashboard sidebar (brief section 18). It keeps its own
- * dark panel even when the main column turns light editorial, which is what the
- * live reference does and what stops the page reading as a document with a nav
- * bolted to it.
+ * Art direction, not a dashboard sidebar (brief section 18). It carries its own
+ * ground rather than depending on the artwork behind it — four of the five hero
+ * plates are light, and type on a ground of unknown value is a coin toss.
+ *
+ * THAT GROUND SWITCHES WITH THE BLOCK UNDER IT. This used to say the rail
+ * "keeps its own dark panel even when the main column turns light editorial,
+ * which is what the live reference does" — true of the reference, and the
+ * opposite of what §5 asks for: "the global header AND DESKTOP SIDEBAR must
+ * automatically switch foreground colour according to the underlying content."
+ * Both the type and the ground read the theme now, so the rail is dark over the
+ * cinematic world and cream over the editorial one. Anyone acting on the old
+ * sentence would put §5 back into failure.
  *
  * The dotted leader between a chapter name and its Roman numeral is a table-of-
  * contents device lifted straight off a printed book, and it is the one piece of
