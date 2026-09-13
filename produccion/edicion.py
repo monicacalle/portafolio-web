@@ -343,3 +343,79 @@ def pelicula():
 
 print('\nLA PELICULA — the Ceguera poster at street scale')
 pelicula()
+
+
+# ---------------------------------------------------------------- PLANOS 3D
+# The depth planes for the persistent canvas (brief sections 20-22).
+#
+# The brief asks for GLB foreground models over KTX2 backgrounds. Her work is
+# painted illustration, print and app screens -- there is no mesh to export, and
+# inventing one would put geometry on the page that is not hers. So the
+# foreground "models" are alpha-cut planes of her own artwork standing at real
+# depths in the scene. The camera dollies and trucks through them per section
+# 22, and because the separation is REAL depth rather than 2D offset, section
+# 21's exit move ("depth separation increases") actually happens.
+#
+# Backgrounds are her own grounds, blurred and darkened: section 21 says the
+# environmental background "loses dominance" on exit, which only reads if it was
+# never competing with the foreground in the first place.
+from PIL import ImageFilter, ImageEnhance
+
+def _alfa_por_fondo(im, tol=20):
+    """Alpha from a flood fill at the border. See the ceguera cut for why this
+    is not a colour-distance threshold: interior areas that happen to match the
+    ground are part of the subject, not holes."""
+    from PIL import ImageDraw
+    rgb = im.convert('RGB')
+    d = np.abs(np.asarray(rgb).astype(np.int16) - np.array(fondo(rgb))).sum(axis=2)
+    m = Image.new('L', (rgb.width + 2, rgb.height + 2), 255)
+    m.paste(Image.fromarray(((d <= tol).astype(np.uint8) * 255), 'L'), (1, 1))
+    ImageDraw.floodfill(m, (0, 0), 128, thresh=0)
+    fuera = np.asarray(m)[1:-1, 1:-1] == 128
+    out = np.dstack([np.asarray(rgb).astype(np.uint8),
+                     np.where(fuera, 0, 255).astype(np.uint8)])
+    return Image.fromarray(out, 'RGBA')
+
+
+def _fondo_escena(im, ancho, desenfoque, oscurecer):
+    """A background plate: blurred and darkened so it recedes."""
+    im = im.convert('RGB')
+    if im.width > ancho:
+        im = im.resize((ancho, round(im.height * ancho / im.width)), Image.LANCZOS)
+    im = im.filter(ImageFilter.GaussianBlur(desenfoque))
+    return ImageEnhance.Brightness(im).enhance(oscurecer)
+
+
+print('\nPLANOS 3D — depth planes for the persistent canvas')
+
+D = os.path.join(RAIZ, 'produccion', 'fuentes', 'drive')
+
+# I ILUSTRACION. Foreground is the copper-hair plane already cut for the film;
+# background is her sage-olive ground, softened.
+_a3 = Image.open(os.path.join(ILUS, 'Untitled_Artwork 3.png'))
+guardar(_alfa_por_fondo(_a3), 'plano-i-fg', 1200, q=58)
+guardar(_fondo_escena(_a3, 1400, 26, 0.55), 'plano-i-bg', 1400, q=48)
+
+# II MARCA. Foreground is the Raiz site photograph; background is her Esmeralda
+# pine, blurred to a field.
+_raiz = Image.open(os.path.join(RAIZ, 'public', 'images', 'mockupraiz.png'))
+guardar(_raiz.convert('RGB'), 'plano-ii-fg', 1400, q=56)
+_esm = Image.open(os.path.join(D, '01-branding/vina-esmeralda/Sunlit Courtyard View.png'))
+guardar(_fondo_escena(_esm, 1400, 30, 0.5), 'plano-ii-bg', 1400, q=48)
+
+# III CAMPANA. The marquesina itself as the environment: the chapter's claim is
+# street scale, so the background IS the street.
+Image.MAX_IMAGE_PIXELS = None
+_marq = Image.open(os.path.join(D, '02-campana/marquesina/marquesina.jpg'))
+guardar(_fondo_escena(_marq, 1400, 22, 0.42), 'plano-iii-bg', 1400, q=48)
+
+# IV PRODUCTO. Her Vibe deck's own dark ground.
+_vibe = Image.open(os.path.join(RAIZ, 'public', 'cine', 'a2-vibe.avif'))
+guardar(_fondo_escena(_vibe, 1200, 28, 0.45), 'plano-iv-bg', 1200, q=48)
+
+# V IMPRESO. Foreground is the open printed portfolio; background is the
+# Plakatstil poster, her burnt orange.
+_port = Image.open(os.path.join(RAIZ, 'public', 'images', 'portafolioabierto.png'))
+guardar(_port.convert('RGB'), 'plano-v-fg', 1400, q=56)
+_plak = Image.open(os.path.join(D, '02-campana/plakatstil/POSTER_ANVERSO.png'))
+guardar(_fondo_escena(_plak, 1400, 26, 0.5), 'plano-v-bg', 1400, q=48)

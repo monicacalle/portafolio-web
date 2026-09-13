@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
 import { EstadoEdicion } from "./estado";
 import { Espina } from "./espina";
+import { Lienzo } from "./lienzo";
 import { Cabecera } from "./cabecera";
 import { Rail } from "./rail";
 import { Hero } from "./hero";
@@ -27,6 +28,7 @@ export function Edicion() {
     <EstadoEdicion>
       <Espina />
       <div className="edicion">
+        <Lienzo />
         <Cabecera />
         <Rail />
 

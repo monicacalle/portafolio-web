@@ -1145,3 +1145,58 @@ html:not([data-nav-theme]) {
   .edicion-geometria__g * { stroke-dashoffset: 0; }
   .edicion-geometria { opacity: 0.18; }
 }
+
+/* ------------------------------------------------- el lienzo persistente
+   Brief section 20: ONE fixed WebGL canvas, created once and never destroyed.
+   It sits BEHIND the static plates, not instead of them -- section 81 requires
+   every cinematic chapter to keep a static fallback that "is not a broken
+   state", so the plates are the floor and the canvas is the ceiling.
+
+   Section 82: starts at opacity 0, crossfades to 1 over ~700ms once the first
+   stable frame is ready, and never shows a black flash. Because it fades in
+   OVER a complete page rather than over black, there is nothing to flash. */
+.edicion-lienzo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease-in-out;
+}
+.edicion-lienzo[data-listo] { opacity: 1; }
+
+/* The chapter intros sit above the canvas; their plates stay as the fallback
+   underneath and fade back as the live scene takes over. */
+.edicion-capitulo__intro { z-index: 1; }
+html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0.18; }
+.edicion-capitulo__escena img { transition: opacity 700ms ease-in-out; }
+
+/* Section 86: mobile switches scenes entirely to optimized static images.
+   The brief permits this explicitly -- "switch some scenes entirely to
+   optimized static images" -- and it is also the honest call on a phone GPU. */
+@media (max-width: 1023px) {
+  .edicion-lienzo { display: none; }
+}
+
+/* Section 87: with reduced motion there is no canvas at all. The static
+   fallback is the page. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-lienzo { display: none; }
+}
+
+/* The chapter intro paints an opaque ground (--cap-fondo) at z-index 1, which
+   sat directly on top of the persistent canvas and hid every scene behind a
+   flat colour. Once the canvas has a stable frame the ground steps aside: the
+   scene's own background plane carries the chapter colour instead, which is
+   what section 20 means by the scene owning the environment.
+
+   It does NOT simply become transparent -- a trace stays, so the chapter colour
+   still reads during the 700ms crossfade and at the seams where the scene's
+   background plane does not reach the viewport edge. */
+html[data-lienzo="activo"] .edicion-capitulo__intro {
+  background: color-mix(in srgb, var(--cap-fondo) 22%, transparent);
+}
+.edicion-capitulo__intro { transition: background-color 700ms ease-in-out; }
+
+/* Same for the hero: its own near-black would otherwise sit over the canvas. */
+html[data-lienzo="activo"] .edicion-hero { background: transparent; }
