@@ -632,11 +632,17 @@ html:not([data-nav-theme]) {
        edicion.py stays the single source of truth for the layout.
 
        62% leaves the label's column (rail + gutter + 19rem ≈ 664px) clear. */
+    /* bottom: auto matters. The base rule uses `inset: 0`, so bottom: 0 was
+       still in force here and fought the aspect-ratio -- the stage came out
+       1066px wide when this says 54% of 1680, which is 907. Every attempt to
+       balance the label column against the art was working from a width the
+       CSS was not actually producing. */
     left: auto;
     right: 0;
     top: 50%;
+    bottom: auto;
     transform: translateY(-50%);
-    width: 64%;
+    width: 52%;
     aspect-ratio: 1680 / 1050;
     height: auto;
   }
@@ -1498,3 +1504,77 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   max-width: 62ch;
 }
 @media (max-width: 767px) { .edicion-lista { grid-column: auto; } }
+
+/* ===================================================================== §16
+   The hero title as artwork, not a heading.
+
+   Section 16: "Large enough to behave like imagery. Treat the title as custom
+   vector artwork rather than a normal centered H1." It was 54px in a 252px
+   column while a chapter H2 was 141px -- the page's own title was a quarter the
+   size of every chapter's. Sized to its column now, and the column widened to
+   carry it.
+
+   Entrance per the section: opacity up, scale 0.96 -> 1, groups arriving on
+   40-80ms offsets, movement quiet. Gated on .motion so it is simply present
+   with JS broken or motion reduced. */
+/* The label column and the retablo are sized against each other: the title is
+   now artwork-scale, so the column has to carry it AND still clear the art.
+   Checked in the browser, not judged -- frame right edge vs first panel left. */
+@media (min-width: 1024px) {
+  .edicion-hero__marco { width: min(25rem, 31vw); }
+}
+.edicion-hero__titulo {
+  font-size: clamp(2.6rem, 5.6vw, 5.4rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.motion .edicion-hero__titulo > span {
+  animation: edicion-titulo-entra 620ms var(--ease-cine) backwards;
+}
+/* 40-80ms offsets between groups. */
+.motion .edicion-hero__titulo > span:nth-child(1) { animation-delay: 620ms; }
+.motion .edicion-hero__titulo > span:nth-child(2) { animation-delay: 680ms; }
+.motion .edicion-hero__titulo > span:nth-child(3) { animation-delay: 740ms; }
+
+@keyframes edicion-titulo-entra {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edicion-hero__titulo > span { animation: none; }
+}
+
+/* ===================================================================== §8
+   The header veil transitions over 300ms.
+
+   background-image is a DISCRETELY animated property -- it snaps. Measured at a
+   theme boundary: the gradient was already fully swapped while the foreground
+   colour was still mid-interpolation. Section 8 asks for the gradient opacity
+   to transition over ~300ms, so it moves to a pseudo-element whose OPACITY
+   animates, which is a continuous property. */
+.edicion-cabecera { background-image: none; }
+.edicion-cabecera::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--edicion-nav-velo);
+  opacity: 1;
+  transition: opacity var(--t-menu) var(--ease-salida);
+}
+html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
+
+/* ===================================================================== §2
+   The 1680px canvas cap, applied rather than merely declared.
+
+   --edicion-lienzo was defined and referenced nowhere, so at 2400px wide the
+   rail measured 14% instead of 20% and the composition had no maximum. */
+@media (min-width: 1681px) {
+  .edicion-capitulo > *,
+  .edicion-capitulo__cuerpo {
+    max-width: calc(var(--edicion-lienzo) - var(--edicion-rail));
+    margin-inline-end: auto;
+  }
+  .edicion-rail { left: max(0px, calc((100vw - var(--edicion-lienzo)) / 2)); }
+}
