@@ -33,9 +33,33 @@ import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gat
  *  a position restored a week later is not where the reader was. */
 const GUARDADO = "edicion:scroll";
 
-function ScrollToTop() {
+/**
+ * Rendered in BOTH branches, with and without Lenis.
+ *
+ * It used to live only inside `ReactLenis`, which is not mounted under reduced
+ * motion — so exactly the readers who need a page to stay where they put it got
+ * neither §84's restoration nor the fragment's settle re-issue. `useLenis`
+ * returns undefined outside its provider rather than throwing, so the same
+ * component covers both by falling back to the native scroller.
+ */
+function Aterrizaje() {
   const lenis = useLenis();
   const pathname = usePathname();
+  /* One mover for both worlds: Lenis when it is there, the browser when it is
+     not. `behavior: auto` because both branches are landings, not journeys. */
+  const irA = (destino: HTMLElement | number) => {
+    if (lenis) {
+      lenis.scrollTo(destino, { immediate: true });
+      return;
+    }
+    if (typeof destino === "number") {
+      window.scrollTo({ top: destino, behavior: "auto" });
+    } else {
+      const y = destino.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: y, behavior: "auto" });
+    }
+  };
+  const posicion = () => (lenis ? lenis.scroll : window.scrollY);
   /* Set by popstate, which fires before React re-renders, so the landing
      effect below can tell a back/forward navigation from a fresh one. */
   const volviendo = useRef(false);
@@ -57,21 +81,27 @@ function ScrollToTop() {
     Lenis that is asked for it — `window.scrollY` lags its animated value.
   */
   useEffect(() => {
-    if (!lenis) return;
     const clave = `${GUARDADO}:${pathname}`;
-    return () => {
+    const guardar = () => {
       try {
-        sessionStorage.setItem(clave, String(Math.round(lenis.scroll)));
+        sessionStorage.setItem(clave, String(Math.round(posicion())));
       } catch {
         // Private mode, quota, a browser that has none. Losing the position is
         // the old behaviour, which is survivable; throwing here is not.
       }
     };
+    /* `pagehide` as well as the cleanup: a same-tab external link or a closed
+       tab never runs a React cleanup, and those are the two ways a reader most
+       often leaves a page they intend to come back to. */
+    window.addEventListener("pagehide", guardar);
+    return () => {
+      window.removeEventListener("pagehide", guardar);
+      guardar();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, lenis]);
 
   useEffect(() => {
-    if (!lenis) return;
-
     // A hash is an explicit request for somewhere else on the page -- the
     // "volver a proyectos" link is /#projects, and the header's chapter jumps
     // are /#producto and its five siblings.
@@ -82,8 +112,13 @@ function ScrollToTop() {
         destino = document.querySelector(hash);
       } catch {
         // A fragment that is not a valid selector is not ours to honour.
+        volviendo.current = false;
         return;
       }
+      /* Cleared here too. It used to survive the hash branch, so a popstate
+         that did not change the pathname left the flag armed and the NEXT
+         forward navigation restored a position nobody asked for. */
+      volviendo.current = false;
       if (!destino) return;
 
       /*
@@ -101,7 +136,7 @@ function ScrollToTop() {
         has said where they want to be, and yanking them back to the anchor a
         second later is worse than landing 200px off.
       */
-      const ir = () => lenis.scrollTo(destino as HTMLElement, { immediate: true });
+      const ir = () => irA(destino as HTMLElement);
       ir();
 
       let cancelado = false;
@@ -135,14 +170,20 @@ function ScrollToTop() {
 
     if (volviendo.current) {
       volviendo.current = false;
-      const guardado = Number(sessionStorage.getItem(`${GUARDADO}:${pathname}`));
+      let guardado = NaN;
+      try {
+        guardado = Number(sessionStorage.getItem(`${GUARDADO}:${pathname}`));
+      } catch {
+        // See above: no storage is survivable, a throw here is not.
+      }
       if (Number.isFinite(guardado) && guardado > 0) {
-        lenis.scrollTo(guardado, { immediate: true });
+        irA(guardado);
         return;
       }
     }
 
-    lenis.scrollTo(0, { immediate: true });
+    irA(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, lenis]);
 
   return null;
@@ -168,7 +209,14 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     () => false,
   );
 
-  if (reduced) return <>{children}</>;
+  if (reduced) {
+    return (
+      <>
+        <Aterrizaje />
+        {children}
+      </>
+    );
+  }
 
   return (
     <ReactLenis
@@ -189,7 +237,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         anchors: true,
       }}
     >
-      <ScrollToTop />
+      <Aterrizaje />
       {children}
     </ReactLenis>
   );

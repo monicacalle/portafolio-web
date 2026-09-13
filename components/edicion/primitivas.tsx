@@ -54,15 +54,12 @@ export function Modal({
   etiqueta: string;
   etiquetaCerrar: string;
   onCerrar: () => void;
-  /** Called once the entrance has finished, for anything that should not start
-   *  during it — §26: "playback begins when transition ends". */
-  onAbierto?: () => void;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   /* §26: "close: reverse". A React unmount is instantaneous, so the exit needs
-     a state of its own — the dialog stays in the top layer for one more
-     transition while the panel scales back down and the backdrop fades. */
+     a state of its own — the dialog stays OPEN and in the top layer for one
+     more transition while the panel scales back down and the backdrop fades. */
   const [cerrando, setCerrando] = useState(false);
   const salida = useRef<number | null>(null);
 
@@ -80,11 +77,26 @@ export function Modal({
     };
   }, []);
 
-  // <dialog> fires `close` for Escape as well as for close(), so one handler
-  // covers both routes out and the parent's state cannot drift from the DOM's.
-  const alCerrar = useCallback(() => {
+  /*
+    EVERY ROUTE OUT GOES THROUGH HERE, and the dialog is not closed until the
+    exit has played.
+
+    The first version listened for the dialog's own `close` event and set the
+    exit state from it, which never worked: `close` fires AFTER the browser has
+    removed the `open` attribute and taken the element out of the top layer, so
+    `.edicion-modal[open][data-cerrando]` could not match and `::backdrop` had
+    no box to paint into. Worse, `.edicion-modal { display: grid }` outranks the
+    user-agent's `dialog:not([open]) { display: none }`, so what actually
+    happened was a full-viewport non-modal dialog left painted, with the video
+    still playing inside it, for the whole 320ms hold.
+  */
+  const cerrar = useCallback(() => {
+    if (salida.current !== null) return;
     setCerrando(true);
-    salida.current = window.setTimeout(onCerrar, MODAL_MS);
+    salida.current = window.setTimeout(() => {
+      ref.current?.close();
+      onCerrar();
+    }, MODAL_MS);
   }, [onCerrar]);
 
   return (
@@ -93,20 +105,21 @@ export function Modal({
       className="edicion-modal"
       {...(cerrando ? { "data-cerrando": "" } : {})}
       aria-label={etiqueta}
-      onClose={alCerrar}
+      // Escape asks to close; the browser's default would close it instantly,
+      // so the request is taken over and answered with the exit above.
+      onCancel={(e) => {
+        e.preventDefault();
+        cerrar();
+      }}
       // Clicking the backdrop closes it. The dialog element itself IS the
       // backdrop, so a click whose target is the dialog rather than its
       // contents is a backdrop click.
       onClick={(e) => {
-        if (e.target === ref.current) ref.current?.close();
+        if (e.target === ref.current) cerrar();
       }}
     >
       <div className="edicion-modal__panel">{children}</div>
-      <button
-        type="button"
-        className="edicion-modal__cerrar"
-        onClick={() => ref.current?.close()}
-      >
+      <button type="button" className="edicion-modal__cerrar" onClick={cerrar}>
         {etiquetaCerrar}
       </button>
     </dialog>

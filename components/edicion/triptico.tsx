@@ -58,8 +58,17 @@ const ESPECIFICACIONES = ["sangre", "perfil", "tinta", "tipo", "prueba"] as cons
 
 /**
  * Where each reading arrives and leaves, as a share of the triptych's own
- * scroll. Thirds, with the swap happening inside a tenth of the travel so two
- * paragraphs are never legible on top of one another.
+ * scroll. Thirds, with the swap inside a tenth of the travel.
+ *
+ * THE TWO RAMPS ARE STAGGERED INSIDE THAT TENTH, and the first version of this
+ * was not: reading 1's departure and reading 2's arrival both ran over
+ * [0.33, 0.43], so at 0.38 two headings and two paragraphs sat on top of one
+ * another at half opacity each, 7px apart, for about 395px of scroll at a
+ * 1000px viewport. Twice. The comment above them claimed the opposite.
+ *
+ * The outgoing one leaves over the first 45% of the window and the incoming
+ * arrives over the last 45%, which is the shape `secuencia.tsx` already uses
+ * for exactly this reason.
  */
 const VENTANAS = [
   { desde: -1, hasta: 0.33 },

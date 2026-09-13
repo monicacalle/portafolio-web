@@ -168,7 +168,6 @@ html:not([data-nav-theme]) {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 50;
   width: var(--edicion-rail);
   height: 100svh;
   display: none;
@@ -247,7 +246,17 @@ html:not([data-nav-theme]) {
   font-size: 0.7rem;
   opacity: 0.75;
 }
-.edicion-rail__indice li[data-activo] .edicion-rail__numeral { color: var(--edicion-acento); opacity: 1; }
+/* The active numeral takes the nav foreground, not the accent.
+
+   `--edicion-acento` is #4e0909 and the rail's dark ground is #120f0e: 1.24:1,
+   which is not a colour, it is an absence. It read as "the numeral disappears
+   when its chapter is active" in five of the six chapters. Now it is simply
+   the brightest thing in the column, which is what active means everywhere
+   else in this index. */
+.edicion-rail__indice li[data-activo] .edicion-rail__numeral {
+  color: var(--edicion-nav-fg);
+  opacity: 1;
+}
 
 .edicion-rail__pie { margin-top: 1.1rem; font-size: 0.62rem; opacity: 0.45; line-height: 1.4; }
 
@@ -397,7 +406,14 @@ html:not([data-nav-theme]) {
 }
 
 .edicion-ficha { grid-column: span 6; min-width: 0; }
-@media (min-width: 768px) {
+/* §44's uneven row, and it belongs to the GRID, not to the carousel.
+   This used to start at 768px, and when §31's carousel was widened from 767 to
+   1023 the two overlapped: between 768 and 1023 a card claimed `span 3` of
+   grid tracks that were 50vw each, so a "half" card measured 1,260px inside an
+   805px scroller. Measured on a real 820px viewport: the compact list came out
+   at 2,542px and the body's scrollWidth at 10,612. It starts where the
+   carousel stops. */
+@media (min-width: 1024px) {
   .edicion-ficha[data-ancho="completo"]   { grid-column: span 6; }
   .edicion-ficha[data-ancho="dos-tercios"]{ grid-column: span 4; }
   .edicion-ficha[data-ancho="medio"]      { grid-column: span 3; }
@@ -813,10 +829,9 @@ html:not([data-nav-theme]) {
     left: calc(var(--edicion-rail) + clamp(1rem, 2vw, 2.2rem));
     top: 50%;
     transform: translateY(-50%);
-    /* Narrow on purpose: the index's right-aligned numerals were landing on the
-       white wing at 19rem, and white numerals on a white ground are invisible
-       rather than merely low-contrast. */
-    width: min(14rem, 21vw);
+    /* Width lives in the §16 block below, which is the one that survives the
+       cascade. Both rules sat in the same 1024px band at the same specificity
+       and the later one won silently; the number is in one place now. */
     /* No border on desktop: against flat near-black a hairline box reads as a
        dialog. The rule under the wordmark does the framing instead. */
     border: none;
@@ -1005,11 +1020,20 @@ html:not([data-nav-theme]) {
      overflow-x scroller, which put the whole sticky story off-screen sideways
      on every phone -- and overflow-x: auto computes overflow-y: auto, so the
      pin stopped referencing the viewport too. */
-  .edicion-oficio,
-  .edicion-oficio__cierre,
-  .edicion-triptico,
-  .edicion-lista,
-  .edicion-declaracion { grid-column: auto; }
+  /* EVERY child, by the parent, not a list of class names.
+
+     The list version kept being outrun: `.edicion-declaracion` and
+     `.edicion-lista` each have a later unconditional `grid-column: span 6`
+     at the same specificity, so the opt-out lost on source order and both came
+     out 300vw wide inside the scroller. Selecting through the body raises the
+     specificity above every one of them and cannot be missed by the next
+     block that adds a span. */
+  /* The class twice, deliberately: `.edicion-capitulo__cuerpo > *` is (0,1,0)
+     and so is `.edicion-lista { grid-column: span 6 }` four hundred lines
+     later, which then wins on source order and comes out 2,542px wide inside
+     an 805px scroller. Repeating the class makes it (0,2,0) and ends the
+     argument for every child, including ones added later. */
+  .edicion-capitulo__cuerpo.edicion-capitulo__cuerpo > * { grid-column: auto; }
 }
 
 /* §87 again: the panel's height still opens instantly, because that is the
@@ -1043,7 +1067,10 @@ html:not([data-nav-theme]) {
       rgba(10, 8, 8, 0.52) 62%,
       rgba(10, 8, 8, 0.74) 100%
     );
-    opacity: clamp(0, calc(1 - var(--p, 0) / 0.18), 1);
+    /* The fallback is 1, not 0. `--p` only exists once the hero's own hook is
+       running, and a 0 fallback left the scrim at full strength forever with
+       JS off — a permanently dimmed hero instead of a first-paint state. */
+    opacity: clamp(0, calc(1 - var(--p, 1) / 0.18), 1);
   }
 }
 
@@ -1386,7 +1413,9 @@ html:not([data-nav-theme]) {
   }
   .edicion-flecha span + span { transform: none; }
   .edicion-cta:hover .edicion-flecha span,
-  .edicion-enlace:hover .edicion-flecha span { transform: none; }
+  .edicion-cta:focus-visible .edicion-flecha span,
+  .edicion-enlace:hover .edicion-flecha span,
+  .edicion-enlace:focus-visible .edicion-flecha span { transform: none; }
   .edicion-documento__hoja { transition: opacity var(--t-micro) linear; }
   .edicion-documento__hoja:hover,
   .edicion-documento__hoja:focus-visible { transform: none; }
@@ -1582,7 +1611,6 @@ html:not([data-nav-theme]) {
 .edicion-lienzo {
   position: fixed;
   inset: 0;
-  z-index: 0;
   pointer-events: none;
   opacity: 0;
   transition: opacity 700ms ease-in-out;
@@ -1615,9 +1643,18 @@ html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0; }
 }
 
 /* Section 87: with reduced motion there is no canvas at all. The static
-   fallback is the page. */
+   fallback is the page.
+
+   And no reserved scroll either. `--cap-altura` is a floor sized for the
+   choreography — chapter V's 700svh exists because the triptych is 495 — and
+   the triptych collapses to its content height under reduced motion while the
+   floor did not, leaving about three and a half viewports of dead space at the
+   end of the chapter. Which is the same "reserved emptiness" the chapter
+   record says was cut once already. With no pinning and no scrub, a chapter's
+   height is its content. */
 @media (prefers-reduced-motion: reduce) {
   .edicion-lienzo { display: none; }
+  .edicion-capitulo { min-height: 0; }
 }
 
 /* The chapter intro paints an opaque ground (--cap-fondo) at z-index 1, which
@@ -1625,6 +1662,11 @@ html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0; }
    flat colour. Once the canvas has a stable frame the ground steps aside: the
    scene's own background plane carries the chapter colour instead, which is
    what section 20 means by the scene owning the environment.
+
+   That plane is `FondoEscena` in lienzo.tsx. It did not exist when this rule
+   was written — `escena.fondo` was declared on all five scenes and read by
+   nothing — so for as long as both were true, a WebGL desktop lost 78% of
+   every chapter's sampled ground to the page's near-black.
 
    It does NOT simply become transparent -- a trace stays, so the chapter colour
    still reads during the 700ms crossfade and at the seams where the scene's
@@ -1780,6 +1822,48 @@ a.edicion-ficha {
 .edicion-capitulo__cuerpo,
 .edicion-capitulo__intro { position: relative; }
 
+/* THE SAME TWO CUTS, ATTACHED TO THE INTRO, FOR THE CAROUSEL BAND.
+
+   Both scrims above hang OUTSIDE the editorial body's box, and below 1024px
+   that body takes `overflow-x: auto` for §31's carousel — which computes
+   `overflow-y: auto` and clips them away. So on every phone and tablet,
+   chapters I, II and III got the instantaneous background swap §77-C forbids
+   by name, while IV, V and VI kept their bands because they opt out of the
+   carousel entirely. It is the same computed-overflow trap this file
+   documents twice already, found a third time.
+
+   The intro is not a scroller, so here the bands sit INSIDE its box: cut B at
+   its foot, rising into the light body that follows, and cut C at its head,
+   arriving out of the light body above. Chapter I is exempt from C because
+   what precedes it is the hero, which is already dark. */
+@media (max-width: 1023px) {
+  .edicion-capitulo__cuerpo::before,
+  .edicion-capitulo__cuerpo::after { display: none; }
+
+  .edicion-capitulo__intro::after,
+  .edicion-capitulo:not(#ilustracion) .edicion-capitulo__intro::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: clamp(90px, 12vh, 190px);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .edicion-capitulo__intro::after {
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent, var(--edicion-crema));
+  }
+  .edicion-capitulo:not(#ilustracion) .edicion-capitulo__intro::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--edicion-crema), transparent);
+  }
+  /* Chapter VI's intro is already the light world; a cream band into cream is
+     nothing, and a cream band out of it would be a seam where there is none. */
+  #oficio .edicion-capitulo__intro::after,
+  #oficio .edicion-capitulo__intro::before { display: none; }
+}
+
 /* ===================================================================== §76
    The keyboard escape control. Hidden by TRANSFORM, never by display or
    visibility: both would drop it out of the tab order, which is the one thing
@@ -1788,7 +1872,6 @@ a.edicion-ficha {
   position: absolute;
   left: clamp(1rem, 4vw, 3.5rem);
   bottom: 0;
-  z-index: 20;
   padding: 0.45rem 1.1rem;
   border: 1px solid currentColor;
   border-radius: 999px;
@@ -1813,8 +1896,12 @@ a.edicion-ficha {
     transition-duration: var(--t-micro);
     transform: none;
   }
-  .edicion-volver:not(:focus-visible) { opacity: 0; }
-  .edicion-volver:focus-visible { opacity: 1; }
+  /* Invisible AND untouchable. Without the translate it is an opacity-0 pill
+     sitting at the foot of every chapter intro, and it is not in §89's
+     pointer-events list, so a reduced-motion reader had six invisible click
+     targets on the page. */
+  .edicion-volver:not(:focus-visible) { opacity: 0; pointer-events: none; }
+  .edicion-volver:focus-visible { opacity: 1; pointer-events: auto; }
 }
 
 /* ===================================================================== §92
@@ -1891,9 +1978,13 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    returns, which is what stops the move reading as a straight dolly and makes
    it read as going round something. The roll stays inside §22's 1–6° band. */
 [data-scrub] .edicion-triptico__objeto img {
-  --t-x: calc((var(--t, 0) - 0.5) * -7%);
-  --t-y: calc(min(var(--t, 0), calc(1 - var(--t, 0))) * -9%);
-  transform: scale(calc(1.05 + var(--t, 0) * 0.24))
+  --t-x: calc((var(--t, 0) - 0.5) * -6%);
+  --t-y: calc(min(var(--t, 0), calc(1 - var(--t, 0))) * -6%);
+  /* The base scale has to cover the drift AND the roll, or the frame shows
+     ground at an edge. 1.12 leaves 6% of overhang on each side against a 3%
+     maximum drift, which is what the first version (1.05 against 3.5%) did
+     not: it opened a sliver at the left edge for the first 7% of the pin. */
+  transform: scale(calc(1.12 + var(--t, 0) * 0.24))
     translate3d(var(--t-x), var(--t-y), 0)
     rotate(calc(var(--t, 0) * 2.4deg));
 }
@@ -1905,8 +1996,12 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 .edicion-triptico__texto { grid-area: 1 / 1; }
 [data-scrub] .edicion-triptico__texto {
   --tr: 0.1;
-  --llega: clamp(0, calc((var(--t, 0) - var(--d)) / var(--tr)), 1);
-  --sale: clamp(0, calc((var(--t, 0) - var(--ds)) / var(--tr)), 1);
+  /* The incoming reading starts at 55% of the window and the outgoing one is
+     gone by 45% of it, so the two never coexist. Ramping both across the whole
+     window put two headings and two paragraphs on top of each other at half
+     opacity, which is the thing this is shaped to prevent. */
+  --llega: clamp(0, calc((var(--t, 0) - var(--d) - var(--tr) * 0.55) / calc(var(--tr) * 0.45)), 1);
+  --sale: clamp(0, calc((var(--t, 0) - var(--ds)) / calc(var(--tr) * 0.45)), 1);
   opacity: calc(var(--llega) - var(--sale));
   transform: translate3d(0, calc((1 - var(--llega)) * 14px), 0);
 }
@@ -1973,13 +2068,11 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 [data-scrub] .edicion-triptico__especificaciones li::after {
   transform: scaleX(var(--ee));
 }
-@media (prefers-reduced-motion: reduce) {
-  [data-scrub] .edicion-triptico__especificaciones li {
-    opacity: 1;
-    transform: none;
-  }
-  [data-scrub] .edicion-triptico__especificaciones li::after { transform: none; }
-}
+/* No reduce override here on purpose. The progressive reveal is declared under
+   [data-scrub], and `Triptico` does not write that attribute when motion is
+   reduced — so the items are simply present, which is what the override was
+   trying to say. It used to be written as a reduce block that also selected
+   [data-scrub], which is a rule that can never match. */
 
 .edicion-triptico__texto h3 {
   margin: 0 0 0.6rem;
@@ -2263,7 +2356,8 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    caption left nothing for the index. The offset comes down to the mobile
    header's own height and the frame comes down with it. */
 @media (max-width: 767px) {
-  [data-scrub] .edicion-secuencia__fijo {
+  [data-scrub] .edicion-secuencia__fijo,
+  [data-scrub] .edicion-triptico__fijo {
     top: 72px;
     min-height: calc(100svh - 72px);
   }
@@ -2345,9 +2439,22 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    with JS broken or motion reduced. */
 /* The label column and the retablo are sized against each other: the title is
    now artwork-scale, so the column has to carry it AND still clear the art.
-   Checked in the browser, not judged -- frame right edge vs first panel left. */
+   Checked in the browser, not judged -- frame right edge vs first panel left.
+
+   `min(25rem, 31vw)` was NOT clear of it. Measured: the column's right edge
+   crossed the first panel's left edge by 75px at 1024, 47 at 1280 and 53 at
+   1440, clearing only at 1680 — and the standfirst and the right-aligned
+   numerals both ran onto the portrait's cream ground, which is exactly the
+   collision the narrower rule this replaced existed to avoid.
+
+   The second term subtracts the rail, because the column starts after it: the
+   space between the rail and the art is what the label may have, and the
+   numerals are right-aligned against its far edge. Re-measured across the
+   band: at 46vw the column comes out 231/333/374/437px against 243/355/402/472
+   of room, so there are 12 to 23px of air between the label and the art at
+   every width instead of 75px of overlap. */
 @media (min-width: 1024px) {
-  .edicion-hero__marco { width: min(25rem, 31vw); }
+  .edicion-hero__marco { width: min(25rem, calc(46vw - var(--edicion-rail))); }
 }
 .edicion-hero__titulo {
   font-size: clamp(2.6rem, 5.6vw, 5.4rem);
@@ -2690,8 +2797,12 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
      resting opacity is rather than a flat value that ignores it. */
   --atenuacion: 0.88;
 }
-.edicion-carta:hover,
-.edicion-carta:focus-within {
+/* Through the cloud, deliberately. `.edicion-constelacion:hover .edicion-carta`
+   above is (0,3,0) and this used to be (0,2,0), so the dim won on the hovered
+   card too: it sat at 0.88 and stayed desaturated, against §30's explicit
+   "opacity → 1", while the comment claimed the opposite. */
+.edicion-constelacion:hover .edicion-carta:hover,
+.edicion-constelacion:focus-within .edicion-carta:focus-within {
   z-index: 3;
   filter: none;
   /* §30: the active card's opacity reaches 1 whatever it was resting at. */
@@ -2701,8 +2812,10 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
     translateY(var(--deriva))
     scale(calc((var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)) * 1.055));
 }
-.edicion-carta:hover img,
-.edicion-carta:focus-within img { box-shadow: 0 22px 48px -18px rgba(23, 16, 12, 0.66); }
+.edicion-constelacion:hover .edicion-carta:hover img,
+.edicion-constelacion:focus-within .edicion-carta:focus-within img {
+  box-shadow: 0 22px 48px -18px rgba(23, 16, 12, 0.66);
+}
 
 /* Below the large breakpoint a five-card absolute cloud becomes a pile, so it
    reverts to the flow. Section 31 asks for a carousel at this width and the
@@ -2782,8 +2895,15 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
    full width" there -- it means six 78% columns, which measured 1677px inside
    a 375px scroller. The film sat a screen and a half off to the right behind a
    blank dark field, which is what a reader actually got on a 390px phone.
-   A band needs a page to cross; a rail of cards has none. */
-@media (max-width: 767px) {
+   A band needs a page to cross; a rail of cards has none.
+
+   1023px, not 767: the carousel this escapes from runs to 1023 (it gained a
+   ~50vw tablet size for §31), and the escape did not follow it. Between 768
+   and 1023 the beat kept `grid-column: span 6` inside `grid-auto-flow: column`
+   — six implicit 50vw tracks, 300vw wide, with the film two and a half screens
+   off to the right behind a blank dark field. Exactly the defect this block
+   was written to fix, at a band the fix did not cover. */
+@media (max-width: 1023px) {
   .edicion-beat-oscuro {
     grid-column: auto;
     margin-inline: 0;

@@ -253,10 +253,49 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
 
   return (
     <group ref={grupo}>
+      <FondoEscena color={escena.fondo} vis={vis} />
       {escena.planos.map((pl) => (
         <PlanoObra key={pl.src + pl.z} plano={pl} vis={vis} />
       ))}
     </group>
+  );
+}
+
+/**
+ * The scene's own ground — brief section 20, "the scene owns the environment".
+ *
+ * IT WAS NEVER BUILT, and the stylesheet was written as though it had been.
+ * `html[data-lienzo="activo"] .edicion-capitulo__intro` drops the chapter's
+ * sampled colour to 22% alpha once the canvas has a stable frame, justified in
+ * its own comment by "the scene's own background plane carries the chapter
+ * colour instead" — and `escena.fondo` was declared on all five scenes and read
+ * by nothing. So on a WebGL desktop 78% of each chapter's ground was simply
+ * gone, backed by the page's near-black.
+ *
+ * A plane rather than `scene.background`, because the canvas is alpha: true and
+ * two scenes overlap during §94's crossfade; a single scene-level background
+ * cannot belong to both. Far enough back to sit behind every plate (the
+ * deepest is z −8.5) and large enough to cover the frustum at that distance
+ * with the exit's 10% group scale applied.
+ */
+function FondoEscena({ color, vis }: { color: string; vis: number }) {
+  const mat = useRef<THREE.MeshBasicMaterial>(null!);
+  const tono = useMemo(() => new THREE.Color(color), [color]);
+  useFrame(() => {
+    if (mat.current) mat.current.opacity = vis;
+  });
+  return (
+    <mesh position={[0, 0, -14]}>
+      <planeGeometry args={[52, 32]} />
+      <meshBasicMaterial
+        ref={mat}
+        color={tono}
+        transparent
+        opacity={0}
+        depthWrite={false}
+        toneMapped={false}
+      />
+    </mesh>
   );
 }
 
@@ -301,7 +340,6 @@ function AvisoPrimerCuadro({ onListo }: { onListo: () => void }) {
 
 export function Lienzo() {
   const progresos = useProgresos();
-  usePrecarga(progresos);
   const [listo, setListo] = useState(false);
   /*
     Section 81: if WebGL is unavailable the page must still feel designed, so
@@ -319,6 +357,7 @@ export function Lienzo() {
     is exactly what it is for.
   */
   const soportado = useSyncExternalStore(sinCambios, haySoporte, () => false);
+  usePrecarga(progresos, soportado);
 
   useEffect(() => {
     // Section 82: once the canvas has a stable frame, the static fallback is
@@ -416,7 +455,7 @@ function sinCambios() {
  * browser cache with a plain Image(), so R3F's loader finds them warm when the
  * reader arrives. Nothing is downloaded at initial render beyond the hero.
  */
-function usePrecarga(progresos: Record<string, number>) {
+function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
   const hecho = useRef<Set<string>>(new Set());
 
   /*
@@ -430,6 +469,10 @@ function usePrecarga(progresos: Record<string, number>) {
     for the first paint, and this is explicitly the priority below them.
   */
   useEffect(() => {
+    // Nothing to warm for a canvas that can never mount: below 1024px and on
+    // any browser without WebGL the scene textures are ~48kB fetched for a
+    // renderer that does not exist.
+    if (!soportado) return;
     const primera = ESCENAS[0];
     if (!primera || hecho.current.has(primera.clave)) return;
     hecho.current.add(primera.clave);
@@ -447,9 +490,10 @@ function usePrecarga(progresos: Record<string, number>) {
     }
     const t = window.setTimeout(calentar, 1200);
     return () => window.clearTimeout(t);
-  }, []);
+  }, [soportado]);
 
   useEffect(() => {
+    if (!soportado) return;
     ESCENAS.forEach((e, i) => {
       const p = progresos[e.clave] ?? 0;
       if (p < 0.5) return;
@@ -462,5 +506,5 @@ function usePrecarga(progresos: Record<string, number>) {
         img.src = pl.src;
       });
     });
-  }, [progresos]);
+  }, [progresos, soportado]);
 }
