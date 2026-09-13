@@ -59,10 +59,22 @@ html:not([data-nav-theme]) {
 .edicion {
   background: var(--edicion-negro);
   color: var(--edicion-crema);
-  /* overflow-x rather than clip: the retablo's outer panels translate past the
-     right edge during the fold, and clip on the root would also clip the
-     position:fixed rail out of existence in Safari. */
-  overflow-x: hidden;
+  /*
+    NO overflow HERE. It used to carry overflow-x: hidden, and that silently
+    broke the entire hero.
+
+    overflow-x: hidden makes an element a SCROLL CONTAINER, and position: sticky
+    resolves against its nearest scrolling ancestor. So .edicion-hero__pegajoso
+    was sticking to .edicion -- which never scrolls vertically -- instead of to
+    the page, and the hero simply scrolled away. Measured: its top read 0, -200,
+    -400, -525 at those scroll positions, when a pinned element reads 0 at all
+    of them. Section 13's 150svh stage, section 17's morph and section 15's
+    geometry all depend on that pin, so all three were dead.
+
+    The elements that genuinely overflow already clip themselves:
+    .edicion-hero__pegajoso and .edicion-capitulo__intro both carry
+    overflow: clip, which does NOT create a scroll container.
+  */
 }
 
 /* ---------------------------------------------------------------- header */
@@ -402,7 +414,7 @@ html:not([data-nav-theme]) {
   .edicion-cabecera__cta {
     transition-duration: 1ms;
   }
-  .edicion-rail__guia { opacity: 0.5; transform: none; }
+  .edicion-rail__indice li[data-activo] .edicion-rail__guia { opacity: 0.5; transform: none; }
 }
 
 /* ------------------------------------------------------------ the retablo

@@ -39,7 +39,13 @@ export function VideoFeature({
 
   return (
     <div className="edicion-video">
-      <div className="edicion-video__marco">
+      <div
+        className="edicion-video__marco"
+        // Consumed by the reduced-motion rule, which hides the <video> and
+        // paints this instead. It was referenced in CSS and defined nowhere, so
+        // a reduced-motion reader got a blank black box where the film is.
+        style={{ "--poster": `url(${poster})` } as React.CSSProperties}
+      >
         <video
           className="edicion-video__medio"
           poster={poster}

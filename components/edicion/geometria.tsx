@@ -30,7 +30,7 @@ export function Geometria() {
     <svg
       className="edicion-geometria"
       viewBox="0 0 1000 625"
-      preserveAspectRatio="none"
+      preserveAspectRatio="xMidYMid slice"
       aria-hidden
       focusable="false"
     >
