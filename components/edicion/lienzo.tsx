@@ -474,14 +474,32 @@ export function Lienzo() {
   usePrecarga(progresos, soportado);
 
   useEffect(() => {
-    // Section 82: once the canvas has a stable frame, the static fallback is
-    // hidden. Flagged on <html> so the CSS owns the crossfade and no component
-    // re-renders to do it.
-    if (listo) document.documentElement.dataset.lienzo = "activo";
+    /*
+      Section 82: once the canvas has a stable frame, the static fallback is
+      hidden. Flagged on <html> so the CSS owns the crossfade and no component
+      re-renders to do it.
+
+      `soportado` IS A DEPENDENCY, and leaving it out was a hole with nothing
+      at the bottom of it. All three of its inputs answer live — the WebGL
+      store, the 1024px media query, the reduced-motion store — so the Canvas
+      unmounts when a desktop window is narrowed past 1024 or the reader flips
+      the system preference mid-session. `listo` never returns to false, so the
+      flag stayed on <html> for the rest of the document's life, and with it on
+      `html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0 }`
+      hides the static plate of all five chapters while the intro's own ground
+      sits at 22% — five chapter intros with no scene, no plate and almost no
+      colour. §82's whole point is that the plate is the ground the page comes
+      back to.
+    */
+    if (listo && soportado) {
+      document.documentElement.dataset.lienzo = "activo";
+    } else {
+      delete document.documentElement.dataset.lienzo;
+    }
     return () => {
       delete document.documentElement.dataset.lienzo;
     };
-  }, [listo]);
+  }, [listo, soportado]);
 
   /*
     THE WRAPPER RENDERS ON THE SERVER TOO, and only the Canvas inside it is

@@ -61,9 +61,17 @@ export const CAPITULOS = [
     // the retablo's centre panel, so the page opens without a colour change.
     fondo: "#888866",
     placa: "/cine/pelo-cobre.avif",
-    // Already 1150x3229, taller than 9:16. It fills a phone as it is, so §81's
-    // portrait fallback is the same file.
-    placaRetrato: undefined,
+    /*
+      §81's portrait fallback, and this used to be `undefined` with the reason
+      "already 1150x3229, taller than 9:16, it fills a phone as it is". It does
+      not fill anything: `.edicion-capitulo__escena img` is `object-fit:
+      scale-down`, which letterboxes by construction. Measured at 390x844 — the
+      intro box is 375x709, a 0.356 plate contain-fits to 252x709, and a row
+      sampled across it read the chapter's flat sage from x=0 to x=60 and her
+      paint from x=61. Sixty-one pixels of empty either side, on the chapter
+      that opens the page.
+    */
+    placaRetrato: "/edicion/cap-ilustracion-retrato.avif",
     // Chapter I's body is the constellation (§29), which carries its own five
     // cards with their titles and dimensions. No plate wall after it.
     obras: [],

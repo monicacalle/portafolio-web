@@ -542,12 +542,20 @@ marca_raiz()
 #             is ordinary art direction rather than cutting her work. Anchored
 #             on the subject, measured column-wise rather than guessed.
 #
-# Chapter I needs neither: /cine/pelo-cobre.avif is already 1150x3229, taller
-# than 9:16, and fills a phone as it is.
+# CHAPTER I NEEDS ONE TOO, and the note that used to sit here said it did not:
+# "/cine/pelo-cobre.avif is already 1150x3229, taller than 9:16, and fills a
+# phone as it is." It cannot fill anything — `.edicion-capitulo__escena img` is
+# `object-fit: scale-down`, which letterboxes by construction. Measured at
+# 390x844: the intro box is 375x709 and a 0.356 plate contain-fits to 252x709,
+# so 61px of the chapter's flat sage sat either side of her paint. Sampling a
+# row confirmed it: (43, 42, 33) from x=0 to x=60, artwork from x=61.
 RETRATO_W, RETRATO_H = 900, 1600
 
 PLACAS_RETRATO = [
     # (origen bajo public/, salida, modo, anclaje x, anclaje y, nota)
+    ('cine/pelo-cobre.avif',     'cap-ilustracion-retrato', 'recortar', 0.45, 0.30,
+     'a tall detail of the copper hair; the crop keeps the lit edge and the '
+     'turn of the wave rather than a slab of the darkest side'),
     ('edicion/cap-marca.avif',   'cap-marca-retrato',   'recortar', 0.50, 0.48,
      'photograph of the Raiz site on a sofa; subject centred at x0.50 y0.48'),
     ('cine/a3-loreal.avif',      'cap-campana-retrato', 'extender', 0.50, 0.50,
@@ -914,6 +922,12 @@ for _f in sorted(os.listdir(OUT)):
     # A lamina is fetched once, on an explicit open, at one size. At 29-89 kB
     # a narrow ladder adds more files to the repository than bytes it saves.
     if _f.startswith('lamina-'):
+        continue
+    # The film's poster is never an <img>: it is the `poster` attribute and a
+    # `url()` inside --poster, and neither takes a srcset. Two variants were
+    # being cut for it and neither was reachable, so a 390px phone downloaded
+    # the 1280px file anyway.
+    if _f.startswith('campana-marquesina-poster'):
         continue
     _ruta = os.path.join(OUT, _f)
     _im = Image.open(_ruta)

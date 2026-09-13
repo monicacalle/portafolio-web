@@ -344,11 +344,27 @@ html:not([data-nav-theme]) {
 }
 .edicion-rail a { pointer-events: auto; }
 
+/*
+  THE SAME TYPEFACE AS THE HERO'S WORDMARK, which it was not.
+
+  §17: "the user should subconsciously understand that the opening artwork has
+  transformed into the navigation system", and the morph now lands the hero's
+  wordmark exactly on this one — dx 0, dy −1 across four viewport heights. It
+  was still a cut, because the two were set in different faces: the hero's in
+  `--font-display` (Bodoni Moda) and this one in the inherited `--font-sans`
+  (Geist), with only the italic middle line shared. A crossfade between two
+  typefaces reading the same three words is a substitution, not a
+  transformation.
+
+  800 rather than 700 for the same reason: it is the hero's weight, and the
+  handover is between two sizes of one wordmark or it is nothing.
+*/
 .edicion-rail__marca {
   display: flex;
   flex-direction: column;
+  font-family: var(--font-display, var(--font-sans));
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.02em;
 }
@@ -449,6 +465,20 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
 @media (max-width: 1023px) {
   .edicion-capitulo { min-height: 0; }
 }
+/*
+  AND CHAPTER V'S FLOOR COMES OFF WITH THE TRIPTYCH'S RESERVE.
+
+  `alturaSvh: 700` exists because §47's three beats are 495svh — the chapter
+  record says so in its own comment. The reserve is behind `[data-scrub]` now,
+  which only exists after hydration, and the floor was not: with JavaScript off
+  at 1024px and up the triptych collapsed to its flow height, one photograph
+  beside three stacked readings, while the chapter still reserved seven
+  viewports. Four of them empty.
+
+  `:has()` asks the only question that decides it — is the thing the floor was
+  sized for actually running — rather than duplicating the condition.
+*/
+.edicion-capitulo:has(.edicion-triptico:not([data-scrub])) { min-height: 0; }
 @media (min-width: 1024px) {
   .edicion-capitulo > * {
     width: calc(100% - var(--edicion-rail));
@@ -777,9 +807,11 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
   flex-direction: column;
   font-family: var(--font-display, var(--font-sans));
   font-weight: 800;
-  font-size: clamp(1.9rem, 3.4vw, 3rem);
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+  /* The size, line-height and tracking used to be declared here as well, at
+     clamp(1.9rem, 3.4vw, 3rem) / 0.98 / -0.03em, and then again two thousand
+     lines below at (0,1,0) — so the later block won all three and these were
+     dead. They are in one place now, down there with §16's own note about
+     them, because that is the block a reader arrives at from the section. */
 }
 .edicion-hero__acento { font-family: var(--font-serif, serif); font-style: italic; font-weight: 400; }
 

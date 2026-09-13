@@ -27,6 +27,7 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/edicion/campana-marquesina-poster.avif": [1280, 720],
   "/edicion/cap-impreso.avif": [1553, 1013],
   "/edicion/cap-campana-retrato.avif": [900, 1600],
+  "/edicion/cap-ilustracion-retrato.avif": [900, 1600],
   "/edicion/cap-impreso-retrato.avif": [900, 1600],
   "/edicion/cap-marca-retrato.avif": [900, 1600],
   "/edicion/cap-producto-retrato.avif": [900, 1600],
@@ -87,7 +88,6 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
 /** Narrow variants, widest last. Only cut for plates a phone would otherwise
  *  download at full size. */
 const VARIANTES: Record<string, readonly (readonly [string, number])[]> = {
-  "/edicion/campana-marquesina-poster.avif": [["/edicion/campana-marquesina-poster-w640.avif", 640], ["/edicion/campana-marquesina-poster-w1024.avif", 1024]],
   "/edicion/cap-impreso.avif": [["/edicion/cap-impreso-w640.avif", 640], ["/edicion/cap-impreso-w1024.avif", 1024]],
   "/edicion/cap-marca.avif": [["/edicion/cap-marca-w640.avif", 640], ["/edicion/cap-marca-w1024.avif", 1024]],
   "/edicion/cap-producto.avif": [["/edicion/cap-producto-w640.avif", 640], ["/edicion/cap-producto-w1024.avif", 1024]],
