@@ -206,16 +206,34 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
   }, [viewport.width]);
 
   /*
-    Visibility: in over the first 8%, out over the last 12% -- section 94's
-    400-700ms crossfade expressed in scroll rather than in time.
+    Visibility: in over the first 15%, out over the last 15% — §94's 400–700ms
+    crossfade expressed in scroll rather than in time.
 
-    The curve is SQUARE-ROOTED at the edges so two overlapping scenes sum to
-    roughly one rather than to two. With a linear ramp both scenes reached 1.0
-    for about an 80px window at every boundary, which put two unrelated
-    compositions at full strength on top of each other -- the exact thing
-    section 94's last line rules out.
+    THE WINDOWS ARE WIDE ENOUGH THAT TWO SCENES CANNOT BOTH BE AT 1, and the
+    8% / 12% they replace were not. The square root below is real and the
+    comment that used to sit here was wrong about what it fixed: `Math.sqrt` is
+    applied AFTER `Math.min(1, …)`, and the square root of 1 is 1, so the
+    plateau it was supposed to remove was exactly as wide as before.
+
+    The geometry decides the number. `p` is `(vh - top) / (height + vh)`, so
+    for two contiguous chapters the scroll during which both sit at full
+    strength is `(1 − in − out)·vh − out·hA − in·hB`. With 8% and 12% and this
+    page's own measured heights — 300svh and 343svh for the first pair — that
+    is 166px at the ilustracion→marca handover and 88px at marca→campana: two
+    unrelated compositions at full strength on top of each other, which §94's
+    last line rules out by name. Setting both to 0.15 makes the expression
+    negative for any pair of chapters at or above about 1.2 viewport-heights
+    each, and every chapter here is at least 1.9.
+
+    It cannot open a gap either: a scene reaches 0 at p = 1, and at that moment
+    the next one's own p is vh / (hB + vh) — 0.23 for the shortest pair, well
+    past the 0.15 where it has already reached 1.
+
+    The square root stays: during the crossfade, two values ramping linearly
+    sum to more than one, and squaring them back does not.
   */
-  const bruto = Math.min(p / 0.08, (1 - p) / 0.12);
+  const VENTANA = 0.15;
+  const bruto = Math.min(p / VENTANA, (1 - p) / VENTANA);
   const vis = bruto <= 0 ? 0 : Math.sqrt(Math.min(1, bruto));
 
   useFrame(() => {
@@ -654,7 +672,21 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
     if (!soportado) return;
     ESCENAS.forEach((e, i) => {
       const p = progresos[e.clave] ?? 0;
-      if (p < 0.5) return;
+      /*
+        ONE CHAPTER AHEAD, and the upper bound is what makes that true.
+
+        §90 says "continue one chapter ahead" and §80 that "only current,
+        previous, and next major scene should need high-priority resources".
+        The test was `p < 0.5 → return` with no ceiling, and `useProgresos`
+        clamps anything scrolled fully past the viewport to exactly 1 — so
+        every chapter ABOVE the reader passed it. Deep-linking or jumping to a
+        late chapter warmed all of their successors at once: measured for a
+        jump to #oficio, chapters I to IV all read p = 1, so marca, campana,
+        producto and impreso were all fetched — 15 files, 442,055 bytes, for
+        four scenes behind the reader that the render guard above will never
+        mount.
+      */
+      if (p < 0.5 || p >= 1) return;
       const siguiente = ESCENAS[i + 1];
       if (!siguiente || hecho.current.has(siguiente.clave)) return;
       hecho.current.add(siguiente.clave);

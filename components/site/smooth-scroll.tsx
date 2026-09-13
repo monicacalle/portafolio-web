@@ -69,8 +69,47 @@ function Aterrizaje() {
       volviendo.current = true;
     };
     window.addEventListener("popstate", alVolver);
-    return () => window.removeEventListener("popstate", alVolver);
+    /*
+      The browser must not restore the scroll itself, because Lenis owns the
+      position and the two fight: the browser puts the document back where it
+      was, `irA(0)` below then yanks it to the top, and §84's "do not always
+      reset the long experience to zero" is broken by our own landing code
+      rather than by the absence of a restore. Taking it over here means the
+      restore below is the only one that runs.
+    */
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    return () => {
+      window.removeEventListener("popstate", alVolver);
+      if ("scrollRestoration" in history) history.scrollRestoration = "auto";
+    };
   }, []);
+
+  /**
+   * Why this document was loaded, for §84.
+   *
+   * `popstate` only fires when the SAME document survives, so it covers
+   * in-app back and forward and nothing else. The position written on
+   * `pagehide` — for "a same-tab external link or a closed tab", which the
+   * writer's own comment calls the two ways a reader most often leaves a page
+   * they intend to come back to — was therefore never read by any path: coming
+   * back either restores from bfcache, where React never remounts, or loads a
+   * fresh document, where no popstate fires and the landing effect ran
+   * `irA(0)`.
+   *
+   * The Navigation Timing entry answers it for the fresh-document case:
+   * "reload" and "back_forward" are returns, "navigate" is an arrival. An
+   * arrival still goes to the top, which is what a first-time reader expects.
+   */
+  const esRegreso = () => {
+    try {
+      const [nav] = performance.getEntriesByType(
+        "navigation",
+      ) as PerformanceNavigationTiming[];
+      return nav?.type === "reload" || nav?.type === "back_forward";
+    } catch {
+      return false;
+    }
+  };
 
   /*
     §84: "restore scroll position when possible… do not always reset the long
@@ -83,23 +122,92 @@ function Aterrizaje() {
   useEffect(() => {
     const clave = `${GUARDADO}:${pathname}`;
     const guardar = () => {
+      /*
+        Zero is never worth writing, and writing it was destroying real
+        positions. This effect re-runs when `lenis` arrives, and React runs the
+        old cleanup before the new effect — so a cleanup firing while the page
+        is still at the top overwrote a genuine saved position with 0.
+        Measured: 9,000 written on `pagehide`, and 0 in the key one reload
+        later. A reader at the top has nothing to restore anyway.
+      */
+      const y = Math.round(posicion());
+      if (y <= 0) return;
       try {
-        sessionStorage.setItem(clave, String(Math.round(posicion())));
+        sessionStorage.setItem(clave, String(y));
       } catch {
         // Private mode, quota, a browser that has none. Losing the position is
         // the old behaviour, which is survivable; throwing here is not.
       }
     };
-    /* `pagehide` as well as the cleanup: a same-tab external link or a closed
-       tab never runs a React cleanup, and those are the two ways a reader most
-       often leaves a page they intend to come back to. */
+    /*
+      THREE WRITERS, AND THE CLEANUP IS NOT ONE OF THEM.
+
+      It used to be: the effect's own cleanup called `guardar()` when the
+      pathname changed. That is too late. Next resets the scroll as it
+      navigates and Lenis animates toward the new value, so by the time React
+      runs the cleanup the position has already started moving. Measured:
+      reading at 11,000, clicking through to a case study, and the key came
+      back 3,742 — the glide caught mid-flight — and the back button then
+      faithfully restored the reader to a position they were never at.
+
+      `click` in the CAPTURE phase runs before anything else handles the event,
+      including Next's router, so it records where the reader actually was when
+      they decided to leave. `pagehide` covers the two exits that never run a
+      React cleanup at all: a same-tab external link and a closed tab.
+    */
+    document.addEventListener("click", guardar, true);
     window.addEventListener("pagehide", guardar);
     return () => {
+      document.removeEventListener("click", guardar, true);
       window.removeEventListener("pagehide", guardar);
-      guardar();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, lenis]);
+
+  /*
+    Land, then land again, and stop the moment the reader takes over.
+
+    The first attempt happens at mount, and this page is 28,000px of
+    scroll-driven layout that is not all there yet: the sticky triptych's three
+    readings only overlap once its component has armed itself, which changes
+    chapter V's height and moves everything below it. Measured before this
+    existed: /es#oficio landed 161px to 320px past its chapter, varying by
+    load. Measured against the RESTORE, which did not have it: a saved 11,000
+    came back as 3,742, the maximum scroll of a page that had not finished
+    mounting.
+
+    Any real input cancels the repeats. A reader who has started scrolling has
+    said where they want to be, and yanking them back a second later is worse
+    than landing short.
+  */
+  const aterrizarRepetido = (ir: () => void) => {
+    ir();
+    let cancelado = false;
+    const cancelar = () => {
+      cancelado = true;
+    };
+    const reintentar = () => {
+      if (!cancelado) ir();
+    };
+    window.addEventListener("wheel", cancelar, { once: true, passive: true });
+    window.addEventListener("touchstart", cancelar, { once: true, passive: true });
+    window.addEventListener("keydown", cancelar, { once: true });
+    void document.fonts?.ready.then(() => requestAnimationFrame(reintentar));
+    let t: number | undefined;
+    if (document.readyState === "complete") {
+      t = window.setTimeout(reintentar, 400);
+    } else {
+      window.addEventListener("load", reintentar, { once: true });
+    }
+    return () => {
+      cancelar();
+      if (t !== undefined) window.clearTimeout(t);
+      window.removeEventListener("load", reintentar);
+      window.removeEventListener("wheel", cancelar);
+      window.removeEventListener("touchstart", cancelar);
+      window.removeEventListener("keydown", cancelar);
+    };
+  };
 
   useEffect(() => {
     // A hash is an explicit request for somewhere else on the page -- the
@@ -121,54 +229,10 @@ function Aterrizaje() {
       volviendo.current = false;
       if (!destino) return;
 
-      /*
-        Three times, not once, and the repeats are the point.
-
-        The first lands where the chapter is AT MOUNT. The page is 28,000px of
-        scroll-driven layout and some of it settles after that: the sticky
-        triptych's three readings overlap only once its component has armed
-        itself, which changes chapter V's height and moves everything below it.
-        Measured before this: /es#oficio landed 161px to 320px past its
-        chapter, varying by load, and stable afterwards — the signature of a
-        scroll computed against a layout that was still moving.
-
-        Any real input cancels the repeats. A reader who has started scrolling
-        has said where they want to be, and yanking them back to the anchor a
-        second later is worse than landing 200px off.
-      */
-      const ir = () => irA(destino as HTMLElement);
-      ir();
-
-      let cancelado = false;
-      const cancelar = () => {
-        cancelado = true;
-      };
-      const reintentar = () => {
-        if (!cancelado) ir();
-      };
-      window.addEventListener("wheel", cancelar, { once: true, passive: true });
-      window.addEventListener("touchstart", cancelar, { once: true, passive: true });
-      window.addEventListener("keydown", cancelar, { once: true });
-
-      void document.fonts?.ready.then(() => requestAnimationFrame(reintentar));
-      if (document.readyState === "complete") {
-        const t = window.setTimeout(reintentar, 400);
-        return () => {
-          cancelar();
-          window.clearTimeout(t);
-        };
-      }
-      window.addEventListener("load", reintentar, { once: true });
-      return () => {
-        cancelar();
-        window.removeEventListener("load", reintentar);
-        window.removeEventListener("wheel", cancelar);
-        window.removeEventListener("touchstart", cancelar);
-        window.removeEventListener("keydown", cancelar);
-      };
+      return aterrizarRepetido(() => irA(destino as HTMLElement));
     }
 
-    if (volviendo.current) {
+    if (volviendo.current || esRegreso()) {
       volviendo.current = false;
       let guardado = NaN;
       try {
@@ -177,8 +241,10 @@ function Aterrizaje() {
         // See above: no storage is survivable, a throw here is not.
       }
       if (Number.isFinite(guardado) && guardado > 0) {
-        irA(guardado);
-        return;
+        /* Repeated for the same reason the fragment is: measured, a saved
+           11,000 restored as 3,742 on the first attempt, which is the maximum
+           scroll of a page whose chapters had not all mounted. */
+        return aterrizarRepetido(() => irA(guardado));
       }
     }
 
