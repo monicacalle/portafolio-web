@@ -5,6 +5,7 @@ import { medidas } from "@/lib/edicion/medidas";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
+import { BeatOscuro } from "./beat-oscuro";
 import { Triptico } from "./triptico";
 import { Constelacion } from "./constelacion";
 import { ListaCompacta } from "./lista-compacta";
@@ -102,6 +103,17 @@ export function CuerpoCampana() {
       <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.campana.declaracion")}</p>
       </div>
+      <Ficha ancho="medio">
+        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-loreal.avif")} />
+      </Ficha>
+      <Ficha ancho="medio">
+        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-ingres.avif")} />
+      </Ficha>
+
+      {/* Sections 40 and 45: the film continues the chapter's dark atmosphere
+          rather than sitting in the light body, and it arrives near the end as
+          a second cinematic beat. */}
+      <BeatOscuro capitulo="campana">
       <VideoFeature
         src="/edicion/campana-marquesina.mp4"
         webm="/edicion/campana-marquesina.webm"
@@ -111,12 +123,7 @@ export function CuerpoCampana() {
         etiquetaVer={t("cta.verVideo")}
         etiquetaCerrar={t("cta.cerrar")}
       />
-      <Ficha ancho="medio">
-        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-loreal.avif")} />
-      </Ficha>
-      <Ficha ancho="medio">
-        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-ingres.avif")} />
-      </Ficha>
+      </BeatOscuro>
     </>
   );
 }

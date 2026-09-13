@@ -1926,3 +1926,56 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   .edicion-carta { transform: none; opacity: 1; }
   .edicion-carta[data-primaria] { opacity: 1; }
 }
+
+/* ============================================================ §39 / §40 / §45
+   THE SECOND DARK BEAT.
+
+   Section 45: "another dark cinematic insert near the end" of a chapter, with
+   roughly 25vh of separation before it, a light→dark transition, and media
+   animating in. Its purpose is stated outright -- "an unexpected second
+   cinematic beat within one chapter" -- and it is what stops every chapter
+   having the identical dark→light rhythm. */
+.edicion-beat-oscuro {
+  grid-column: span 6;
+  position: relative;
+  /* The section's own 25vh of breathing room before the block enters. */
+  margin-top: 25vh;
+  /* Full-bleed out of the padded editorial column: this is the cinematic world
+     returning, and it cannot return inside a reading measure. */
+  margin-inline: calc(clamp(1.2rem, 4vw, 3.5rem) * -1);
+  padding: clamp(2.5rem, 7vw, 6rem) clamp(1.2rem, 4vw, 3.5rem);
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+}
+/* Light → dark, as a band rather than an edge (§77-C). */
+.edicion-beat-oscuro::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: clamp(90px, 12vh, 190px);
+  transform: translateY(-100%);
+  background: linear-gradient(to bottom, transparent, var(--edicion-negro));
+  pointer-events: none;
+}
+/* And back to light for the rest of the chapter -- only when there IS a rest of
+   the chapter. When the beat is the last block, the next thing is the following
+   chapter's dark intro, and a dark→transparent scrim over it reads as a light
+   band between two dark blocks. */
+.edicion-beat-oscuro[data-vuelve]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(90px, 12vh, 190px);
+  transform: translateY(100%);
+  background: linear-gradient(to bottom, var(--edicion-negro), transparent);
+  pointer-events: none;
+}
+.edicion-beat-oscuro__interior { max-width: 100%; }
+
+/* Inside the dark beat the video's caption inverts. */
+.edicion-beat-oscuro .edicion-video { grid-column: auto; }
+.edicion-beat-oscuro .edicion-video__pie p { color: rgba(246, 243, 239, 0.72); }

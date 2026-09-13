@@ -178,16 +178,31 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
 export function MarcaTema({
   tema,
   capitulo = null,
+  borde = "arriba",
 }: {
   tema: "oscuro" | "claro";
   capitulo?: string | null;
+  /**
+   * Which edge of the parent the marker sits on.
+   *
+   * It matters: a block that opens one theme and closes another needs its
+   * closing marker at the FOOT. With both at top: 0 they land on the same
+   * pixel, the later one wins in document order, and the block never takes its
+   * own theme at all -- which is exactly what happened to the dark beat.
+   */
+  borde?: "arriba" | "abajo";
 }) {
   return (
     <div
       aria-hidden
       data-marca-tema={tema === "oscuro" ? "dark" : "light"}
       {...(capitulo ? { "data-marca-capitulo": capitulo } : {})}
-      style={{ position: "absolute", top: 0, height: 1, width: "100%" }}
+      style={{
+        position: "absolute",
+        [borde === "arriba" ? "top" : "bottom"]: 0,
+        height: 1,
+        width: "100%",
+      }}
     />
   );
 }
