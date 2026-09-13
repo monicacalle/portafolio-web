@@ -2354,6 +2354,26 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   .edicion-triptico__objeto { flex: 1 1 58%; min-width: 0; }
   .edicion-triptico__lecturas { flex: 1 1 42%; min-width: 0; }
 }
+/*
+  THE PINNED BLOCK HAS TO FIT THE VIEWPORT, and between 1024 and ~1150px wide
+  it did not. `min-height: calc(100svh - 110px)` is a floor, not a ceiling, and
+  the readings column is the tallest thing in the row: at 1024px wide it is 42%
+  of 1008px, so the third reading — the one carrying §49's five spec rows —
+  wraps to 695px against a 590px stage. Measured at 1024x700 the pinned child
+  spanned y = 110 to 805, 105px below the fold for the whole pin; 18px at
+  1100x700; clean from 1152 up. §49's last row reveals inside that overhang, so
+  its entire 0→1 ramp played off screen.
+
+  The readings take the wider share in that band, which is what actually
+  shrinks them — the type is already at its floor. §42's sequence solves the
+  same problem by clamping its frame against `100svh`; the triptych's tall
+  element is text, so the lever is measure rather than height.
+*/
+@media (min-width: 900px) and (max-width: 1199px) {
+  .edicion-triptico__objeto { flex: 1 1 46%; }
+  .edicion-triptico__lecturas { flex: 1 1 54%; }
+  .edicion-triptico__fijo { gap: clamp(0.9rem, 2vw, 1.6rem); }
+}
 
 .edicion-triptico__objeto { margin: 0; overflow: hidden; border-radius: 6px; }
 .edicion-triptico__objeto img {
@@ -2457,6 +2477,19 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   opacity: var(--ee);
   transform: translate3d(calc((1 - var(--ee)) * 10px), 0, 0);
 }
+/* And a short window, which is the other way to run out of stage. At 1024x600
+   the measure fix further up still left 33px over the fold, because the stage
+   is only 490px there. §49's five rows carry the overhang, so they carry the
+   saving. It sits BELOW the rules it overrides rather than above them: both
+   are (0,1,1), and a media query adds no specificity — the first version of
+   this block was written 80 lines earlier and lost on source order, computing
+   7.56px of padding where it had asked for 4.16. */
+@media (min-width: 900px) and (max-height: 719px) {
+  .edicion-triptico__especificaciones { margin-top: 0.8rem; }
+  .edicion-triptico__especificaciones li { padding: 0.26rem 0 0.3rem; }
+  .edicion-triptico__texto p { margin-bottom: 0.6rem; }
+}
+
 [data-scrub] .edicion-triptico__especificaciones li::after {
   transform: scaleX(var(--ee));
 }
@@ -3141,11 +3174,35 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   top: calc(var(--edicion-cabecera-h) + 0.9rem);
   aspect-ratio: 340 / 464;
   border: 1px solid currentColor;
+  /* 0 below 1024px, where there is no rail for it to bound. The scrubbed value
+     that replaces it above that breakpoint is in the block below. */
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--t-medio) var(--ease-cine);
 }
-html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
+/*
+  IT DRAWS DURING THE MORPH, not half a screen after it.
+
+  §17 numbers this step 4 — "a rectangular Renaissance proportion frame becomes
+  the sidebar boundary" — inside the 35%→90% scrub, and step 5 says the title
+  "settles INSIDE this navigation frame". It was keyed to `data-fase`, a
+  discrete state the machine writes when the first chapter's marker crosses the
+  header line, which is a different event entirely. Measured at 1440x900: at
+  scrollY 419 the rail was at 0.508 and the hero's wordmark at 0.574, with --m
+  already saturated, and the frame was at 0; still 0 at 450 where the morph
+  ends; still 0 at 600, 700, 800, 850, 900; it appeared between 925 and 950.
+  Four hundred and eighty-five pixels after the thing it is the boundary of, so
+  the title spent the whole morph settling inside a frame that was not drawn.
+
+  `--hp` is the hero's own progress published on <html>, the same value the
+  rail's arrival reads. The frame draws over its last quarter, so it is there
+  before the wordmark lands. It is held at 0.18 afterwards by the fallback,
+  which is what keeps it "as the rail's edge" for the rest of the page.
+*/
+@media (min-width: 1024px) {
+  .edicion-rail__frame {
+    opacity: calc(0.18 * clamp(0, calc((var(--hp, 1) - 0.7) / 0.25), 1));
+  }
+}
 
 /* Steps 6 and 8: the chapter links become legible and the rail takes over as
    the fixed navigation while the 80% column becomes the storytelling surface.
