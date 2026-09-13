@@ -371,6 +371,66 @@ print('\nLA SECUENCIA — four delivered states of Vibe, for chapter IV')
 secuencia()
 
 
+# ----------------------------------------------------------------- EL OFICIO
+# Chapter VI's media — brief section 67.
+#
+# §67 asks the closing chapter to open with "a full-width major story" that
+# "should feel like the chapter hero after the chapter intro", then "two major
+# media cards". Chapter VI was text only: three lists and a mailto.
+#
+# The three plates below are the only things on this site that belong to the
+# closing chapter and appear nowhere else on the page. Her portrait is the one
+# photograph of the person the other five chapters are about, and the two
+# documents are what a reader can actually take away — and neither had any
+# visual presence at all. The graphic portfolio, 30 designed pages, was a text
+# link; the CV was a link whose label said "open the full CV" and opened the
+# graphic portfolio instead.
+#
+# The portrait is NOT the one on the portfolio's cover. Both are hers and both
+# are in that document (the cover carries one, page 3 the other), so using the
+# cover as a card and the cover's own portrait as the hero would have put the
+# same photograph on screen twice.
+OFICIO_DOCS = [
+    ('assets/portafolio-grafico.pdf', 'oficio-doc-grafico', 'cover, 30 pages'),
+    ('assets/cv-monica-calle-es.pdf', 'oficio-doc-cv-es', 'CV page 1, ES'),
+    ('assets/cv-monica-calle-en.pdf', 'oficio-doc-cv-en', 'CV page 1, EN'),
+]
+
+
+def oficio():
+    retrato = os.path.join(RAIZ, 'public', 'images', 'about.png')
+    if os.path.exists(retrato):
+        # Not cropped. The page's rule about her illustrations holds for a
+        # photograph of her too: the layout fits the portrait, never the
+        # reverse.
+        guardar(Image.open(retrato).convert('RGB'), 'oficio-retrato', 900, q=62)
+    else:
+        print('  oficio-retrato         SKIP (source not on disk)')
+
+    for rel, nombre, nota in OFICIO_DOCS:
+        ruta = os.path.join(RAIZ, 'public', rel)
+        if not os.path.exists(ruta):
+            print(f'  {nombre:22s} SKIP (source not on disk)')
+            continue
+        with tempfile.TemporaryDirectory() as tmp:
+            # 90dpi against A4's 595pt gives ~744px, which is the card's
+            # delivery width. Rendered rather than extracted: these are
+            # laid-out pages, not embedded photographs.
+            subprocess.run(['pdftoppm', '-png', '-f', '1', '-l', '1', '-r', '90',
+                            ruta, os.path.join(tmp, 'p')], check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            paginas = sorted(glob.glob(os.path.join(tmp, '*.png')))
+            if not paginas:
+                print(f'  {nombre:22s} SKIP (pdftoppm produced nothing)')
+                continue
+            guardar(Image.open(paginas[0]).convert('RGB'), nombre, 744, q=62)
+            print(f'  {"":22s} {nota}')
+
+
+print('\nEL OFICIO — the closing chapter\'s portrait and documents')
+oficio()
+
+
 # ------------------------------------------------------- PLACAS DE CAPITULO
 # The chapter opening plates.
 #

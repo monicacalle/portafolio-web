@@ -15,7 +15,7 @@
  *
  * THEY ARE FLOORS, NOT MEASUREMENTS. `alturaSvh` becomes a min-height, and as
  * the editorial bodies filled every chapter grew past its own number. Measured
- * at 1680x1000 on 2026-09-13: 300 / 342 / 373 / 661 / 772 / 228 against the
+ * at 1680x1000 on 2026-09-13: 300 / 343 / 375 / 661 / 773 / 421 against the
  * 300 / 260 / 280 / 340 / 700 / 190 declared below. The numbers are kept as
  * the reserved minimum each chapter gets before its content is counted, and
  * the ratio between them is still what sets the rhythm; they are not a claim
@@ -110,7 +110,9 @@ export const CAPITULOS = [
     alturaSvh: 190,
     tema: "claro",
     // The chapter that closes is the only one that never goes dark: it is the
-    // practical one — where she has worked, what she uses, how to write to her.
+    // practical one — who she is, what she can hand you, where she has worked,
+    // what she uses, how to write to her. §67's story and its two document
+    // cards took it from 190svh of lists to ~421svh measured.
     fondo: "#F4F2F0",
     obras: [],
   },

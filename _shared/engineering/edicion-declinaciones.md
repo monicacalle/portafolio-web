@@ -52,6 +52,7 @@ portfolio. These sections have no equivalent to build.
 | 54, 56, 58, 60, 62, 64 | Checkout, Operations, Shop app, B2B, Finance, Shipping chapter intros | Six chapters, not twelve. Her body of work supports six; padding to twelve would put single images under chapter titles. Settled with the user at the start. |
 | 55, 57, 59, 61, 63, 65 | The light content sections belonging to those six chapters | Declined with their intros. Named explicitly here because an audit counted them as unscored otherwise. |
 | 52 | "Products surfacing across multiple merchant surfaces" | The dark featured story §52 asks for is built (see §39/40/45 below); its SUBJECT is not. One designer's two apps do not surface across a network of merchant surfaces, and drawing a diagram that says they do would be the only invented claim on the page. |
+| 69 | Chapter VI's full-bleed video story | §69 asks the closing chapter for "one full-bleed video story" on top of §67's hero and cards. There is no film of her practice, and the only two this page could cut are of work that belongs to chapters III and V. A second showing of the campaign film or the printed portfolio, dressed as a new story in the closing chapter, is repetition. §69's other half — media cards and compact capability updates — is built: the two document cards and the three list columns. |
 | 74 | "Coming soon / get notified" product modal | Nothing on this site is unreleased. |
 | 75 | Product / merch modal | There is no merchandise. |
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
@@ -86,7 +87,6 @@ These are absent. They are not declined, they are unfinished.
 
 | § | Requirement | Note |
 |---|---|---|
-| 67, 69 | Chapter VI media | The closing chapter is text only. |
 | 102 | Extracted primitives | `ChapterIntro`, `SectionHeading`, `CTA`, `InlineLink` and `Modal` exist as markup inside their own components rather than as named primitives. |
 | 103 | Full data consolidation | `PLACAS`, `OBRAS` and the piece lists still live beside the components rather than inside the chapter records. |
 
@@ -115,6 +115,21 @@ it, and Geist carries the grotesque role for UI and body. It is a departure from
 retablo, built in CSS 3D. It is built that way because it is also §17's
 hero-to-rail morph, which has to survive WebGL being off. §81 and §82 bless a
 non-WebGL cinematic path explicitly.
+
+**§67 — the closing chapter's hero and its two cards are documents, not
+product stories.** §67 asks for "a full-width major story" that "should feel
+like the chapter hero", then "two major media cards". Chapter VI was three
+lists and a mailto: no photograph of the person the other five chapters are
+about, and no sight of either thing a reader can take away. The story is her
+own `about` copy, which had been off the site since this page replaced the old
+homepage, beside her portrait. The two cards are the graphic portfolio and the
+CV, each showing its real first page.
+
+It also closed a defect rather than only adding a section: the chapter's one
+document link was labelled "Abrir el CV completo" / "Open the full CV" and
+opened the graphic portfolio. Both documents have their own card and their own
+correct destination now, and the "Herramientas y fortalezas" heading sits over
+the tool tags rather than over `contact.tags`, which are the service lines.
 
 **§42 — the four states are Vibe's, not Rollouts'.** The section is built:
 `components/edicion/secuencia.tsx`, a pinned stage in chapter IV where four
@@ -173,7 +188,8 @@ and 22 FAIL — and then found three blockers, all since fixed:
    scroll container.
 
 Since that audit: §29 and §30 (the constellation and its hover), §39/§40/§45
-(the second dark beat), and §42 (the state-to-state sequence) have landed, and
+(the second dark beat), §42 (the state-to-state sequence) and §67 (the closing
+chapter's story and its two documents) have landed, and
 one horizontal-overflow defect the sequence exposed has been fixed — `MarcaTema`
 was absolutely positioned with `width: 100%` and no `left`, so inside the dark
 beat it hung 48px past the right edge of the document on every desktop width.

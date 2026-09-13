@@ -211,7 +211,15 @@
     },
     "oficio": {
       "titulo": "PRACTICE",
-      "entradilla": "Where I have worked, what I use, and how to write to me."
+      "entradilla": "Where I have worked, what I use, and how to write to me.",
+      "historiaTitulo": "I design product, and I stay with it into production.",
+      "documentosTitulo": "The printed portfolio and the CV, in full.",
+      "documentos": {
+        "cv": {
+          "nota": "Experience, education and skills on two pages.",
+          "meta": "2 pages · PDF"
+        }
+      }
     }
   },
   "pie": {

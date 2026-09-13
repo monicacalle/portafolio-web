@@ -211,7 +211,15 @@
     },
     "oficio": {
       "titulo": "OFICIO",
-      "entradilla": "Dónde he trabajado, qué uso y cómo escribirme."
+      "entradilla": "Dónde he trabajado, qué uso y cómo escribirme.",
+      "historiaTitulo": "Diseño producto y lo acompaño hasta producción.",
+      "documentosTitulo": "El portafolio impreso y el CV, enteros.",
+      "documentos": {
+        "cv": {
+          "nota": "La experiencia, la formación y las competencias en dos páginas.",
+          "meta": "2 páginas · PDF"
+        }
+      }
     }
   },
   "pie": {

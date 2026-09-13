@@ -561,6 +561,144 @@ html:not([data-nav-theme]) {
 }
 
 /* ------------------------------------------------------------- chapter VI */
+/* ===================================================================== §67
+   Chapter VI's story and its two documents.
+
+   §67 wants the closing chapter to open with "a full-width major story" that
+   "should feel like the chapter hero after the chapter intro", and then "two
+   major media cards". The chapter was three lists and a mailto. */
+.edicion-historia {
+  grid-column: span 6;
+  display: grid;
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: center;
+  margin-bottom: clamp(2rem, 5vw, 4.5rem);
+}
+@media (min-width: 900px) {
+  .edicion-historia {
+    /* The portrait takes a third and the story takes the rest: a full-width
+       block, not a full-width photograph. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+}
+.edicion-historia__retrato {
+  margin: 0;
+  min-width: 0;
+  /* Not cropped. The page's rule about her illustrations holds for a
+     photograph of her too. */
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px -30px rgba(23, 16, 12, 0.6);
+}
+.edicion-historia__retrato img { width: 100%; height: auto; display: block; }
+.edicion-historia__texto { min-width: 0; }
+.edicion-historia__texto h3 {
+  margin: 0 0 clamp(0.8rem, 2vw, 1.4rem);
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(1.7rem, 3.6vw, 3.1rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  max-width: min(20ch, 100%);
+  text-wrap: balance;
+}
+.edicion-historia__texto p {
+  margin: 0 0 0.9rem;
+  font-size: clamp(0.95rem, 1.3vw, 1.06rem);
+  line-height: 1.6;
+  max-width: min(56ch, 100%);
+  color: rgba(23, 16, 12, 0.76);
+}
+.edicion-historia__texto p:last-child { margin-bottom: 0; }
+
+.edicion-documentos {
+  grid-column: span 6;
+  display: grid;
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  margin-bottom: clamp(2rem, 6vw, 5rem);
+}
+@media (min-width: 900px) {
+  .edicion-documentos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+.edicion-documentos__titulo {
+  margin: 0;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: min(22ch, 100%);
+}
+@media (min-width: 900px) {
+  /* The heading spans both cards rather than sitting over the first one. */
+  .edicion-documentos__titulo { grid-column: 1 / -1; }
+}
+
+.edicion-documento { display: grid; gap: 0.9rem; align-content: start; min-width: 0; }
+/* A sheet of paper, not a screenshot: these two are documents, and the shadow
+   and the hairline are what say so. */
+.edicion-documento__hoja {
+  display: block;
+  border: 1px solid rgba(23, 16, 12, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 14px 40px -26px rgba(23, 16, 12, 0.55);
+  transition: transform 260ms var(--ease-cine), box-shadow 260ms var(--ease-cine);
+}
+.edicion-documento__hoja img { width: 100%; height: auto; display: block; }
+.edicion-documento__hoja:hover,
+.edicion-documento__hoja:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 52px -24px rgba(23, 16, 12, 0.62);
+}
+.edicion-documento__pie h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.edicion-documento__pie p {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: min(40ch, 100%);
+  color: rgba(23, 16, 12, 0.72);
+}
+.edicion-documento__meta {
+  display: block;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(23, 16, 12, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+.edicion-documento__accion {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
+  padding-bottom: 1px;
+}
+.edicion-documento__accion:hover { border-bottom-color: currentColor; }
+.edicion-documento__accion span {
+  display: inline-block;
+  transition: transform 200ms var(--ease-salida);
+}
+.edicion-documento__accion:hover span { transform: translate(2px, -2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .edicion-documento__hoja,
+  .edicion-documento__accion span { transition: none; }
+  .edicion-documento__hoja:hover,
+  .edicion-documento__hoja:focus-visible { transform: none; }
+}
+
 .edicion-oficio {
   grid-column: span 6;
   display: grid;
