@@ -1,6 +1,10 @@
 /**
- * The thirteen conceptual background scenes of brief section 20 — here, seven:
- * the hero plus six chapters.
+ * The thirteen conceptual background scenes of brief section 20 — here, FIVE.
+ *
+ * This used to say seven, "the hero plus six chapters", and neither number is
+ * the file's: the hero's retablo is CSS 3D rather than a scene (see the note
+ * on the array), and chapter VI has none because §23 sends the closing chapter
+ * into the light world. Five chapters with a cinematic intro, five scenes.
  *
  * Each scene is a stack of PLANES at different depths. The brief asks for GLB
  * foreground models over KTX2 backgrounds; her work is painted illustration,

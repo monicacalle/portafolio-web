@@ -152,7 +152,19 @@ export function Hero() {
               // LCP candidate rather than competing with one.
               fetchPriority="high"
               decoding="async"
-              {...medidas(p.src, `(max-width: 1023px) 100vw, ${Math.round(p.w)}vw`)}
+              /*
+                `p.w` is a percentage OF THE STAGE, and above 1024px the stage
+                is 52vw — `.edicion-hero__escena { width: 52% }` inside the
+                sticky block. Promising `p.w`vw therefore overstated every
+                panel by about 1.9x: the dominant one claimed 35vw and measures
+                17.8vw at 1440. `sizes` is a promise, and one that overstates
+                makes the browser reach for a larger candidate than it needs —
+                the same error this file measured and fixed on the anachronism.
+              */
+              {...medidas(
+                p.src,
+                `(max-width: 1023px) 100vw, ${Math.round(p.w * 0.52)}vw`,
+              )}
             />
           ))}
 

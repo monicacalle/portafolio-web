@@ -11,6 +11,12 @@
  * document reflowed as plates decoded; without srcset a 390px phone pulled a
  * 1680px plate whole. Typing either by hand would let them drift from the
  * assets the pipeline cuts, so both are read off the files.
+ *
+ * Nine `/images/*.png` rows lived here and no caller ever passed one: every
+ * `medidas()` call site takes a path under `/edicion/`, `/cine/` or
+ * `/trabajo/`. A hand-maintained table carrying rows nothing looks up is the
+ * dead-configuration-that-reads-as-live the §103 note in `capitulos.ts` says
+ * was removed from this build; it had simply moved house.
  */
 export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/cine/a2-esmeralda.avif": [1200, 262],
@@ -66,15 +72,6 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/edicion/plano-iv-bg.avif": [236, 512],
   "/edicion/plano-v-bg.avif": [364, 512],
   "/edicion/plano-v-fg.avif": [1400, 913],
-  "/images/about.png": [1024, 1536],
-  "/images/asset4.png": [768, 202],
-  "/images/luxeestate.png": [1024, 482],
-  "/images/mockupisa.png": [4500, 3000],
-  "/images/mockupraiz.png": [4000, 3000],
-  "/images/portafolioabierto.png": [1553, 1013],
-  "/images/profilepicture.png": [832, 1248],
-  "/images/vibe.png": [1512, 982],
-  "/images/voluntee.png": [2162, 1204],
   "/trabajo/t-esmeralda.avif": [900, 640],
   "/trabajo/t-ilustracion.avif": [900, 640],
   "/trabajo/t-isabella.avif": [900, 640],
