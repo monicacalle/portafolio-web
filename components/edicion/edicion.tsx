@@ -58,7 +58,7 @@ export function Edicion() {
  */
 function Escena({ anclaje }: { anclaje: string }) {
   const PLACAS: Record<string, string> = {
-    ilustracion: "/edicion/hero-retablo.avif",
+    ilustracion: "/cine/pelo-cobre.avif",
     marca: "/cine/a2-esmeralda.avif",
     campana: "/cine/a3-loreal.avif",
     producto: "/cine/a2-vibe.avif",

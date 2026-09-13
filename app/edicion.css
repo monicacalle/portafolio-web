@@ -251,6 +251,10 @@ html:not([data-nav-theme]) {
   /* Section 85: ~140svh desktop, ~70svh mobile. Not a scaled-down desktop. */
   min-height: 70svh;
   display: flex;
+  /* Centred, matching the reference: its chapter titles sit at roughly 45% of
+     the intro with the serif standfirst under them. flex-end pushed the title
+     to the bottom of a 140svh block, i.e. a full viewport below where the
+     chapter starts, so arriving at #ilustracion showed only the plate. */
   align-items: center;
   overflow: clip;
   background: var(--cap-fondo);
@@ -260,13 +264,25 @@ html:not([data-nav-theme]) {
 }
 
 .edicion-capitulo__escena { position: absolute; inset: 0; }
+.edicion-capitulo__escena::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 8, 8, 0.82) 0%,
+    rgba(10, 8, 8, 0.55) 34%,
+    rgba(10, 8, 8, 0.1) 62%,
+    transparent 100%
+  );
+}
 .edicion-capitulo__escena img { width: 100%; height: 100%; object-fit: cover; }
 
 .edicion-capitulo__portada {
   position: relative;
   z-index: 2;
   padding: clamp(1.2rem, 4vw, 3.5rem);
-  max-width: 46ch;
+  width: 100%;
 }
 
 /* Section 4: oversized and architectural. Little text occupying a very large
@@ -276,8 +292,8 @@ html:not([data-nav-theme]) {
   margin: 0;
   font-family: var(--font-display, var(--font-sans));
   font-weight: 800;
-  font-size: clamp(3.2rem, 13vw, 12rem);
-  line-height: 0.86;
+  font-size: clamp(2.4rem, 8.4vw, 8.5rem);
+  line-height: 0.88;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
