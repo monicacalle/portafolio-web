@@ -1088,3 +1088,60 @@ html:not([data-nav-theme]) {
     background-position: center;
   }
 }
+
+/* -------------------------------------------------- la geometría (§15)
+   A full-viewport hairline construction that draws itself as the hero scrolls.
+   Drafting ink, not a HUD: one warm off-white, 1px, very low opacity, no glow,
+   no blur, no colour.
+
+   pathLength="1" on every element means stroke-dasharray: 1 is the whole path
+   whatever its real length, so a single dashoffset expression draws a line, a
+   circle and an arc identically. */
+.edicion-geometria {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+.edicion-geometria * {
+  fill: none;
+  stroke: #f6f3ef;
+  /* vector-effect keeps it a true hairline after preserveAspectRatio="none"
+     stretches the viewBox to the viewport, which would otherwise scale the
+     stroke unevenly on each axis. */
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+}
+
+/* Opacity goes on the ROOT, once. Putting it on `.edicion-geometria *` applied
+   it to the <g> AND to the shape inside it, so it multiplied: 0.22 x 0.22 was
+   an effective 0.048 and the construction was invisible. Section 15 asks for
+   "very low" and forbids a glowing HUD; 0.3 of a warm off-white at 1px is a
+   pencil line on a dark board, which is the register it wants. */
+.edicion-geometria { opacity: 0.3; }
+
+/* Section 15's sequence, each group reading its own window of the hero's --p:
+   frame 0-15%, divisions 10-30%, diagonals 20-45%, circles and spiral 30-60%.
+   Staggered so it feels constructed by hand rather than switched on. */
+.edicion-geometria__g { stroke-dasharray: 1; }
+.edicion-geometria__g[data-fase="marco"]       { --g: clamp(0, calc(var(--p, 0) / 0.15), 1); }
+.edicion-geometria__g[data-fase="divisiones"]  { --g: clamp(0, calc((var(--p, 0) - 0.10) / 0.20), 1); }
+.edicion-geometria__g[data-fase="diagonales"]  { --g: clamp(0, calc((var(--p, 0) - 0.20) / 0.25), 1); }
+.edicion-geometria__g[data-fase="circulos"]    { --g: clamp(0, calc((var(--p, 0) - 0.30) / 0.30), 1); }
+.edicion-geometria__g * { stroke-dashoffset: calc(1 - var(--g, 1)); }
+
+/* The construction fades as the retablo folds away, so it never competes with
+   the chapter that follows. */
+.motion .edicion-geometria {
+  opacity: calc(0.3 * (1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.28), 1)));
+}
+
+/* Motion off: the construction is simply finished and still, at a lower
+   opacity so a static page does not read as a wireframe. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-geometria__g * { stroke-dashoffset: 0; }
+  .edicion-geometria { opacity: 0.18; }
+}

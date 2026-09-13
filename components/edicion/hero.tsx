@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
 import { MarcaTema } from "./estado";
+import { Geometria } from "./geometria";
 
 /**
  * Panel geometry, as fractions of the 1680x1050 composition that
@@ -118,6 +119,8 @@ export function Hero() {
             decoding="async"
           />
         </div>
+
+        <Geometria />
 
         {/* The thin-rule frame, sitting across the panel joins: wordmark, a
             two-line standfirst carrying the positioning, and the six chapters
