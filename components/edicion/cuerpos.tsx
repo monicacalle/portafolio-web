@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { medidas } from "@/lib/edicion/medidas";
-import { CAPITULOS, type Anclaje } from "@/lib/edicion/capitulos";
+import { POR_ANCLAJE } from "@/lib/edicion/capitulos";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
@@ -50,6 +50,26 @@ export function CuerpoIlustracion() {
         bent to fit the other. Each card's title and dimensions ride with it.
       */}
       <Constelacion />
+
+      {/*
+        §37: after the heavy block, the compact register — "compact textual
+        updates follow without requiring elaborate animations". Chapter I ended
+        on the constellation and had none of it.
+
+        The rows are the five `linea` texts, which were written for these
+        drawings, went through ghost, and rendered NOWHERE: the constellation
+        card is 22% of the column wide and carries a title and the file's
+        dimensions, because a forty-word paragraph inside it would break §29's
+        cloud. This is where they fit.
+      */}
+      <ListaCompacta
+        id="piezas-ilustracion"
+        titulo={t("capitulos.ilustracion.piezasTitulo")}
+        filas={(["pelo-cobre", "panuelo", "modigliani", "nube", "ceguera"] as const).map((k) => ({
+          q: t(`capitulos.ilustracion.piezas.${k}.titulo`),
+          a: t(`capitulos.ilustracion.piezas.${k}.linea`),
+        }))}
+      />
     </>
   );
 }
@@ -79,24 +99,32 @@ export function CuerpoIlustracion() {
  * a half and two thirds, and that unevenness is what stops the light sections
  * reading as a CMS listing.
  */
-export function ParedDeObras({ anclaje }: { anclaje: Anclaje }) {
-  const obras = CAPITULOS.find((c) => c.anclaje === anclaje)?.obras ?? [];
+export function ParedDeObras({ obras }: { obras: readonly ObraConTexto[] }) {
   return (
     <>
       {obras.map((o, i) => (
         <Ficha key={o.src + i} ancho={o.ancho}>
-          {/* alt is empty on purpose: every plate here is decorative repetition
-              of work the surrounding copy already names, and a screen-reader
-              user hearing "t-esmeralda dot avif" twelve times is worse served
-              than one who hears the chapter's prose once. Plates that carry
-              information a sighted reader gets ONLY from the image are given
-              real alt text where they appear. */}
+          {/* alt is empty on purpose: the figcaption below carries the name and
+              the line, so a screen reader hears each piece once rather than
+              twice. Plates whose meaning a sighted reader gets ONLY from the
+              image are given real alt text where they appear. */}
           <img src={o.src} alt="" loading="lazy" decoding="async" {...medidas(o.src)} />
+          <h3>{o.titulo}</h3>
+          <p>{o.nota}</p>
         </Ficha>
       ))}
     </>
   );
 }
+
+interface ObraConTexto {
+  src: string;
+  ancho: "completo" | "medio" | "tercio" | "dos-tercios";
+  titulo: string;
+  nota: string;
+}
+
+
 
 /**
  * Chapter II's editorial body: her statement, the branding method, and the
@@ -121,7 +149,13 @@ export function CuerpoMarca() {
           a: t(`capitulos.marca.metodo.filas.${k}.a`),
         }))}
       />
-      <ParedDeObras anclaje="marca" />
+      <ParedDeObras
+        obras={POR_ANCLAJE.marca.obras.map((o) => ({
+          ...o,
+          titulo: t(`capitulos.marca.obras.${o.clave}.titulo`),
+          nota: t(`capitulos.marca.obras.${o.clave}.nota`),
+        }))}
+      />
     </>
   );
 }
@@ -178,7 +212,13 @@ export function CuerpoCampana() {
       <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.campana.declaracion")}</p>
       </div>
-      <ParedDeObras anclaje="campana" />
+      <ParedDeObras
+        obras={POR_ANCLAJE.campana.obras.map((o) => ({
+          ...o,
+          titulo: t(`capitulos.campana.obras.${o.clave}.titulo`),
+          nota: t(`capitulos.campana.obras.${o.clave}.nota`),
+        }))}
+      />
 
       {/* Sections 40 and 45: the film continues the chapter's dark atmosphere
           rather than sitting in the light body, and it arrives near the end as
@@ -213,7 +253,13 @@ export function CuerpoImpreso() {
       {/* §50: "after the sticky sequence ends… show media cards". The compact
           list that used to sit here is §49's now, inside the third reading,
           where the object it describes is still on screen. */}
-      <ParedDeObras anclaje="impreso" />
+      <ParedDeObras
+        obras={POR_ANCLAJE.impreso.obras.map((o) => ({
+          ...o,
+          titulo: t(`capitulos.impreso.obras.${o.clave}.titulo`),
+          nota: t(`capitulos.impreso.obras.${o.clave}.nota`),
+        }))}
+      />
     </>
   );
 }

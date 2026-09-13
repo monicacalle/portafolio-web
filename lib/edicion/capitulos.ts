@@ -71,11 +71,15 @@ export const CAPITULOS = [
     // Estudio Raíz oxblood. Also the page's one structural accent.
     fondo: "#4E0909",
     placa: "/edicion/cap-marca.avif",
+    // Three marks, then two of them applied. The fourth card used to be the
+    // open printed portfolio, which is chapter V's subject sitting unlabelled
+    // in the brand chapter.
     obras: [
-      { src: "/trabajo/t-esmeralda.avif", ancho: "medio" },
-      { src: "/edicion/cap-marca.avif", ancho: "medio" },
-      { src: "/trabajo/t-isabella.avif", ancho: "tercio" },
-      { src: "/edicion/cap-impreso.avif", ancho: "dos-tercios" },
+      { clave: "esmeralda", src: "/trabajo/t-esmeralda.avif", ancho: "tercio" },
+      { clave: "raiz-marca", src: "/edicion/marca-raiz.avif", ancho: "tercio" },
+      { clave: "isabella", src: "/trabajo/t-isabella.avif", ancho: "tercio" },
+      { clave: "raiz-aplicada", src: "/edicion/cap-marca.avif", ancho: "medio" },
+      { clave: "isabella-aplicada", src: "/cine/a2-isabella.avif", ancho: "medio" },
     ],
   },
   {
@@ -93,9 +97,11 @@ export const CAPITULOS = [
     // them, because chapter III's body never reached the renderer holding it;
     // Nespresso is chapter V's Plakatstil homage besides. What ships here is
     // what shipped before: the two plates the chapter's own body drew.
+    // Uneven on purpose, and in this direction on purpose: her campaign is the
+    // subject and the public-domain portrait beside it is the reference.
     obras: [
-      { src: "/cine/a3-loreal.avif", ancho: "medio" },
-      { src: "/cine/a3-ingres.avif", ancho: "medio" },
+      { clave: "loreal", src: "/cine/a3-loreal.avif", ancho: "dos-tercios" },
+      { clave: "ingres", src: "/cine/a3-ingres.avif", ancho: "tercio" },
     ],
   },
   {
@@ -126,8 +132,9 @@ export const CAPITULOS = [
     fondo: "#6B2F14",
     placa: "/edicion/cap-impreso.avif",
     obras: [
-      { src: "/trabajo/t-libro.avif", ancho: "medio" },
-      { src: "/trabajo/t-lobo.avif", ancho: "medio" },
+      { clave: "portafolio", src: "/trabajo/t-libro.avif", ancho: "dos-tercios" },
+      { clave: "lobo", src: "/trabajo/t-lobo.avif", ancho: "tercio" },
+      { clave: "nespresso", src: "/trabajo/t-nespresso.avif", ancho: "medio" },
     ],
   },
   {
@@ -165,8 +172,16 @@ export const CAPITULOS = [
  * - `fondo`     The flat ground, sampled from her own files, not chosen at a desk.
  * - `placa`     The chapter intro's plate. Absent means no cinematic ground.
  * - `obras`     The editorial plate wall under the body, with §103's layout
- *               field on each. Empty where the chapter's body is a bespoke
- *               composition that already shows its own work.
+ *               field on each and the message key its caption lives under.
+ *               Empty where the chapter's body is a bespoke composition that
+ *               already shows its own work.
+ *
+ * `clave` exists because §32 asks every card for a title and a short
+ * description and these had neither. Four pieces of her branding work were on
+ * screen unnamed; the chapter statement above them names one of the three
+ * studios. The copy is at `capitulos.<anclaje>.obras.<clave>` and the caller
+ * resolves it, because a message key threaded through a prop widens to
+ * `string` and loses next-intl's compile-time guarantee.
  *
  * SECTION 103 is why `placa` and `obras` are here rather than in the
  * components. They were two `Record<string, ...>` maps inside edicion.tsx, next
@@ -180,6 +195,19 @@ export type Capitulo = (typeof CAPITULOS)[number];
 
 export const ANCLAJES = CAPITULOS.map((c) => c.anclaje);
 export type Anclaje = Capitulo["anclaje"];
+
+/**
+ * The same six, by anchor, keeping each record's own literal types.
+ *
+ * `CAPITULOS.find(...)` returns the UNION of all six, so `obras[n].clave`
+ * widens to every card key on the page and next-intl then rejects
+ * `capitulos.marca.obras.${clave}` because the cross product contains keys
+ * that do not exist. Indexing this map with a literal anchor keeps one
+ * chapter's card keys, which is what makes the caption lookup type-check.
+ */
+export const POR_ANCLAJE = Object.fromEntries(
+  CAPITULOS.map((c) => [c.anclaje, c]),
+) as { [C in Capitulo as C["anclaje"]]: C };
 
 /**
  * The hero's own length, before chapter I begins. 150svh per brief section 13:

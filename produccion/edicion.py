@@ -431,6 +431,46 @@ print('\nEL OFICIO — the closing chapter\'s portrait and documents')
 oficio()
 
 
+# ------------------------------------------------------- LA MARCA, SOBRE SU COLOR
+# Chapter II's third card — brief section 32.
+#
+# §32 asks every editorial card for a title and a short description, and four
+# of her branding pieces were on screen with neither. Naming them turned up a
+# second problem: the Estudio Raíz wordmark (public/cine/a2-raiz.avif) is white
+# on TRANSPARENT — 90% of its pixels have alpha 0 — so on the cream editorial
+# ground it rendered as white type on off-white and read as an empty cell,
+# while the other two marks sit on their own colour and read fine.
+#
+# #513329 is not a chosen colour. It is the median of the lower right quadrant
+# of page 8 of her own printed portfolio, which is the Estudio Raíz spread, so
+# the mark goes back on the ground she gave it.
+RAIZ_SUELO = (0x51, 0x33, 0x29)
+
+
+def marca_raiz():
+    origen = os.path.join(RAIZ, 'public', 'cine', 'a2-raiz.avif')
+    if not os.path.exists(origen):
+        print('  marca-raiz             SKIP (source not on disk)')
+        return
+    marca = Image.open(origen).convert('RGBA')
+    caja = marca.getbbox()
+    if caja:
+        marca = marca.crop(caja)
+    # 900x640 is the aspect the other two cards in this row already use, so the
+    # grid keeps its rhythm. 62% occupancy leaves the mark room to be a mark.
+    ancho, alto = 900, 640
+    f = min((ancho * 0.62) / marca.width, (alto * 0.62) / marca.height)
+    marca = marca.resize((max(1, round(marca.width * f)), max(1, round(marca.height * f))),
+                         Image.LANCZOS)
+    lienzo = Image.new('RGB', (ancho, alto), RAIZ_SUELO)
+    lienzo.paste(marca, ((ancho - marca.width) // 2, (alto - marca.height) // 2), marca)
+    guardar(lienzo, 'marca-raiz', None, q=62)
+
+
+print('\nLA MARCA, SOBRE SU COLOR — her wordmark back on her own ground')
+marca_raiz()
+
+
 # ------------------------------------------------------- PLACAS DE CAPITULO
 # The chapter opening plates.
 #

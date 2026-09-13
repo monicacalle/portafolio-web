@@ -32,6 +32,7 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/edicion/estado-vibe-4.avif": [392, 854],
   "/edicion/hero-retablo-completo.avif": [1680, 1050],
   "/edicion/hero-retablo.avif": [1680, 1050],
+  "/edicion/marca-raiz.avif": [900, 640],
   "/edicion/oficio-doc-cv-en.avif": [744, 1052],
   "/edicion/oficio-doc-cv-es.avif": [744, 1052],
   "/edicion/oficio-doc-grafico.avif": [744, 1052],

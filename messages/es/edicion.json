@@ -23,6 +23,7 @@
       "titulo": "ILUSTRACIÓN",
       "entradilla": "A cuatro de estos cinco no me los pidió nadie.",
       "declaracion": "Dibujo en Procreate y nunca había puesto estos dibujos en mi portafolio. Quizá porque no se parecen a lo que me encargan. A cuatro de los cinco no me los pidió nadie, y solo dos llevan fecha. El quinto es el único que responde a un briefing, y lo verás entero en <enlace>el capítulo de campaña</enlace>.",
+      "piezasTitulo": "Los cinco, uno por uno.",
       "piezas": {
         "pelo-cobre": {
           "titulo": "Cobre",
@@ -79,6 +80,28 @@
             "a": "Corto. Un documento de ochenta páginas no lo abre nadie dos veces."
           }
         }
+      },
+      "obras": {
+        "esmeralda": {
+          "titulo": "Viña Esmeralda",
+          "nota": "Etiqueta, estuche y colgante para un vino mediterráneo."
+        },
+        "raiz-marca": {
+          "titulo": "Estudio Raíz",
+          "nota": "El logotipo de mi propio estudio."
+        },
+        "isabella": {
+          "titulo": "Isabella Mendoza",
+          "nota": "Monograma y firma para un salón de bienestar capilar."
+        },
+        "raiz-aplicada": {
+          "titulo": "Raíz, en pantalla",
+          "nota": "La misma identidad, ya en la web del estudio."
+        },
+        "isabella-aplicada": {
+          "titulo": "Isabella, aplicada",
+          "nota": "El monograma en el rótulo y dentro del salón."
+        }
       }
     },
     "campana": {
@@ -88,6 +111,16 @@
       "video": {
         "titulo": "Ceguera Digital, en la calle",
         "nota": "El cartel completo en una marquesina del Ajuntament de València. La ilustración que abre esta edición es la misma que ves aquí a tamaño real."
+      },
+      "obras": {
+        "loreal": {
+          "titulo": "L'Oréal Paris",
+          "nota": "Revela tu poder en dos tonos. Una cara, dos barras, una frase."
+        },
+        "ingres": {
+          "titulo": "Ingres, 1823",
+          "nota": "Madame Jacques-Louis Leblanc. Metropolitan Museum of Art, dominio público."
+        }
       }
     },
     "producto": {
@@ -206,6 +239,20 @@
             "q": "Prueba impresa",
             "a": "Una, siempre, antes de la tirada. El monitor miente sobre el papel."
           }
+        }
+      },
+      "obras": {
+        "portafolio": {
+          "titulo": "Portafolio gráfico",
+          "nota": "La portada de las treinta páginas que puedes abrir al final de esta edición."
+        },
+        "lobo": {
+          "titulo": "El lobo estepario",
+          "nota": "Cartel para la novela de Hermann Hesse."
+        },
+        "nespresso": {
+          "titulo": "Nespresso",
+          "nota": "El desplegable, reducido a lo que el Plakatstil permite."
         }
       }
     },

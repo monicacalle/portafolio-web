@@ -58,6 +58,7 @@ portfolio. These sections have no equivalent to build.
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
 | 9 | Editions dropdown | The reference's menu switches between separately published editions. There is one of these. A menu that opens to reveal a single item is theatre; the six chapters are in the header, the rail and the hero index instead. |
 | 10 | Search | Six chapters and roughly forty pieces of work is not a corpus to search. **This one is a genuine gap rather than a clean adaptation** — §10 describes a find-and-jump interaction, and the build supplies the jump without the find. |
+| 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
 | 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the sitemap all read from one list. |
 
@@ -178,6 +179,31 @@ between them is stated on the screens themselves.
 **§47 / §48 — the sticky triptych is in chapter V, not chapter IV.** §48 is
 about circling a physical artifact, and her printed portfolio is the only thing
 on the page that genuinely is one.
+
+**§32 — the cards name the work now, and one mark went back on its own
+colour.** §32 asks every editorial card for a title and a short description and
+they had neither: four pieces of her branding work were on screen unnamed, and
+chapter II's statement above them names one of the three studios. The captions
+are at `capitulos.<anclaje>.obras.<clave>` and every line is checkable against
+her own printed portfolio.
+
+Naming them turned up a second thing. The Estudio Raíz wordmark is white on
+transparent — 90% of `a2-raiz.avif` has alpha 0 — so on the cream editorial
+ground it rendered as white type on off-white and read as an empty cell.
+`produccion/edicion.py` composites it onto #513329, which is the median of the
+lower right quadrant of page 8 of her portfolio, the Estudio Raíz spread. The
+mark is back on the ground she gave it.
+
+Chapter II's fourth card was also the open printed portfolio, which is chapter
+V's subject sitting unlabelled in the brand chapter. It is five cards now:
+three marks, then two of them applied.
+
+**§37 — chapter I's compact register, out of copy that existed.** The five
+`linea` texts were written for her five drawings, went through ghost, and
+rendered nowhere: a constellation card is 22% of the column wide and carries a
+title and the file's dimensions, because a forty-word paragraph inside it would
+break §29's cloud. They are the chapter's compact list now, which is where §37
+puts that register — after the heavy block.
 
 **§49 / §50 — the technical items moved up, they were not duplicated.** §49
 wants technical capability items inside the third story, revealed progressively;

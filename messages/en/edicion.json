@@ -23,6 +23,7 @@
       "titulo": "ILLUSTRATION",
       "entradilla": "Nobody asked me for four of these five.",
       "declaracion": "I draw in Procreate and I had never put these drawings in my portfolio. Maybe because they look nothing like the work I get asked for. Nobody asked me for four of the five, and only two of them carry a date. The fifth is the only one that answers to a brief, and you will see it in full in <enlace>the campaign chapter</enlace>.",
+      "piezasTitulo": "The five, one by one.",
       "piezas": {
         "pelo-cobre": {
           "titulo": "Copper",
@@ -79,6 +80,28 @@
             "a": "Short. Nobody opens an eighty-page document twice."
           }
         }
+      },
+      "obras": {
+        "esmeralda": {
+          "titulo": "Viña Esmeralda",
+          "nota": "Label, case and hang tag for a Mediterranean wine."
+        },
+        "raiz-marca": {
+          "titulo": "Estudio Raíz",
+          "nota": "The wordmark of my own studio."
+        },
+        "isabella": {
+          "titulo": "Isabella Mendoza",
+          "nota": "Monogram and signature for a hair and wellbeing salon."
+        },
+        "raiz-aplicada": {
+          "titulo": "Raíz, on screen",
+          "nota": "The same identity, this time on the studio site."
+        },
+        "isabella-aplicada": {
+          "titulo": "Isabella, applied",
+          "nota": "The monogram on the sign and inside the salon."
+        }
       }
     },
     "campana": {
@@ -88,6 +111,16 @@
       "video": {
         "titulo": "Ceguera Digital, in the street",
         "nota": "The full poster in an Ajuntament de València bus shelter. The illustration that opens this edition is the same one you see here at real size."
+      },
+      "obras": {
+        "loreal": {
+          "titulo": "L'Oréal Paris",
+          "nota": "Reveal your power in two shades. One face, two lipsticks, one line."
+        },
+        "ingres": {
+          "titulo": "Ingres, 1823",
+          "nota": "Madame Jacques-Louis Leblanc. Metropolitan Museum of Art, public domain."
+        }
       }
     },
     "producto": {
@@ -206,6 +239,20 @@
             "q": "Proof",
             "a": "One, always, before the run. A monitor lies about paper."
           }
+        }
+      },
+      "obras": {
+        "portafolio": {
+          "titulo": "Graphic portfolio",
+          "nota": "The cover of the thirty pages you can open at the end of this edition."
+        },
+        "lobo": {
+          "titulo": "Steppenwolf",
+          "nota": "A poster for the Hermann Hesse novel."
+        },
+        "nespresso": {
+          "titulo": "Nespresso",
+          "nota": "The fold-out, cut back to what Plakatstil allows."
         }
       }
     },
