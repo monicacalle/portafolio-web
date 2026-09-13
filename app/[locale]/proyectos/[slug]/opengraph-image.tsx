@@ -11,7 +11,7 @@ import {
   OG_CONTENT_TYPE,
   ProjectCard,
   toDataUrl,
-  seasonsFont,
+  serifFont,
 } from "@/lib/og/card";
 
 /*
@@ -78,7 +78,7 @@ export default async function CaseStudyOgImage({
   const read = Object.hasOwn(IMAGE, slug) ? IMAGE[slug] : undefined;
   if (!cs || !read) notFound();
 
-  const [font, png] = await Promise.all([seasonsFont(), read()]);
+  const [font, png] = await Promise.all([serifFont(), read()]);
   const image = toDataUrl(png);
 
   return new ImageResponse(

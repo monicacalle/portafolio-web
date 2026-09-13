@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { geist, newYork } from "../fonts";
+import { geist, garamond, bodoni } from "../fonts";
 import "../globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { SITE_URL, PERSON } from "@/lib/site";
@@ -76,7 +76,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={l} className={`${geist.variable} ${newYork.variable}`} suppressHydrationWarning>
+    <html lang={l} className={`${geist.variable} ${garamond.variable} ${bodoni.variable}`} suppressHydrationWarning>
       <head>
         {/* Progressive enhancement, inline and before paint.
 

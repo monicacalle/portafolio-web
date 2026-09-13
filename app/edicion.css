@@ -825,3 +825,27 @@ html:not([data-nav-theme]) {
      chapter VI and in the footer; the chapters are what a reader needs here. */
   .edicion-cabecera__cta { display: none; }
 }
+
+/* Chapter I's statement: it opens the editorial body, at reading size, before
+   any picture. The chapter's whole problem was that it had no words. */
+.edicion-declaracion {
+  grid-column: span 6;
+  max-width: 52ch;
+  margin-bottom: clamp(0.8rem, 2.5vw, 2rem);
+}
+.edicion-declaracion p {
+  margin: 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.15rem, 2.2vw, 1.75rem);
+  line-height: 1.36;
+}
+.edicion-ficha__meta {
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+}
+@media (max-width: 767px) {
+  /* The statement is prose, so it stays out of the snap carousel. */
+  .edicion-declaracion { grid-column: auto; scroll-snap-align: start; }
+}

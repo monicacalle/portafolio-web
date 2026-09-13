@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { geist, newYork } from "./fonts";
+import { geist, garamond, bodoni } from "./fonts";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/paths";
 import es from "@/messages/es";
@@ -40,7 +40,7 @@ export default async function GlobalNotFound() {
   const { notFound } = MESSAGES[locale];
 
   return (
-    <html lang={locale} className={`${geist.variable} ${newYork.variable}`}>
+    <html lang={locale} className={`${geist.variable} ${garamond.variable} ${bodoni.variable}`}>
       <body className="grain">
         <main className="section shell notfound">
           <p className="eyebrow">404</p>

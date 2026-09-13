@@ -17,7 +17,35 @@
   "capitulos": {
     "ilustracion": {
       "titulo": "ILUSTRACIÓN",
-      "entradilla": "Nadie me encargó estos retratos."
+      "entradilla": "A cuatro de estos cinco no me los pidió nadie.",
+      "declaracion": "Dibujo en Procreate y nunca había puesto estos dibujos en mi portafolio. Quizá porque no se parecen a lo que me encargan. A cuatro de los cinco no me los pidió nadie, y solo dos llevan fecha. El quinto es el único que responde a un briefing, y lo verás entero en el capítulo de campaña.",
+      "piezas": {
+        "pelo-cobre": {
+          "titulo": "Cobre",
+          "linea": "El pelo ocupa más superficie que la cara y le pinté los brillos hebra a hebra. El abrigo apenas lo dibujé: una masa oscura y un cuello claro.",
+          "meta": "3000 × 3000 px · sin firma ni fecha"
+        },
+        "panuelo": {
+          "titulo": "El pañuelo",
+          "linea": "Pinté la cara entera y el cuello se quedó en línea: dentro del contorno no hay color. El trazo de la mandíbula se prolonga más allá de la barbilla. Aun así lo firmé y le puse fecha.",
+          "meta": "3000 × 3000 px · firmado 07-01-2025"
+        },
+        "modigliani": {
+          "titulo": "El cuello",
+          "linea": "El cuello baja sin interrumpirse hasta dentro del vestido, y el vestido es una mancha oscura sin un pliegue. Los párpados caen hasta la mitad del ojo y la mirada va hacia abajo.",
+          "meta": "3000 × 3000 px · firmado «January 09 25»"
+        },
+        "nube": {
+          "titulo": "La niebla",
+          "linea": "Pinté la cara y el cuello con todo el detalle. A la altura del hombro el cuerpo se deshace en el fondo. No hay ropa ni borde que cierre la figura.",
+          "meta": "2048 × 2732 px · el único que no es cuadrado · firmado, sin fecha"
+        },
+        "ceguera": {
+          "titulo": "Ceguera Digital",
+          "linea": "El único que responde a un briefing, y el único sin una sola sombra: línea clara sobre color plano. El móvil va de pie sobre su cabeza y le ha salido un brazo propio. Ese brazo le tapa los ojos mientras ella lleva los suyos caídos.",
+          "meta": "3000 × 3000 px · de la campaña Ceguera Digital"
+        }
+      }
     },
     "marca": {
       "titulo": "MARCA",

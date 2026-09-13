@@ -17,7 +17,35 @@
   "capitulos": {
     "ilustracion": {
       "titulo": "ILLUSTRATION",
-      "entradilla": "Nobody commissioned these portraits."
+      "entradilla": "Nobody asked me for four of these five.",
+      "declaracion": "I draw in Procreate and I had never put these drawings in my portfolio. Maybe because they look nothing like the work I get asked for. Nobody asked me for four of the five, and only two of them carry a date. The fifth is the only one that answers to a brief, and you will see it in full in the campaign chapter.",
+      "piezas": {
+        "pelo-cobre": {
+          "titulo": "Copper",
+          "linea": "The hair covers more of the canvas than the face, and I painted its highlights strand by strand. I barely drew the coat at all: a dark mass and a pale collar.",
+          "meta": "3000 × 3000 px · unsigned, undated"
+        },
+        "panuelo": {
+          "titulo": "The headscarf",
+          "linea": "I painted the whole face and the neck stayed as line: inside the contour there is no colour. The jaw stroke runs on past the chin. I signed and dated it all the same.",
+          "meta": "3000 × 3000 px · signed 07-01-2025"
+        },
+        "modigliani": {
+          "titulo": "The neck",
+          "linea": "The neck runs down unbroken into the dress, and the dress is one dark mass without a fold. The lids come halfway down the eyes and the look goes to the floor.",
+          "meta": "3000 × 3000 px · signed “January 09 25”"
+        },
+        "nube": {
+          "titulo": "The haze",
+          "linea": "I painted the face and the neck in full detail. At the shoulder the body comes apart into the ground. No clothing, no edge closing the figure.",
+          "meta": "2048 × 2732 px · the only one that is not square · signed, undated"
+        },
+        "ceguera": {
+          "titulo": "Ceguera Digital",
+          "linea": "The only one that answers to a brief, and the only one without a single shadow: clear line over flat colour. The phone stands upright on her head and has grown an arm of its own. That arm covers her eyes while hers hang at her sides.",
+          "meta": "3000 × 3000 px · from the Ceguera Digital campaign"
+        }
+      }
     },
     "marca": {
       "titulo": "BRAND",

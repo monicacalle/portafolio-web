@@ -8,6 +8,7 @@ import { Rail } from "./rail";
 import { Hero } from "./hero";
 import { Capitulo, Ficha } from "./capitulo";
 import { Oficio } from "./oficio";
+import { CuerpoIlustracion } from "./cuerpos";
 
 /**
  * The Edition — the whole homepage.
@@ -72,15 +73,9 @@ function Escena({ anclaje }: { anclaje: string }) {
 /** The light editorial body under each chapter intro. */
 function Cuerpo({ anclaje }: { anclaje: string }) {
   if (anclaje === "oficio") return <Oficio />;
+  if (anclaje === "ilustracion") return <CuerpoIlustracion />;
 
   const OBRAS: Record<string, { src: string; ancho: "completo" | "medio" | "tercio" | "dos-tercios" }[]> = {
-    ilustracion: [
-      { src: "/edicion/panel-3.avif", ancho: "dos-tercios" },
-      { src: "/edicion/panel-7.avif", ancho: "tercio" },
-      { src: "/edicion/panel-6.avif", ancho: "tercio" },
-      { src: "/edicion/panel-9.avif", ancho: "tercio" },
-      { src: "/cine/a4-ceguera.avif", ancho: "tercio" },
-    ],
     marca: [
       { src: "/trabajo/t-esmeralda.avif", ancho: "medio" },
       { src: "/images/mockupraiz.png", ancho: "medio" },

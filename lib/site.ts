@@ -14,13 +14,13 @@ export const PERSON = {
   // NOTE: the user-facing jobTitle/description are localized in messages/{es,en}
   // (used by generateMetadata + the JSON-LD in page.tsx). These fields are kept
   // as a default/structural fallback and mirror the ES positioning.
-  jobTitle: "Diseñadora de Producto (UX/UI)",
+  jobTitle: "Diseñadora gráfica y UX/UI",
   email: "monicacalle369@gmail.com",
   locality: "Valencia",
   region: "Comunidad Valenciana",
   country: "ES",
   description:
-    "Diseñadora de producto (UX/UI) con base en desarrollo front-end. Prototipado en alta fidelidad, usabilidad y conversión, branding y handoff validado a desarrollo.",
+    "Diseñadora gráfica y UX/UI en Valencia. Ilustración, identidad de marca, campaña y diseño de producto. Trabaja con base en desarrollo front-end.",
   linkedin: "https://www.linkedin.com/in/monica-calle-betancourt/",
   knowsAbout: [
     "Diseño UX/UI",
