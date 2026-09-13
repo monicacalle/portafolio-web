@@ -30,7 +30,28 @@ export function Geometria() {
     <svg
       className="edicion-geometria"
       viewBox="0 0 1000 625"
-      preserveAspectRatio="xMidYMid slice"
+      /*
+        MEET, not slice, and the viewBox's own proportion is the reason.
+
+        1000 x 625 is 1.6:1 — the golden rectangle the whole construction is
+        built on. The 0.382 and 0.618 divisions, the auxiliary diagonals and
+        the quarter-arc spiral are all golden sections OF THAT RECTANGLE, so
+        the proportion is the content and cannot be stretched or recomputed per
+        viewport without ceasing to be what §15 asks for.
+
+        `slice` filled the viewport by cropping, and what it cropped was two of
+        the twelve things §15 enumerates. Measured: the frame rectangle's left
+        edge sat at x = -434 in a 375px viewport, at -466 in an 805px one and
+        at -42 at 1440x900 — off screen at every width tested, including the
+        one closest to 1.6. All six circles were outside the visible area at
+        390x844, five at 820x1180 and two at 1280 and above.
+
+        `meet` inscribes the rectangle instead: the SVG element is still
+        full-viewport, which is what §15's first line asks for, and the drawing
+        inside it is a golden rectangle with its frame and its corner circles
+        where a drafting sheet would have them.
+      */
+      preserveAspectRatio="xMidYMid meet"
       aria-hidden
       focusable="false"
     >

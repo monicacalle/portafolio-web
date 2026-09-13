@@ -1737,9 +1737,10 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
 .edicion-geometria * {
   fill: none;
   stroke: #f6f3ef;
-  /* vector-effect keeps it a true hairline after preserveAspectRatio="none"
-     stretches the viewBox to the viewport, which would otherwise scale the
-     stroke unevenly on each axis. */
+  /* vector-effect keeps it a true hairline whatever the viewBox scale works
+     out to. The comment here used to say `preserveAspectRatio="none"`, which
+     the SVG has never carried — it was `slice` and is `meet` now, for the
+     reason written beside it. */
   vector-effect: non-scaling-stroke;
   stroke-width: 1;
 }
