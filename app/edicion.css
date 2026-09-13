@@ -819,13 +819,27 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   overflow: hidden;
   background: #fff;
   box-shadow: 0 14px 40px -26px rgba(23, 16, 12, 0.55);
-  transition: transform 260ms var(--ease-cine), box-shadow 260ms var(--ease-cine);
 }
-.edicion-documento__hoja img { width: 100%; height: auto; display: block; }
-.edicion-documento__hoja:hover,
-.edicion-documento__hoja:focus-visible {
-  transform: translateY(-3px);
-  box-shadow: 0 22px 52px -24px rgba(23, 16, 12, 0.62);
+.edicion-documento__hoja img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* §71's duration, and it was 260ms. */
+  transition: transform 300ms var(--ease-cine);
+}
+/*
+  §71, and this used to break two of its four hover rules.
+
+  It was `transform: translateY(-3px)` on the card with the shadow growing from
+  -26px to -24px spread — which is the "dramatic card lift" §71 forbids by name,
+  plus a heavier shadow. What the section actually allows on hover is "tiny
+  image scale only if needed: 1 → 1.015" and "CTA underline or icon motion", so
+  the sheet holds still, the scan inside it scales by exactly that, and the
+  action underneath is an `Enlace` with §72's arrow.
+*/
+.edicion-documento__hoja:hover img,
+.edicion-documento__hoja:focus-visible img {
+  transform: scale(1.015);
 }
 .edicion-documento__pie h4 {
   margin: 0 0 0.25rem;
@@ -1961,16 +1975,36 @@ a.edicion-ficha {
   color: inherit;
   text-decoration: none;
 }
-/* Scoped to cards that CONTAIN A LINK. A hover state on something that cannot
-   be clicked is the inverse of section 71 -- it promises a destination that is
-   not there. The plate walls in chapters II, III and V are decorative repeats
-   of work the surrounding copy already names, so they stay inert. */
-.edicion-ficha:has(a) img { transition: transform var(--t-hover) var(--ease-cine); }
-.edicion-ficha:has(a):hover img,
-.edicion-ficha:has(a):focus-within img { transform: scale(1.015); }
-.edicion-ficha:has(a) h3 { transition: color var(--t-hover) var(--ease-cine); }
-.edicion-ficha:has(a):hover h3,
-.edicion-ficha:has(a):focus-within h3 { color: var(--edicion-acento); }
+/*
+  THE PRESSABLE CARDS ARE NAMED, because `.edicion-ficha:has(a)` named none.
+
+  This block used to be scoped to "cards that contain a link", which was the
+  right instinct and matched nothing: `Ficha` is rendered in exactly one place,
+  `ParedDeObras`, and those ten plates are deliberately inert — decorative
+  repeats of work the surrounding copy already names. So the whole §71 hover
+  treatment was dead CSS with a comment explaining why it was correct.
+
+  Three things on this page are pressable cards, and each gets §71's rules
+  where its own section does not already say otherwise:
+
+    .edicion-plancha      the two case studies      image scale + CTA arrow
+    .edicion-documento    the portfolio and the CV  see its own block above
+    .edicion-carta        the five drawings         §30's 4-7%, not §71's 1.5%
+
+  The constellation is the exception on purpose: §30 is the more specific
+  section and asks for a 4–7% scale on the active card, so §71's "tiny image
+  scale only if needed" does not overrule it.
+*/
+.edicion-plancha__marco { transition: box-shadow 300ms var(--ease-cine); }
+.edicion-plancha:hover .edicion-plancha__marco,
+.edicion-plancha:focus-within .edicion-plancha__marco {
+  /* Not a lift: §71 forbids one. The frame gains a little depth and that is
+     all; the CTA below it carries the actual affordance. */
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 22px 48px -24px rgba(23, 16, 12, 0.5);
+}
+.edicion-plancha h3 { transition: color 300ms var(--ease-cine); }
+.edicion-plancha:hover h3,
+.edicion-plancha:focus-within h3 { color: var(--edicion-acento); }
 
 /* ===================================================================== §77
    Section cut language. Three cuts, and none of them is an instantaneous
