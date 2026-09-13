@@ -188,6 +188,18 @@ export function Oficio() {
             {k("linkedin")}
           </CTA>
         </div>
+        {/*
+          §70: the page "ends naturally through its chapter/content architecture
+          and persistent navigation/footer information", and below 1024px there
+          was no footer information at all. The legal line lives in the rail,
+          the rail is a desktop device (§3 removes it), and the closing chapter
+          ended on two buttons with nothing after them.
+
+          Hidden at 1024 and up rather than duplicated: the rail carries it
+          there and two copyright lines on one screen is worse than one in the
+          wrong place. Same string, one source.
+        */}
+        <p className="edicion-oficio__legal">{t("pie.derechos")}</p>
       </div>
     </>
   );

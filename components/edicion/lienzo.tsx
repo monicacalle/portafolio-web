@@ -433,7 +433,10 @@ export function Lienzo() {
     server snapshot during hydration and the real one immediately after, which
     is exactly what it is for.
   */
-  const soportado = useSyncExternalStore(sinCambios, haySoporte, () => false);
+  const conContexto = useSyncExternalStore(sinCambios, haySoporte, () => false);
+  /* Both conditions, and the width is the one that was missing. */
+  const anchoSuficiente = useSyncExternalStore(suscribirAncho, hayAncho, () => false);
+  const soportado = conContexto && anchoSuficiente;
   usePrecarga(progresos, soportado);
 
   useEffect(() => {
@@ -501,6 +504,33 @@ export function Lienzo() {
 
 
 /**
+ * Is this a width the canvas is FOR? — §86 and §3.
+ *
+ * `.edicion-lienzo { display: none }` below 1024px has been in the stylesheet
+ * all along, and it was doing less than it looked like. Hiding the wrapper
+ * does not stop React mounting the `<Canvas>` inside it, so a phone still got
+ * a WebGL context, R3F's loop, and — through `usePrecarga`, whose own comment
+ * claimed the opposite — the scene textures. Measured at 390x844 scrolled to
+ * 3,000px: 184,131 bytes of plate downloaded for a renderer that is
+ * `display: none`.
+ *
+ * 1024px, matching the stylesheet and §3's large breakpoint. It is a store
+ * rather than a `useState` + effect for the same reason `haySoporte` is: the
+ * server cannot answer it, so the first client render has to.
+ */
+const CONSULTA_ANCHO = "(min-width: 1024px)";
+function suscribirAncho(fn: () => void) {
+  if (typeof window === "undefined" || !window.matchMedia) return () => {};
+  const mq = window.matchMedia(CONSULTA_ANCHO);
+  mq.addEventListener("change", fn);
+  return () => mq.removeEventListener("change", fn);
+}
+function hayAncho() {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  return window.matchMedia(CONSULTA_ANCHO).matches;
+}
+
+/**
  * Does this browser have a WebGL context to give?
  *
  * Answered once and cached, because `useSyncExternalStore` calls its snapshot
@@ -553,9 +583,10 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
     for the first paint, and this is explicitly the priority below them.
   */
   useEffect(() => {
-    // Nothing to warm for a canvas that can never mount: below 1024px and on
-    // any browser without WebGL the scene textures are ~48kB fetched for a
-    // renderer that does not exist.
+    // Nothing to warm for a canvas that will not mount. `soportado` now means
+    // BOTH a WebGL context and a viewport at or above 1024px — it used to mean
+    // only the first, so this guard let 184kB of plate through to every phone
+    // while this comment said it did not.
     if (!soportado) return;
     const primera = ESCENAS[0];
     if (!primera || hecho.current.has(primera.clave)) return;

@@ -1390,6 +1390,23 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   .edicion-plancha__pantalla { transform: none; }
 }
 
+/* §70's footer information, where the rail cannot carry it.
+
+   The legal line lives in the rail and the rail is a desktop device, so below
+   1024px the page ended on two buttons and nothing else — no footer
+   information of any kind, which is half of what §70 says the ending is made
+   of. It sits at the foot of the closing chapter instead, and is hidden from
+   1024 up rather than duplicated, because the rail already has it there. */
+.edicion-oficio__legal {
+  margin: clamp(2rem, 6vh, 3.5rem) 0 0;
+  font-size: 0.74rem;
+  color: rgba(23, 16, 12, 0.62);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1024px) {
+  .edicion-oficio__legal { display: none; }
+}
+
 /* Chapter VI's actions stack on a phone. Everything the block around this used
    to do — taking chapters IV, V and VI out of the snap carousel one id at a
    time — is the default now that the carousel belongs to the card group; see
