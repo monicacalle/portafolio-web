@@ -1457,7 +1457,15 @@ html:not([data-nav-theme]) {
   transition: background-color var(--t-hover) var(--ease-salida),
     border-color var(--t-hover) var(--ease-salida);
 }
-.edicion-video__play:hover { background: rgba(12, 9, 9, 0.72); border-color: #f6f3ef; }
+/* §25: "the entire media area is clickable… on hover: play affordance gains
+   emphasis". The frame carries the role and the click, so the frame is what
+   has to be hovered — bound to the pill alone, moving the pointer anywhere
+   over the film did nothing, and the pill is 130px of a full-bleed block. */
+.edicion-video__marco:hover .edicion-video__play,
+.edicion-video__marco:focus-visible .edicion-video__play {
+  background: rgba(12, 9, 9, 0.72);
+  border-color: #f6f3ef;
+}
 .edicion-video__play-icono { font-size: 0.72em; line-height: 1; }
 
 .edicion-video__pie h3 { margin: 0 0 0.25rem; font-size: 1rem; font-weight: 700; }
@@ -1687,9 +1695,14 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
    The micro-timing and easing systems, as named tokens.
 
    Section 98 is explicit: "Do not randomly choose animation durations." Every
-   duration on this page now comes from one of its families, and every easing
-   from section 99, so a value can be checked against the brief rather than
-   argued about. */
+   easing on this page comes from section 99 and every duration from one of
+   section 98's families — which is not the same as saying every duration is a
+   token. About twenty literals remain, at the point of use, and each one is
+   inside a family: 260 and 320 in the 250–350 band, 620 and 700 in 600–800.
+   The tokens are here for the values used in more than one place; a one-off
+   that is already in a family does not become more checkable by being given a
+   name. The one value outside every family is the 1ms on the mobile panel's
+   height, which §87 sanctions. */
 :root {
   --t-micro: 200ms;      /* input and button micro-interactions */
   --t-hover: 300ms;      /* hover and simple fades (250–350 band) */
@@ -2519,6 +2532,17 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
   .edicion-capitulo > * {
     max-width: calc(var(--edicion-lienzo) - var(--edicion-rail));
     margin-inline-start: calc((100vw - var(--edicion-lienzo)) / 2 + var(--edicion-rail));
+    margin-inline-end: auto;
+  }
+  /* The hero is part of the composition §2 caps, and it was not: the rule
+     above selects chapter children only, so above 1680px the retablo kept
+     spreading while everything under it stopped. */
+  .edicion-hero__pegajoso {
+    max-width: var(--edicion-lienzo);
+    /* The same expression the rail uses, not `margin-inline: auto`: auto
+       centres inside the content box and the rail centres against 100vw, so a
+       scrollbar put them 7px out of register at 2400px. */
+    margin-inline-start: max(0px, calc((100vw - var(--edicion-lienzo)) / 2));
     margin-inline-end: auto;
   }
   .edicion-rail { left: max(0px, calc((100vw - var(--edicion-lienzo)) / 2)); }

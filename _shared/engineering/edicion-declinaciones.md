@@ -64,7 +64,12 @@ portfolio. These sections have no equivalent to build.
 | 81 | A portrait fallback plate per chapter | Each chapter has one landscape plate serving both orientations, repositioned rather than recropped on a phone. A portrait cut per chapter is five more plates from the same sources, and the sources are hers: it is work that should happen, not a decision against it. |
 | 85 | Mobile intro heights varying 70–90svh by content | All six are a flat 70svh below 768px, which is the floor the section gives. The tablet band (110svh) and the desktop band (140svh) are the section's numbers. |
 | 86 | Simplified mobile 3D | The canvas is removed below 1024px rather than simplified, which is the first of §86's six bullets ("switch some scenes entirely to optimized static images") applied to all of them. Tablets between 768 and 1023 get the static path too, although §85 gives them 110svh of intro specifically for 3D choreography. Lower-resolution textures and reduced environmental layers are not built. |
-| 92 | Three of the per-chapter sub-states, and two of the page-level ones | The machine publishes `data-fase` (hero / capitulos), `data-subfase` (intro / editorial) and `data-capitulo`. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
+| 1 | Step 2 of §1.1's grammar, "text begins to leave" | The chapter title enters (step 6 is built) and never exits. `Revelar` unobserves after revealing, per §78's warning against scroll-scrubbing the editorial world, so nothing on this page animates on the way out. Giving the chapter titles an exit means a second scrubbed value per chapter for a moment the reader is already past. |
+| 8 | A transitioned background between dark and light nav themes | The header's veil fades in once, from transparent, and then swaps `background-image` at each theme boundary. Gradients do not interpolate, so a real transition means two stacked pseudo-elements cross-fading. The band itself is soft and the swap happens inside §77's cut, where the whole viewport is already changing. |
+| 30 | Focus parity for the constellation cards | "Focus state should behave equivalently to hover." The cards are `<figure>` elements with no link and no `tabindex`, so `:focus-within` can never fire. The hover rules name it anyway, which costs nothing and becomes correct the day a card gets a destination; giving five images a tab stop that leads nowhere would not. |
+| 32 | A CTA on every editorial card | Title and description are built. The cards that HAVE a destination carry one — the planchas, the two documents. The plate-wall cards do not have one: each is a piece of finished work with no page behind it, and a button that scrolls nowhere is worse than no button. |
+| 80 | Re-evaluating the DPR verdict | The adaptive DPR samples 45 frames once and keeps the answer for the session, so a machine that was busy during the sample is pinned at DPR 1 until reload. Re-sampling would need a hysteresis of its own to avoid oscillating between densities mid-scroll. |
+| 92 | Three of the per-chapter sub-states, END, and the sub-phase's blind spot | The machine publishes `data-fase` (hero / capitulos), `data-subfase` (intro / editorial) and `data-capitulo`. END is in the brief's diagram and in neither the code nor a rule that would read it. `data-subfase` is derived from the nav theme, so the dark beat inside chapter III reports `intro` while the reader is in the middle of an editorial body — true about the theme, wrong about the phase. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
 | 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the sitemap all read from one list. |
@@ -254,29 +259,41 @@ falling off with depth, as a neutral grey multiplier on her own colour.
 
 ## 6. The honest state
 
-Two full compliance audits against all 105 sections are in the session record.
-The first found 10 PASS / 44 PARTIAL / 39 FAIL of 93 applicable sections. The
-second, after the cinematic layer, the video, the geometry, the triptych, the
-reveal system, the escape control and the state machine landed, found 19 PASS
-and 22 FAIL — and then found three blockers, all since fixed:
+Three full compliance audits against all 105 sections are in the session
+record, plus one verification pass over the fixes. The first found 10 PASS / 44
+PARTIAL / 39 FAIL of 93 applicable sections. The second, after the cinematic
+layer, the video, the geometry, the triptych, the reveal system, the escape
+control and the state machine landed, found 19 PASS and 22 FAIL.
 
-1. A screenshot of Apple's iPhone "Titanium" marketing page was chapter IV's
-   ground. Inherited from the old site, run through this project's own pipeline
-   by me, and visible on every phone. Purged.
-2. The `.motion` gate never reached the browser: React owns `className` on
-   `<html>` and stripped it on hydration about 10ms after paint, on every load,
-   so the desktop page shipped permanently in its reduced-motion presentation
-   and ten sections failed from one cause.
-3. The hero never pinned, because `overflow-x: hidden` made its ancestor a
-   scroll container.
+The third read all 105 against the code with five readers and found the
+problems below. They are listed because the rule at the top of this file is
+that a defect is recorded, not quietly repaired, and because every one of them
+had a comment beside it claiming the opposite:
 
-Since that audit: §29 and §30 (the constellation and its hover), §39/§40/§45
-(the second dark beat), §42 (the state-to-state sequence), §67 (the closing
-chapter's story and its two documents) and §102/§103 (the shared primitives and
-the chapter data consolidation) have landed, and
-one horizontal-overflow defect the sequence exposed has been fixed — `MarcaTema`
-was absolutely positioned with `width: 100%` and no `left`, so inside the dark
-beat it hung 48px past the right edge of the document on every desktop width.
+1. **Chapter VI opened on a blank screen.** Its intro is the one §23 sends into
+   the light world, and the title inherited the cream it was painted on. 1.00:1.
+2. **The §28 reveal system never animated.** Two copies of the same reset, one
+   of them outside the reduced-motion query, and a CSS transition reads its
+   duration from the after-change style.
+3. **Chapter I's entire editorial body was invisible with JavaScript off** at
+   1024px and up, which §100 names as disqualifying.
+4. **React discarded and re-rendered the whole page on every load.** A lazy
+   `useState` initialiser answered the WebGL question differently on the server
+   and on the first client render.
+5. **§17's step 7 was dead code** — `length × length` inside a `calc`.
+6. **§82 left her artwork double-imaged** on every WebGL desktop.
+7. **§20's scene ground did not exist**, while the stylesheet gave away 78% of
+   every chapter's colour on the strength of a comment saying it did.
+8. **§31's own fix broke the 768–1023 band**: 10,612px of cards inside an 805px
+   scroller.
+9. **§26's modal close never ran**, leaving a full-viewport dialog painted with
+   the video playing for 320ms.
+10. **Deep links landed up to 320px inside their chapter**, and before that, two
+    smooth scrollers were animating the same property.
+11. **The hero label overlapped the art** by up to 75px, and the rail's active
+    numeral sat at 1.24:1.
+
+All of them are fixed and each fix is measured in its commit message.
 
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.
