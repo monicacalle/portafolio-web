@@ -83,6 +83,24 @@ html {
   }
 }
 
+/* TWO SMOOTH SCROLLERS CANNOT SHARE A PAGE.
+
+   Lenis owns the scroll position in root mode and writes its own animated
+   value every frame; `scroll-behavior: smooth` above makes the browser animate
+   the same property at the same time for a fragment jump. They compound.
+   Measured at 1440x900: /es#impreso settled at 17048 against the chapter's own
+   offset of 16643 -- every deep link landed 405px inside its chapter instead
+   of at its top, and the same for #oficio.
+
+   Lenis ships this rule in `lenis/dist/lenis.css`, which this project does not
+   import because it needs nothing else from that file. The class is Lenis's
+   own, added to <html> when the provider mounts, so the browser's smooth
+   scroll is off exactly when Lenis is there and on when it is not -- which is
+   the reduced-motion case, where SmoothScroll deliberately does not mount. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
 /* .eyebrow--light is defined in sections.css, which globals.css @imports at the
    top, so .eyebrow (same specificity, later in the cascade) always won and the
    contact eyebrow rendered burgundy on burgundy: contrast 1.00:1, invisible.

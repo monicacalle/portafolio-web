@@ -6,7 +6,7 @@ import { usePathname } from "@/lib/i18n/navigation";
 import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gate";
 
 /*
-  Land at the top of the page you navigated to.
+  Land where the URL says, and let Lenis be the one that puts you there.
 
   Next resets the scroll on navigation, but Lenis owns the scroll position in
   root mode and writes its own animated value back on the next frame -- so a
@@ -16,18 +16,41 @@ import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gat
   stranded mid-page, having to scroll up to read the title of the thing they
   had just clicked.
 
-  immediate: true skips the easing. There is nothing to animate between two
-  different pages, and the animation was the whole problem.
+  THE FRAGMENT CASE USED TO BE LEFT TO THE BROWSER, and the browser lost the
+  race. Measured at 1440x900 on 2026-09-13: /es#impreso settled at 17048
+  against the chapter's own layout offset of 16643, and /es#oficio at 24027
+  against 23622 -- both 405px INSIDE the chapter rather than at its top, and
+  the overshoot changed with the viewport (60px at 600, 449px at 1000), which
+  is the signature of a scroll computed against a layout that is still moving.
+  Handing the fragment to `lenis.scrollTo(element)` makes it deterministic: it
+  resolves the offset itself, at the moment it runs, on the scroller that
+  actually owns the position.
+
+  immediate: true skips the easing in both branches. There is nothing to
+  animate between two different pages, and the animation was the whole problem.
 */
 function ScrollToTop() {
   const lenis = useLenis();
   const pathname = usePathname();
 
   useEffect(() => {
+    if (!lenis) return;
     // A hash is an explicit request for somewhere else on the page -- the
-    // "volver a proyectos" link is /#projects -- so leave those alone.
-    if (window.location.hash) return;
-    lenis?.scrollTo(0, { immediate: true });
+    // "volver a proyectos" link is /#projects, and the header's chapter jumps
+    // are /#producto and its five siblings.
+    const hash = window.location.hash;
+    if (!hash) {
+      lenis.scrollTo(0, { immediate: true });
+      return;
+    }
+    let destino: Element | null = null;
+    try {
+      destino = document.querySelector(hash);
+    } catch {
+      // A fragment that is not a valid selector is not ours to honour.
+      return;
+    }
+    if (destino) lenis.scrollTo(destino as HTMLElement, { immediate: true });
   }, [pathname, lenis]);
 
   return null;
