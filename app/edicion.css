@@ -675,29 +675,6 @@ html:not([data-nav-theme]) {
   color: rgba(23, 16, 12, 0.5);
   font-variant-numeric: tabular-nums;
 }
-.edicion-documento__accion {
-  display: inline-block;
-  margin-top: 0.7rem;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
-  padding-bottom: 1px;
-}
-.edicion-documento__accion:hover { border-bottom-color: currentColor; }
-.edicion-documento__accion span {
-  display: inline-block;
-  transition: transform 200ms var(--ease-salida);
-}
-.edicion-documento__accion:hover span { transform: translate(2px, -2px); }
-
-@media (prefers-reduced-motion: reduce) {
-  .edicion-documento__hoja,
-  .edicion-documento__accion span { transition: none; }
-  .edicion-documento__hoja:hover,
-  .edicion-documento__hoja:focus-visible { transform: none; }
-}
 
 .edicion-oficio {
   grid-column: span 6;
@@ -748,21 +725,6 @@ html:not([data-nav-theme]) {
   max-width: 24ch;
 }
 .edicion-oficio__acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.edicion-oficio__acciones a {
-  border: 1px solid rgba(23, 16, 12, 0.28);
-  border-radius: 999px;
-  padding: 0.44rem 1.1rem;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: inherit;
-  text-decoration: none;
-  transition: background-color 200ms var(--ease-salida), color 200ms var(--ease-salida);
-}
-.edicion-oficio__acciones a:hover {
-  background: var(--edicion-acento);
-  border-color: var(--edicion-acento);
-  color: var(--edicion-crema);
-}
 
 /* ---------------------------------------------- hero composition, desktop
    The first render put the title frame dead centre, the way the reference
@@ -1106,6 +1068,7 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
 }
 
 .edicion-plancha__pie h3 { margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 700; }
+.edicion-plancha__pie .edicion-cta { margin-top: 0.7rem; }
 .edicion-plancha__pie p {
   margin: 0;
   font-size: 0.86rem;
@@ -1157,7 +1120,7 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
   #producto .edicion-capitulo__cuerpo > * { grid-column: span 6; }
 
   .edicion-oficio__acciones { flex-direction: column; align-items: stretch; }
-  .edicion-oficio__acciones a { text-align: center; }
+  .edicion-oficio__acciones .edicion-cta { justify-content: center; }
 }
 
 /* The horizontal scrollers are keyboard-reachable. Chrome does not make an
@@ -1193,23 +1156,67 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
 .edicion-oficio h3 { opacity: 1; color: rgba(23, 16, 12, 0.62); }
 .edicion-oficio__cuando { opacity: 1; color: rgba(23, 16, 12, 0.62); }
 
-.edicion-plancha__ver {
+
+/* ==================================================================== §102
+   The shared primitives: the pill and the underlined action.
+
+   These were three near-identical rules at three slightly different sizes --
+   the plancha's 0.36/0.9rem, the closing chapter's 0.44/1.1rem, and the
+   header's own -- plus the §72 arrow declared twice. One pill on the page now,
+   at the largest of the three, because it is also the biggest tap target.
+
+   The header's CTA keeps its own rule on purpose: it sits on the dark nav and
+   draws from `currentColor` against a background that inverts with the theme,
+   and it has responsive rules at two breakpoints. Folding it in would change
+   measured header metrics to satisfy a list. */
+.edicion-cta {
   display: inline-flex;
   align-items: center;
-  margin-top: 0.7rem;
-  padding: 0.36rem 0.9rem;
   border: 1px solid rgba(23, 16, 12, 0.28);
   border-radius: 999px;
-  font-size: 0.8rem;
+  padding: 0.44rem 1.1rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: inherit;
   text-decoration: none;
-  transition: background-color 200ms var(--ease-salida), color 200ms var(--ease-salida);
+  transition: background-color var(--t-hover) var(--ease-cine),
+    color var(--t-hover) var(--ease-cine), border-color var(--t-hover) var(--ease-cine);
 }
-.edicion-plancha__ver:hover {
+.edicion-cta:hover {
   background: var(--edicion-acento);
   border-color: var(--edicion-acento);
   color: var(--edicion-crema);
+}
+
+.edicion-enlace {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
+  padding-bottom: 1px;
+}
+.edicion-enlace:hover { border-bottom-color: currentColor; }
+
+/* §72: the CTA glyph moves on hover rather than the whole control. */
+.edicion-cta span,
+.edicion-enlace span {
+  display: inline-block;
+  transition: transform var(--t-hover) var(--ease-cine);
+}
+.edicion-cta:hover span,
+.edicion-enlace:hover span { transform: translate(2px, -2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .edicion-cta span,
+  .edicion-enlace span,
+  .edicion-documento__hoja { transition: none; }
+  .edicion-cta:hover span,
+  .edicion-enlace:hover span { transform: none; }
+  .edicion-documento__hoja:hover,
+  .edicion-documento__hoja:focus-visible { transform: none; }
 }
 
 /* ------------------------------------------------------------- el vídeo
@@ -1525,13 +1532,6 @@ a.edicion-ficha {
 .edicion-ficha:has(a) h3 { transition: color var(--t-hover) var(--ease-cine); }
 .edicion-ficha:has(a):hover h3,
 .edicion-ficha:has(a):focus-within h3 { color: var(--edicion-acento); }
-/* §72: the CTA glyph moves on hover rather than the whole control. */
-.edicion-plancha__ver span,
-.edicion-oficio__acciones a span {
-  display: inline-block;
-  transition: transform var(--t-hover) var(--ease-cine);
-}
-.edicion-plancha__ver:hover span { transform: translate(2px, -2px); }
 
 /* ===================================================================== §77
    Section cut language. Three cuts, and none of them is an instantaneous

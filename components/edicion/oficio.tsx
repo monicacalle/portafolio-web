@@ -5,6 +5,7 @@ import { PERSON } from "@/lib/site";
 import { GRAFICO_ROUTE } from "@/lib/case-studies";
 import { Link } from "@/lib/i18n/navigation";
 import { medidas } from "@/lib/edicion/medidas";
+import { CTA, Enlace } from "./primitivas";
 
 interface Entrada {
   when: string;
@@ -106,10 +107,7 @@ export function Oficio() {
             <h4>{g("title")}</h4>
             <p>{g("tagline")}</p>
             <span className="edicion-documento__meta">{g("pages")}</span>
-            <Link className="edicion-documento__accion" href={GRAFICO_ROUTE}>
-              {g("open")}
-              <span aria-hidden> ↗</span>
-            </Link>
+            <Enlace href={GRAFICO_ROUTE}>{g("open")}</Enlace>
           </div>
         </article>
 
@@ -135,15 +133,7 @@ export function Oficio() {
             <span className="edicion-documento__meta">
               {t("capitulos.oficio.documentos.cv.meta")}
             </span>
-            <a
-              className="edicion-documento__accion"
-              href={a("cvHref")}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {t("cta.cv")}
-              <span aria-hidden> ↗</span>
-            </a>
+            <Enlace href={a("cvHref")}>{t("cta.cv")}</Enlace>
           </div>
         </article>
       </section>
@@ -193,10 +183,10 @@ export function Oficio() {
       <div className="edicion-oficio__cierre">
         <p className="edicion-oficio__lead">{k("lead")}</p>
         <div className="edicion-oficio__acciones">
-          <a href={`mailto:${PERSON.email}`}>{k("mailCursor")}</a>
-          <a href={PERSON.linkedin} target="_blank" rel="noreferrer noopener">
+          <CTA href={`mailto:${PERSON.email}`}>{k("mailCursor")}</CTA>
+          <CTA href={PERSON.linkedin} flecha>
             {k("linkedin")}
-          </a>
+          </CTA>
         </div>
       </div>
     </>

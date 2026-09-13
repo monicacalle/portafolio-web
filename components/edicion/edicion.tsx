@@ -1,8 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { medidas } from "@/lib/edicion/medidas";
-import { CAPITULOS } from "@/lib/edicion/capitulos";
+import { CAPITULOS, type Capitulo } from "@/lib/edicion/capitulos";
 import { EstadoEdicion } from "./estado";
 import { Espina } from "./espina";
 import { Lienzo } from "./lienzo";
@@ -10,10 +9,15 @@ import { Revelar } from "./revelar";
 import { Cabecera } from "./cabecera";
 import { Rail } from "./rail";
 import { Hero } from "./hero";
-import { Capitulo, Ficha } from "./capitulo";
+import { Capitulo as Seccion } from "./capitulo";
 import { Oficio } from "./oficio";
-import { CuerpoIlustracion, CuerpoProducto, CuerpoCampana, CuerpoImpreso } from "./cuerpos";
-import { ListaCompacta } from "./lista-compacta";
+import {
+  CuerpoIlustracion,
+  CuerpoProducto,
+  CuerpoCampana,
+  CuerpoImpreso,
+  CuerpoMarca,
+} from "./cuerpos";
 
 /**
  * The Edition — the whole homepage.
@@ -40,14 +44,9 @@ export function Edicion() {
           <Hero />
 
           {CAPITULOS.map((c, i) => (
-            <Capitulo
-              key={c.anclaje}
-              capitulo={c}
-              indice={i}
-              escena={placaDe(c.anclaje)}
-            >
-              <Cuerpo anclaje={c.anclaje} />
-            </Capitulo>
+            <Seccion key={c.anclaje} capitulo={c} indice={i} escena={placaDe(c)}>
+              <Cuerpo capitulo={c} />
+            </Seccion>
           ))}
         </main>
       </div>
@@ -63,6 +62,13 @@ export function Edicion() {
  * it — brief sections 81 and 82 want the fallback to be the thing that is
  * already there, not a thing that appears when something fails. Building it
  * first is also what makes the mobile path (section 86) free.
+ *
+ * Returns undefined rather than a component when a chapter has no plate.
+ * `escena={<Escena .../>}` was always truthy even when Escena returned null,
+ * because a JSX element is an object. So chapter VI, which has no plate, still
+ * rendered the scene wrapper and its ::after scrim painted a grey wash over the
+ * cream ground — with the cream title on top of it at 1.00:1 before the
+ * gradient. The truthiness has to be decided here, not inside the component.
  */
 /*
   No chapter plate may be LETTERING. The chapter title is set at ~150px in white
@@ -77,109 +83,31 @@ export function Edicion() {
   portafolioabierto at 2.2 MB, against ~450 KB for the rest of the page
   combined. main rendered them through next/image; the Edition used a plain
   <img> and bypassed the optimiser.
+
+  Which plate belongs to which chapter is in lib/edicion/capitulos.ts, per
+  section 103.
 */
-const PLACAS: Record<string, string> = {
-  ilustracion: "/cine/pelo-cobre.avif",
-  marca: "/edicion/cap-marca.avif",
-  campana: "/cine/a3-loreal.avif",
-  producto: "/edicion/cap-producto.avif",
-  impreso: "/edicion/cap-impreso.avif",
-};
-
-/**
- * Returns undefined rather than a component when a chapter has no plate.
- *
- * `escena={<Escena .../>}` was always truthy even when Escena returned null,
- * because a JSX element is an object. So chapter VI, which has no plate, still
- * rendered the scene wrapper and its ::after scrim painted a grey wash over the
- * cream ground -- with the cream title on top of it at 1.00:1 before the
- * gradient. The truthiness has to be decided here, not inside the component.
- */
-function placaDe(anclaje: string) {
-  const src = PLACAS[anclaje];
-  return src ? <Escena src={src} /> : undefined;
-}
-
-function Escena({ src }: { src: string }) {
-  return <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />;
+function placaDe(capitulo: Capitulo) {
+  const src = capitulo.placa;
+  return src ? (
+    <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />
+  ) : undefined;
 }
 
 /** The light editorial body under each chapter intro. */
-function Cuerpo({ anclaje }: { anclaje: string }) {
-  if (anclaje === "oficio") return <Oficio />;
-  if (anclaje === "ilustracion") return <CuerpoIlustracion />;
-  if (anclaje === "producto") return <CuerpoProducto />;
-  if (anclaje === "campana") return <CuerpoCampana />;
-  if (anclaje === "impreso") return <CuerpoImpreso />;
-  return <CuerpoPlacas anclaje={anclaje} />;
-}
-
-/**
- * The three chapters whose body is her statement followed by a plate wall.
- * Kept apart from Cuerpo so the hook below is not called conditionally, which
- * the rules of hooks forbid and which the earlier shape would have done as soon
- * as a translator was needed here.
- */
-function CuerpoPlacas({ anclaje }: { anclaje: string }) {
-  const t = useTranslations("edicion");
-  const DECLARACION: Record<string, string> = {
-    marca: t("capitulos.marca.declaracion"),
-    campana: t("capitulos.campana.declaracion"),
-    impreso: t("capitulos.impreso.declaracion"),
-  };
-
-  const OBRAS: Record<string, { src: string; ancho: "completo" | "medio" | "tercio" | "dos-tercios" }[]> = {
-    marca: [
-      { src: "/trabajo/t-esmeralda.avif", ancho: "medio" },
-      { src: "/edicion/cap-marca.avif", ancho: "medio" },
-      { src: "/trabajo/t-isabella.avif", ancho: "tercio" },
-      { src: "/edicion/cap-impreso.avif", ancho: "dos-tercios" },
-    ],
-    campana: [
-      { src: "/cine/a3-loreal.avif", ancho: "dos-tercios" },
-      { src: "/cine/a3-ingres.avif", ancho: "tercio" },
-      { src: "/trabajo/t-nespresso.avif", ancho: "medio" },
-      { src: "/trabajo/t-ilustracion.avif", ancho: "medio" },
-    ],
-    impreso: [
-      { src: "/trabajo/t-libro.avif", ancho: "medio" },
-      { src: "/trabajo/t-lobo.avif", ancho: "medio" },
-      { src: "/edicion/cap-impreso.avif", ancho: "completo" },
-    ],
-  };
-
-  const obras = OBRAS[anclaje] ?? [];
-  const declaracion = DECLARACION[anclaje];
-  return (
-    <>
-      {declaracion ? (
-        <div className="edicion-declaracion animate-show-media">
-          <p>{declaracion}</p>
-        </div>
-      ) : null}
-      {anclaje === "marca" ? (
-        <ListaCompacta
-          id="metodo-marca"
-          titulo={t("capitulos.marca.metodo.titulo")}
-          filas={(["logotipo", "color", "tipografia", "aplicacion", "manual"] as const).map(
-            (k) => ({
-              q: t(`capitulos.marca.metodo.filas.${k}.q`),
-              a: t(`capitulos.marca.metodo.filas.${k}.a`),
-            }),
-          )}
-        />
-      ) : null}
-      {obras.map((o, i) => (
-        <Ficha key={o.src + i} ancho={o.ancho}>
-          {/* alt is empty on purpose: every plate here is decorative repetition
-              of work the surrounding copy already names, and a screen-reader
-              user hearing "t-esmeralda dot avif" twelve times is worse served
-              than one who hears the chapter's prose once. Plates that carry
-              information a sighted reader gets ONLY from the image are given
-              real alt text where they appear. */}
-          <img src={o.src} alt="" loading="lazy" decoding="async" {...medidas(o.src)} />
-        </Ficha>
-      ))}
-    </>
-  );
+function Cuerpo({ capitulo }: { capitulo: Capitulo }) {
+  switch (capitulo.anclaje) {
+    case "oficio":
+      return <Oficio />;
+    case "ilustracion":
+      return <CuerpoIlustracion />;
+    case "producto":
+      return <CuerpoProducto />;
+    case "campana":
+      return <CuerpoCampana />;
+    case "impreso":
+      return <CuerpoImpreso />;
+    case "marca":
+      return <CuerpoMarca />;
+  }
 }

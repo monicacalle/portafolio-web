@@ -87,8 +87,7 @@ These are absent. They are not declined, they are unfinished.
 
 | § | Requirement | Note |
 |---|---|---|
-| 102 | Extracted primitives | `ChapterIntro`, `SectionHeading`, `CTA`, `InlineLink` and `Modal` exist as markup inside their own components rather than as named primitives. |
-| 103 | Full data consolidation | `PLACAS`, `OBRAS` and the piece lists still live beside the components rather than inside the chapter records. |
+| — | — | Empty. Every section that was on this list has since been built or moved to a written decline. This is not a claim that all 105 are clean — that is what the audit in section 6 measures, and it is rerun, not inferred. |
 
 §29 and §30 (the five-card constellation and its hover) landed in
 `components/edicion/constelacion.tsx`; §39, §40 and §45 (a second dark featured
@@ -115,6 +114,32 @@ it, and Geist carries the grotesque role for UI and body. It is a departure from
 retablo, built in CSS 3D. It is built that way because it is also §17's
 hero-to-rail morph, which has to survive WebGL being off. §81 and §82 bless a
 non-WebGL cinematic path explicitly.
+
+**§102 — eleven of the fifteen primitives exist under this page's own names.**
+`components/edicion/primitivas.tsx` carries the three that were genuinely
+duplicated: the modal, the pill and the underlined action link. Its header maps
+the rest — CinematicScene is Lienzo, FeatureCard is Ficha, RiveMedia is
+Plancha, CompactUpdateList is ListaCompacta, StickyNarrative is Triptico — and
+renaming working components to match a list would be relabelling presented as
+architecture. `SectionHeading` and `InlineLink` are deliberately absent:
+headings differ by role and are one element each, and the inline prose link is
+`t.rich`'s own element, so it cannot be a component at the call site. A
+primitive whose body is one styled tag is indirection, not reuse.
+
+**§103 — data-driven, but not a layout engine.** `placa` and `obras` (with the
+section's own `layout` field on each card) are in `lib/edicion/capitulos.ts`
+now, where the anchors, heights, themes and grounds already were. What the
+section protects against is real and was present: two `Record<string, …>` maps
+inside `edicion.tsx`, one of them holding entries for chapters whose bodies
+never reached that renderer, while the chapter record carried an `obras` field
+of slugs that nothing read — so the authoritative-looking list was the dead one.
+
+What is NOT data-driven is the bodies. §103 exists to stop "150 individual
+product modules" being hand-written; there are six chapters here, four of whose
+bodies are one-off compositions (a constellation, a state sequence with two
+planchas, a film inside a dark beat, a triptych). Expressing four bespoke
+compositions through a layout engine would be more machinery than the thing it
+renders.
 
 **§67 — the closing chapter's hero and its two cards are documents, not
 product stories.** §67 asks for "a full-width major story" that "should feel
@@ -188,8 +213,9 @@ and 22 FAIL — and then found three blockers, all since fixed:
    scroll container.
 
 Since that audit: §29 and §30 (the constellation and its hover), §39/§40/§45
-(the second dark beat), §42 (the state-to-state sequence) and §67 (the closing
-chapter's story and its two documents) have landed, and
+(the second dark beat), §42 (the state-to-state sequence), §67 (the closing
+chapter's story and its two documents) and §102/§103 (the shared primitives and
+the chapter data consolidation) have landed, and
 one horizontal-overflow defect the sequence exposed has been fixed — `MarcaTema`
 was absolutely positioned with `width: 100%` and no `left`, so inside the dark
 beat it hung 48px past the right edge of the document on every desktop width.

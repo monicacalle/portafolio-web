@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Modal } from "./primitivas";
 
 /**
  * VideoFeature and VideoModal — brief sections 25, 26 and 40.
@@ -158,9 +159,9 @@ export function VideoFeature({
 /**
  * The full-screen overlay (section 26).
  *
- * A real <dialog> rather than a div with role="dialog": the browser then owns
- * the top layer, the backdrop, Escape, and the focus trap, all of which are
- * easy to hand-roll incorrectly and tedious to hand-roll well.
+ * The dialog itself is `Modal` in primitivas.tsx — §102 asks for one shared
+ * modal system and the brief hands it to four separate sections, so it has a
+ * name of its own. What is left here is the only part that is about video.
  */
 function VideoModal({
   src,
@@ -177,58 +178,19 @@ function VideoModal({
   etiquetaCerrar: string;
   onCerrar: () => void;
 }) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const d = ref.current;
-    if (!d) return;
-    d.showModal();
-    // showModal() alone leaves the page behind it scrollable on some engines,
-    // and a scrolling background under a full-screen video is disorienting.
-    const previo = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previo;
-    };
-  }, []);
-
-  // <dialog> fires `close` for Escape as well as for close(), so one handler
-  // covers both routes out and the parent's state cannot drift from the DOM's.
-  const alCerrar = useCallback(() => onCerrar(), [onCerrar]);
-
   return (
-    <dialog
-      ref={ref}
-      className="edicion-modal"
-      aria-label={titulo}
-      onClose={alCerrar}
-      // Clicking the backdrop closes it. The dialog element itself IS the
-      // backdrop, so a click whose target is the dialog rather than its
-      // contents is a backdrop click.
-      onClick={(e) => {
-        if (e.target === ref.current) ref.current?.close();
-      }}
-    >
-      <div className="edicion-modal__panel">
-        <video
-          className="edicion-modal__medio"
-          poster={poster}
-          controls
-          autoPlay
-          playsInline
-          preload="auto"
-        >
-          {webm ? <source src={webm} type="video/webm" /> : null}
-          <source src={src} type="video/mp4" />
-        </video>
-      </div>
-      <button
-        type="button"
-        className="edicion-modal__cerrar"
-        onClick={() => ref.current?.close()}
+    <Modal etiqueta={titulo} etiquetaCerrar={etiquetaCerrar} onCerrar={onCerrar}>
+      <video
+        className="edicion-modal__medio"
+        poster={poster}
+        controls
+        autoPlay
+        playsInline
+        preload="auto"
       >
-        {etiquetaCerrar}
-      </button>
-    </dialog>
+        {webm ? <source src={webm} type="video/webm" /> : null}
+        <source src={src} type="video/mp4" />
+      </video>
+    </Modal>
   );
 }

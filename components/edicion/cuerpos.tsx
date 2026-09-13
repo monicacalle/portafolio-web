@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { medidas } from "@/lib/edicion/medidas";
+import { CAPITULOS, type Anclaje } from "@/lib/edicion/capitulos";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
@@ -63,6 +64,68 @@ export function CuerpoIlustracion() {
  * The handover is deliberate too — the sequence ends on the Agenda, and the
  * first plancha is that screen at full length, where it can be read.
  */
+/**
+ * The editorial plate wall — brief section 103's `mediaCards`, with its
+ * `layout` field.
+ *
+ * What each chapter shows, and at what width, is in `lib/edicion/capitulos.ts`
+ * and nowhere else. It used to be a `Record<string, ...>` inside edicion.tsx
+ * beside two more maps keyed the same way, one of which held entries for
+ * chapters whose bodies never reached that renderer — dead configuration that
+ * read as live configuration — while the chapter record carried an `obras`
+ * field of slugs that nothing rendered at all.
+ *
+ * The uneven widths are section 44's point: a row mixes a full-bleed card with
+ * a half and two thirds, and that unevenness is what stops the light sections
+ * reading as a CMS listing.
+ */
+export function ParedDeObras({ anclaje }: { anclaje: Anclaje }) {
+  const obras = CAPITULOS.find((c) => c.anclaje === anclaje)?.obras ?? [];
+  return (
+    <>
+      {obras.map((o, i) => (
+        <Ficha key={o.src + i} ancho={o.ancho}>
+          {/* alt is empty on purpose: every plate here is decorative repetition
+              of work the surrounding copy already names, and a screen-reader
+              user hearing "t-esmeralda dot avif" twelve times is worse served
+              than one who hears the chapter's prose once. Plates that carry
+              information a sighted reader gets ONLY from the image are given
+              real alt text where they appear. */}
+          <img src={o.src} alt="" loading="lazy" decoding="async" {...medidas(o.src)} />
+        </Ficha>
+      ))}
+    </>
+  );
+}
+
+/**
+ * Chapter II's editorial body: her statement, the branding method, and the
+ * plate wall.
+ *
+ * It is the one chapter with no bespoke composition of its own, which is why
+ * the generic renderer this replaced existed. That renderer served exactly one
+ * chapter while carrying maps keyed for three.
+ */
+export function CuerpoMarca() {
+  const t = useTranslations("edicion");
+  return (
+    <>
+      <div className="edicion-declaracion animate-show-media">
+        <p>{t("capitulos.marca.declaracion")}</p>
+      </div>
+      <ListaCompacta
+        id="metodo-marca"
+        titulo={t("capitulos.marca.metodo.titulo")}
+        filas={(["logotipo", "color", "tipografia", "aplicacion", "manual"] as const).map((k) => ({
+          q: t(`capitulos.marca.metodo.filas.${k}.q`),
+          a: t(`capitulos.marca.metodo.filas.${k}.a`),
+        }))}
+      />
+      <ParedDeObras anclaje="marca" />
+    </>
+  );
+}
+
 export function CuerpoProducto() {
   const t = useTranslations("edicion");
   return (
@@ -115,12 +178,7 @@ export function CuerpoCampana() {
       <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.campana.declaracion")}</p>
       </div>
-      <Ficha ancho="medio">
-        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-loreal.avif")} />
-      </Ficha>
-      <Ficha ancho="medio">
-        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-ingres.avif")} />
-      </Ficha>
+      <ParedDeObras anclaje="campana" />
 
       {/* Sections 40 and 45: the film continues the chapter's dark atmosphere
           rather than sitting in the light body, and it arrives near the end as
@@ -160,12 +218,7 @@ export function CuerpoImpreso() {
           a: t(`capitulos.impreso.metodo.filas.${k}.a`),
         }))}
       />
-      <Ficha ancho="medio">
-        <img src="/trabajo/t-libro.avif" alt="" loading="lazy" decoding="async" {...medidas("/trabajo/t-libro.avif")} />
-      </Ficha>
-      <Ficha ancho="medio">
-        <img src="/trabajo/t-lobo.avif" alt="" loading="lazy" decoding="async" {...medidas("/trabajo/t-lobo.avif")} />
-      </Ficha>
+      <ParedDeObras anclaje="impreso" />
     </>
   );
 }

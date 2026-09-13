@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useProgreso } from "@/lib/edicion/use-progreso";
-import { Link } from "@/lib/i18n/navigation";
+import { CTA } from "./primitivas";
 
 /**
  * A plancha: one of her delivered app screens, scrubbed through a phone-sized
@@ -84,10 +84,9 @@ export function Plancha({
             of deep written work on the whole site -- the ones the market
             research calls the highest-leverage thing she has -- were reachable
             only by typing the URL. */}
-        <Link className="edicion-plancha__ver" href={href}>
+        <CTA href={href} flecha>
           {verLabel}
-          <span aria-hidden> ↗</span>
-        </Link>
+        </CTA>
       </div>
     </div>
   );

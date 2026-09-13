@@ -58,7 +58,10 @@ export const CAPITULOS = [
     // The sage-olive of Untitled_Artwork 3, corner-sampled. It is the ground of
     // the retablo's centre panel, so the page opens without a colour change.
     fondo: "#888866",
-    obras: ["retablo", "pelo-cobre", "modigliani", "panuelo", "nube", "ceguera"],
+    placa: "/cine/pelo-cobre.avif",
+    // Chapter I's body is the constellation (§29), which carries its own five
+    // cards with their titles and dimensions. No plate wall after it.
+    obras: [],
   },
   {
     anclaje: "marca",
@@ -67,7 +70,13 @@ export const CAPITULOS = [
     tema: "oscuro",
     // Estudio Raíz oxblood. Also the page's one structural accent.
     fondo: "#4E0909",
-    obras: ["estudio-raiz", "vina-esmeralda", "isabella-mendoza"],
+    placa: "/edicion/cap-marca.avif",
+    obras: [
+      { src: "/trabajo/t-esmeralda.avif", ancho: "medio" },
+      { src: "/edicion/cap-marca.avif", ancho: "medio" },
+      { src: "/trabajo/t-isabella.avif", ancho: "tercio" },
+      { src: "/edicion/cap-impreso.avif", ancho: "dos-tercios" },
+    ],
   },
   {
     anclaje: "campana",
@@ -78,14 +87,27 @@ export const CAPITULOS = [
     // ground. The figure itself never sits on it — at 1.06:1 the sweater would
     // vanish and the black contour would drop from 18.4:1 to 3.5:1.
     fondo: "#1B2C47",
-    obras: ["ceguera-digital", "marquesina", "loreal", "ingres"],
+    placa: "/cine/a3-loreal.avif",
+    // Two, not the four the dead map in edicion.tsx carried. That map listed
+    // Nespresso and an illustration plate for this chapter and never rendered
+    // them, because chapter III's body never reached the renderer holding it;
+    // Nespresso is chapter V's Plakatstil homage besides. What ships here is
+    // what shipped before: the two plates the chapter's own body drew.
+    obras: [
+      { src: "/cine/a3-loreal.avif", ancho: "medio" },
+      { src: "/cine/a3-ingres.avif", ancho: "medio" },
+    ],
   },
   {
     anclaje: "producto",
     numeral: "IV",
     alturaSvh: 340,
     tema: "oscuro",
-    obras: ["vibe", "voluntee"],
+    placa: "/edicion/cap-producto.avif",
+    // Chapter IV's body is §42's sequence and §43's two planchas, each of which
+    // names its own screen. A plate wall of the same two apps after them would
+    // be the third showing.
+    obras: [],
     // Vibe's own dark. This is the longest chapter after V, because it is the
     // only one with two finished bilingual case studies already written behind
     // it -- and since §42's four-state sequence landed in its body it measures
@@ -102,7 +124,11 @@ export const CAPITULOS = [
     tema: "oscuro",
     // Plakatstil burnt orange, from her Nespresso homage.
     fondo: "#6B2F14",
-    obras: ["portafolio-grafico", "lobo-estepario", "sade", "plakatstil", "gestalt"],
+    placa: "/edicion/cap-impreso.avif",
+    obras: [
+      { src: "/trabajo/t-libro.avif", ancho: "medio" },
+      { src: "/trabajo/t-lobo.avif", ancho: "medio" },
+    ],
   },
   {
     anclaje: "oficio",
@@ -114,6 +140,15 @@ export const CAPITULOS = [
     // what she uses, how to write to her. §67's story and its two document
     // cards took it from 190svh of lists to ~421svh measured.
     fondo: "#F4F2F0",
+    // Declared and undefined, not omitted. `as const` would otherwise leave
+    // this record without the property at all, and `Capitulo` is the union of
+    // the six, so `capitulo.placa` would not type-check on it.
+    //
+    // No plate because §23 sends the closing chapter into the light world, and
+    // a cinematic ground under contact details would fight it. `placaDe`
+    // decides truthiness from this field, because `escena={<Escena/>}` is an
+    // object and therefore truthy even when the component returns null.
+    placa: undefined,
     obras: [],
   },
 ] as const;
@@ -128,7 +163,18 @@ export const CAPITULOS = [
  * - `tema`      Where the INTRO sits. The body that follows always turns light;
  *               that alternation is the page's pulse (brief section 77).
  * - `fondo`     The flat ground, sampled from her own files, not chosen at a desk.
- * - `obras`     Her work, by the slug the plate pipeline and message keys use.
+ * - `placa`     The chapter intro's plate. Absent means no cinematic ground.
+ * - `obras`     The editorial plate wall under the body, with §103's layout
+ *               field on each. Empty where the chapter's body is a bespoke
+ *               composition that already shows its own work.
+ *
+ * SECTION 103 is why `placa` and `obras` are here rather than in the
+ * components. They were two `Record<string, ...>` maps inside edicion.tsx, next
+ * to a third that mapped anchors to message keys, while this record carried an
+ * `obras` field of slugs that nothing read -- so the authoritative-looking list
+ * was the dead one. Two of the three maps also had entries for chapters whose
+ * bodies never reached that renderer, which is dead configuration that reads as
+ * live configuration. One record per chapter, and the renderer reads it.
  */
 export type Capitulo = (typeof CAPITULOS)[number];
 
