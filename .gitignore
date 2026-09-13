@@ -71,3 +71,13 @@ _shared/product/
 # The rule exists on the cinematic-universe branch; main never had it, so any
 # branch cut from main is one `git add .` away from committing all of it.
 /produccion/
+
+# ...but the scripts that cut the plates ARE tracked. They are code, they carry
+# the provenance for every crop, and a pipeline nobody can read is a pipeline
+# nobody can check. Only their 129MB of inputs stay out.
+!/produccion/
+/produccion/*
+!/produccion/*.py
+!/produccion/blender/
+/produccion/blender/*
+!/produccion/blender/*.py
