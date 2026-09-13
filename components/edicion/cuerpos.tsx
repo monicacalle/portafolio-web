@@ -36,7 +36,15 @@ export function CuerpoIlustracion() {
   return (
     <>
       <div className="edicion-declaracion animate-show-media">
-        <p>{t("capitulos.ilustracion.declaracion")}</p>
+        {/* Section 73: an understated inline link in running prose, not a pill.
+            The sentence already points forward to the campaign chapter, so the
+            link is a real cross-reference rather than an affordance invented to
+            satisfy the section. */}
+        <p>
+          {t.rich("capitulos.ilustracion.declaracion", {
+            enlace: (chunks) => <a href="#campana">{chunks}</a>,
+          })}
+        </p>
       </div>
 
       {PIEZAS.map((p) => (
