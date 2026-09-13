@@ -746,13 +746,55 @@ def _alfa_por_fondo(im, tol=20):
     return Image.fromarray(out, 'RGBA')
 
 
-def _fondo_escena(im, ancho, desenfoque, oscurecer):
-    """A background plate: blurred and darkened so it recedes."""
+# Section 86: "use lower-resolution textures."
+#
+# The ceiling is on the LONG EDGE, and it is on the backgrounds only. A
+# background plate is a Gaussian blur at radius 22-30 of a 1200-1400px source:
+# the blur has already removed every frequency a 512px sample could not carry,
+# so the cap costs nothing and the measurement says so. Original against the
+# capped plate resampled back up, per plate:
+#
+#   plano-i-bg     1400x1400 -> 512x512   57.29 dB, max channel error 3
+#   plano-iii-bg   1400x2092 -> 343x512   55.95 dB, max channel error 4
+#   plano-iv-bg     385x835  -> 236x512   58.07 dB, max channel error 3
+#   plano-v-bg      860x1209 -> 364x512   55.70 dB, max channel error 3
+#   plano-ii-bg     454x484               already under the ceiling
+#
+# What it does cost is 21.0 MiB of VRAM. These are uploaded as RGBA8, so
+# plano-iii-bg alone was 11.17 MiB of texture memory for a field sitting at
+# z = -8.5 and opacity 0.32 behind everything else in its scene. The five
+# backgrounds were 24.69 MiB of the canvas's 40.66; they are 3.68 now.
+#
+# The cap is NOT applied to the foreground plates. Those are her work, at
+# z = 0.6 to 1.5, in focus and dominant -- section 86 asks to simplify the
+# environment, not the subject.
+TECHO_FONDO = 512
+
+
+def _techo(im, techo):
+    """Cap the long edge. Width-only caps get portraits wrong: plano-iii-bg
+    came out 1400x2092 under a 1400 width cap, which is a 2,092px long edge."""
+    largo = max(im.width, im.height)
+    if largo <= techo:
+        return im
+    e = techo / largo
+    return im.resize((max(1, round(im.width * e)), max(1, round(im.height * e))),
+                     Image.LANCZOS)
+
+
+def _fondo_escena(im, ancho, desenfoque, oscurecer, techo=TECHO_FONDO):
+    """A background plate: blurred and darkened so it recedes, then capped.
+
+    The cap comes AFTER the blur, not before. Blurring at the working width and
+    sampling down preserves the blur's geometry exactly; blurring a 512px image
+    at radius 26 would be a radius of 71 at the original scale, a different
+    picture."""
     im = im.convert('RGB')
     if im.width > ancho:
         im = im.resize((ancho, round(im.height * ancho / im.width)), Image.LANCZOS)
     im = im.filter(ImageFilter.GaussianBlur(desenfoque))
-    return ImageEnhance.Brightness(im).enhance(oscurecer)
+    im = ImageEnhance.Brightness(im).enhance(oscurecer)
+    return _techo(im, techo)
 
 
 print('\nPLANOS 3D — depth planes for the persistent canvas')

@@ -182,6 +182,14 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
   const grupo = useRef<THREE.Group>(null);
   const { viewport } = useThree();
 
+  /* §86: on a machine that has measured slow, the environment goes and the
+     work stays. See the note beside the store in DprAdaptativo. */
+  const reducido = useSyncExternalStore(suscribirLigero, leerLigero, leerLigero);
+  const planos = useMemo(
+    () => (reducido ? escena.planos.filter((pl) => !pl.ambiental) : escena.planos),
+    [escena.planos, reducido],
+  );
+
   /*
     Section 2: the cinematic background may fill the viewport, but important 3D
     compositions must respect the 20/80 relationship "so foreground subjects do
@@ -254,7 +262,7 @@ function EscenaCapitulo({ escena, p }: { escena: Escena; p: number }) {
   return (
     <group ref={grupo}>
       <FondoEscena color={escena.fondo} vis={vis} />
-      {escena.planos.map((pl) => (
+      {planos.map((pl) => (
         <PlanoObra key={pl.src + pl.z} plano={pl} vis={vis} />
       ))}
     </group>
@@ -307,6 +315,42 @@ function FondoEscena({ color, vis }: { color: string; vis: number }) {
  * string, because device sniffing is wrong about exactly the machines that
  * matter.
  */
+/*
+  §86's OTHER bullet, on the same measurement: "reduce environmental layers".
+
+  The section is written for mobile and mobile has no canvas here — the whole
+  thing is removed below 1024px, which is §86's fourth bullet applied to every
+  scene. What is left is the low end of the range where the canvas DOES run,
+  and the honest signal for it is the one already being taken: a machine whose
+  frames measure slow enough to drop the density is the machine that should not
+  also be compositing a 15-unit blurred field behind everything else.
+
+  So the same verdict does both. When the density drops to 1, every plane marked
+  `ambiental` in escenas.ts — the five `plano-*-bg` plates — stops rendering,
+  and when it recovers they come back. The chapter's colour is not lost with
+  them: `FondoEscena` is a separate plane and it stays.
+
+  A module-level store rather than context: this changes at most a couple of
+  times in a session because of the hysteresis below, and a context provider
+  inside the Canvas would put every scene's re-render on R3F's tree.
+*/
+let ligero = false;
+const oyentes = new Set<() => void>();
+function suscribirLigero(fn: () => void) {
+  oyentes.add(fn);
+  return () => {
+    oyentes.delete(fn);
+  };
+}
+function leerLigero() {
+  return ligero;
+}
+function ponerLigero(v: boolean) {
+  if (v === ligero) return;
+  ligero = v;
+  for (const fn of oyentes) fn();
+}
+
 /** Frames per window. ~0.75s at 60fps: long enough to average out a texture
  *  upload, short enough to react inside one chapter. */
 const MUESTRA = 45;
@@ -350,6 +394,9 @@ function DprAdaptativo() {
     if (siguiente !== null && siguiente !== actual.current) {
       actual.current = siguiente;
       setDpr(siguiente);
+      // The same verdict, §86's second half: density 1 means this machine is
+      // not holding the frame, so the environment goes too.
+      ponerLigero(siguiente === 1);
     }
   });
 
@@ -485,6 +532,13 @@ function sinCambios() {
  * browser cache with a plain Image(), so R3F's loader finds them warm when the
  * reader arrives. Nothing is downloaded at initial render beyond the hero.
  */
+/** The planes a warm-up should actually fetch. Under §86's reduced mode the
+ *  ambient plates are never rendered, so downloading them is bytes and a decode
+ *  spent on a machine that has already measured slow. */
+function porCalentar(escena: Escena) {
+  return leerLigero() ? escena.planos.filter((pl) => !pl.ambiental) : escena.planos;
+}
+
 function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
   const hecho = useRef<Set<string>>(new Set());
 
@@ -507,7 +561,7 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
     if (!primera || hecho.current.has(primera.clave)) return;
     hecho.current.add(primera.clave);
     const calentar = () => {
-      primera.planos.forEach((pl) => {
+      porCalentar(primera).forEach((pl) => {
         const img = new Image();
         img.decoding = "async";
         img.src = pl.src;
@@ -530,7 +584,7 @@ function usePrecarga(progresos: Record<string, number>, soportado: boolean) {
       const siguiente = ESCENAS[i + 1];
       if (!siguiente || hecho.current.has(siguiente.clave)) return;
       hecho.current.add(siguiente.clave);
-      siguiente.planos.forEach((pl) => {
+      porCalentar(siguiente).forEach((pl) => {
         const img = new Image();
         img.decoding = "async";
         img.src = pl.src;

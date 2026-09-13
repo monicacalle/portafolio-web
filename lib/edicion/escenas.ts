@@ -34,6 +34,19 @@ export interface Plano {
    * videogame sense", so this is drift, not float.
    */
   deriva?: number;
+  /**
+   * §86's "reduce environmental layers": true for a plane that is environment
+   * rather than subject, so the canvas can drop it on a machine that has
+   * measured slow.
+   *
+   * Marked in the data rather than inferred from `z` or `opacidad`, because
+   * both of those are art direction and would tie a performance decision to a
+   * number someone will reasonably want to change. Every one of these is a
+   * `plano-*-bg` plate: her own ground, blurred to a field, sitting at 28–34%
+   * behind the work. The scene's colour is not lost with it — `FondoEscena`
+   * carries that on its own plane.
+   */
+  ambiental?: boolean;
 }
 
 export interface Escena {
@@ -72,7 +85,7 @@ export const ESCENAS: readonly Escena[] = [
     planos: [
       { src: "/edicion/plano-i-fg.avif", z: 1.2, ancho: 3.4, x: -0.6, deriva: 0.007 },
       { src: "/edicion/panel-6.avif", z: -2.6, ancho: 1.9, x: 2.7, y: 0.3, opacidad: 0.9, deriva: 0.004 },
-      { src: "/edicion/plano-i-bg.avif", z: -7.5, ancho: 13, opacidad: 0.34, deriva: 0.002 },
+      { src: "/edicion/plano-i-bg.avif", z: -7.5, ancho: 13, opacidad: 0.34, deriva: 0.002, ambiental: true },
     ],
     camara: { dollyZ: -1.1, truckX: -0.6, pedestalY: 0.18, giro: 2.0 },
   },
@@ -83,7 +96,7 @@ export const ESCENAS: readonly Escena[] = [
       { src: "/edicion/plano-ii-fg.avif", z: 0.9, ancho: 3.6, x: 0.5, deriva: 0.0055 },
       { src: "/trabajo/t-esmeralda.avif", z: -2.4, ancho: 1.8, x: -2.8, y: 0.4, deriva: 0.0045 },
       { src: "/trabajo/t-isabella.avif", z: -4.2, ancho: 1.3, x: 3.2, y: -0.6, opacidad: 0.85, deriva: 0.0035 },
-      { src: "/edicion/plano-ii-bg.avif", z: -8, ancho: 14, opacidad: 0.3, deriva: 0.0015 },
+      { src: "/edicion/plano-ii-bg.avif", z: -8, ancho: 14, opacidad: 0.3, deriva: 0.0015, ambiental: true },
     ],
     camara: { dollyZ: -1.3, truckX: 0.7, pedestalY: -0.2, giro: 2.8 },
   },
@@ -94,7 +107,7 @@ export const ESCENAS: readonly Escena[] = [
       { src: "/edicion/ceguera-figura.avif", z: 1.5, ancho: 2.8, x: -1.9, y: -0.7, deriva: 0.0075 },
       { src: "/cine/a3-loreal.avif", z: -1.8, ancho: 2.6, x: 1.8, y: 0.3, deriva: 0.0045 },
       { src: "/cine/a3-ingres.avif", z: -4.4, ancho: 2.0, x: -3.4, y: 0.5, opacidad: 0.8, deriva: 0.003 },
-      { src: "/edicion/plano-iii-bg.avif", z: -8.5, ancho: 15, opacidad: 0.32, deriva: 0.0015 },
+      { src: "/edicion/plano-iii-bg.avif", z: -8.5, ancho: 15, opacidad: 0.32, deriva: 0.0015, ambiental: true },
     ],
     camara: { dollyZ: -1.5, truckX: -0.8, pedestalY: 0.26, giro: 3.2 },
   },
@@ -111,7 +124,7 @@ export const ESCENAS: readonly Escena[] = [
       */
       { src: "/edicion/detalle-vibe.avif", z: 0.6, ancho: 1.7, x: -1.9, y: -0.2, deriva: 0.005 },
       { src: "/edicion/detalle-voluntee.avif", z: -1.4, ancho: 1.5, x: 2.0, y: 0.4, opacidad: 0.9, deriva: 0.005 },
-      { src: "/edicion/plano-iv-bg.avif", z: -7, ancho: 13, opacidad: 0.28, deriva: 0.002 },
+      { src: "/edicion/plano-iv-bg.avif", z: -7, ancho: 13, opacidad: 0.28, deriva: 0.002, ambiental: true },
     ],
     camara: { dollyZ: -0.8, truckX: 0.4, pedestalY: 0.3, giro: 1.6 },
   },
@@ -122,7 +135,7 @@ export const ESCENAS: readonly Escena[] = [
       { src: "/edicion/plano-v-fg.avif", z: 1.0, ancho: 3.8, x: 0.3, deriva: 0.006 },
       { src: "/trabajo/t-lobo.avif", z: -2.2, ancho: 1.7, x: -2.9, y: -0.3, deriva: 0.004 },
       { src: "/trabajo/t-nespresso.avif", z: -4.0, ancho: 1.5, x: 3.0, y: 0.5, opacidad: 0.85, deriva: 0.0035 },
-      { src: "/edicion/plano-v-bg.avif", z: -8, ancho: 14, opacidad: 0.3, deriva: 0.0015 },
+      { src: "/edicion/plano-v-bg.avif", z: -8, ancho: 14, opacidad: 0.3, deriva: 0.0015, ambiental: true },
     ],
     camara: { dollyZ: -1.2, truckX: -0.5, pedestalY: -0.24, giro: 2.6 },
   },
