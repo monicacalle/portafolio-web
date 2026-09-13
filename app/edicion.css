@@ -37,24 +37,54 @@
 /* ---------------------------------------------------------------- theming
    Section 5. The header and rail take their foreground from the block under
    them, set on <html> by the IntersectionObserver in estado.tsx. CSS reads it,
-   so a theme change re-paints without re-rendering a single component. */
+   so a theme change re-paints without re-rendering a single component.
+
+   THE TWO GROUNDS ARE REGISTERED COLOURS, and that is what makes §8 work.
+
+   §8 asks the header's gradient to transition "over approximately 300ms" and
+   the declaration said `transition: background-image 300ms`, which does
+   nothing: `background-image` is not an animatable property, so the veil
+   swapped in a single frame at every one of the eleven theme boundaries. The
+   rail's ground did the same, straight from #120f0e to #f4f2f0, while its type
+   faded across on its own timing — the ground arriving a quarter of a second
+   before the words it is there to carry.
+
+   A gradient does not interpolate; a COLOUR inside one does, once it is
+   registered with a syntax the engine can parse. So the token is the veil's
+   top colour rather than the whole gradient, the gradient is built where it is
+   used, and both grounds cross-fade. */
+@property --edicion-velo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --edicion-rail-suelo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #120f0e;
+}
 html[data-nav-theme="dark"] {
   --edicion-nav-fg: #f6f3ef;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
-  --edicion-nav-velo: linear-gradient(to bottom, rgba(8, 6, 6, 0.55), transparent);
+  --edicion-velo: rgba(8, 6, 6, 0.55);
   --edicion-rail-suelo: #120f0e;
 }
 html[data-nav-theme="light"] {
   --edicion-nav-fg: #17100c;
   --edicion-nav-fg-suave: rgba(23, 16, 12, 0.6);
-  --edicion-nav-velo: linear-gradient(to bottom, rgba(244, 242, 240, 0.72), transparent);
+  --edicion-velo: rgba(244, 242, 240, 0.72);
   --edicion-rail-suelo: #f4f2f0;
 }
-/* Before the first sentinel fires, the page is the hero, and the hero is dark. */
+/* Before the first sentinel fires, the page is the hero, and the hero is dark.
+   §8: "header initially floats transparently over cinematic content", so the
+   veil is not merely dark here, it is absent — and `transparent` rather than
+   `none` because a colour is what interpolates when the first chapter arrives
+   and the veil fades UP from nothing, which is the other half of the sentence
+   ("as readability requires, introduce a very subtle top gradient"). */
 html:not([data-nav-theme]) {
   --edicion-nav-fg: #f6f3ef;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
-  --edicion-nav-velo: none;
+  --edicion-velo: transparent;
   --edicion-rail-suelo: #120f0e;
 }
 
@@ -94,9 +124,14 @@ html:not([data-nav-theme]) {
   padding-inline: clamp(0.9rem, 2vw, 1.5rem);
   color: var(--edicion-nav-fg);
   /* Section 8: never an obvious solid navbar. A very subtle gradient only,
-     transitioning over ~300ms as the theme underneath changes. */
-  background-image: var(--edicion-nav-velo);
-  transition: color 300ms var(--ease-salida), background-image 300ms var(--ease-salida);
+     transitioning over ~300ms as the theme underneath changes.
+
+     The transition is on the COLOUR inside the gradient, not on the gradient:
+     `background-image` is not animatable and the 300ms was decorative. The
+     property is inherited from <html>, so what changes here is this element's
+     own computed value, which is what a transition can act on. */
+  background-image: linear-gradient(to bottom, var(--edicion-velo), transparent);
+  transition: color 300ms var(--ease-salida), --edicion-velo 300ms var(--ease-salida);
 }
 
 .edicion-cabecera a {
@@ -184,7 +219,22 @@ html:not([data-nav-theme]) {
      chapter VI's light intro it painted a near-black slab with cream type
      against a cream page. It reads the same token the header does now. */
   color: var(--edicion-nav-fg);
-  transition: color var(--t-menu) var(--ease-salida);
+  /* One transition declaration for the rail, and it has to be one: there was a
+     second `.edicion-rail { transition: opacity ... }` nine hundred lines
+     below at the same specificity, which won on source order and silently
+     deleted this colour fade. The rail's type has been snapping between cream
+     and near-black at every boundary for as long as both rules have existed,
+     with the comment above claiming the opposite.
+
+     --edicion-rail-suelo is here rather than on `::before`, which is where it
+     is used: a pseudo-element does not run a transition for a custom property
+     it merely INHERITS — measured, it snapped through all seven samples of a
+     420ms window. Transitioning it on the rail animates the rail's own
+     computed value and the pseudo-element inherits the animated one. */
+  transition:
+    color var(--t-menu) var(--ease-salida),
+    --edicion-rail-suelo var(--t-menu) var(--ease-salida),
+    opacity var(--t-menu) var(--ease-cine);
   pointer-events: none;
 }
 /* Section 3: the rail is a desktop device. Below the large breakpoint the main
@@ -895,6 +945,9 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   position: absolute;
   inset: 0;
   z-index: -1;
+  /* The ground is built from the same registered colour the rail transitions,
+     so the words and the thing that makes them legible cross over together.
+     The transition itself is on `.edicion-rail`; see the note there. */
   background: linear-gradient(
     to right,
     var(--edicion-rail-suelo) 0%,
@@ -2011,7 +2064,10 @@ a.edicion-ficha {
    morph could not beat, so the rail never arrived at all. */
 html[data-fase="hero"] .edicion-rail { pointer-events: none; }
 html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
-.edicion-rail { transition: opacity var(--t-menu) var(--ease-cine); }
+/* The opacity transition this used to re-declare is folded into the rail's one
+   transition list at the top of the file. It was a second `transition` on the
+   same selector at the same specificity, so it did not add a transition — it
+   replaced the colour fade next to it. */
 
 /* ================================================================ §47 / §48
    The three-part sticky story.
@@ -2585,25 +2641,20 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 }
 
 /* ===================================================================== §8
-   The header veil transitions over 300ms.
+   Nothing here any more, and the deletion is the fix.
 
-   background-image is a DISCRETELY animated property -- it snaps. Measured at a
-   theme boundary: the gradient was already fully swapped while the foreground
-   colour was still mid-interpolation. Section 8 asks for the gradient opacity
-   to transition over ~300ms, so it moves to a pseudo-element whose OPACITY
-   animates, which is a continuous property. */
-.edicion-cabecera { background-image: none; }
-.edicion-cabecera::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: var(--edicion-nav-velo);
-  opacity: 1;
-  transition: opacity var(--t-menu) var(--ease-salida);
-}
-html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
+   This block used to move the veil onto a pseudo-element and animate its
+   OPACITY, on the reasoning that `background-image` snaps and opacity does
+   not. That is true and it solved half the problem: it fades the veil up as
+   the hero hands over to chapter I, because that boundary is "no gradient" to
+   "a gradient". It does nothing at the other ELEVEN boundaries, which are
+   dark-to-light and light-to-dark with the pseudo-element's opacity pinned at
+   1 the whole way — the two gradients still swapped in a frame, which is the
+   defect the block was written to fix.
+
+   The veil is a registered `<color>` inside a gradient now (see the theming
+   block at the top of this file), so one mechanism covers both: transparent to
+   dark at the handover, dark to light at every cut. */
 
 /* ===================================================================== §2
    The 1680px canvas cap, applied rather than merely declared.
