@@ -5,6 +5,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { LanguageSwitcher } from "@/components/site/language-switcher";
 import { PERSON } from "@/lib/site";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
+import { MenuMovil } from "./menu-movil";
 
 /**
  * The fixed global header (brief sections 6–8).
@@ -61,6 +62,7 @@ export function Cabecera() {
         >
           {t("cta.escribir")}
         </a>
+        <MenuMovil />
       </div>
     </header>
   );

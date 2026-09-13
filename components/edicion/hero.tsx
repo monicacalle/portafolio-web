@@ -83,12 +83,17 @@ export function Hero() {
               alt=""
               className="edicion-hero__panel"
               data-eje={p.eje}
+              // Custom properties, not direct left/top/width/height. Inline
+              // styles beat any stylesheet rule short of !important, so setting
+              // the geometry directly made the panels impossible to recompose
+              // for mobile -- the phone layout silently kept the desktop's
+              // percentages and cropped her portrait to fit them.
               style={
                 {
-                  left: `${p.x}%`,
-                  top: `${p.y}%`,
-                  width: `${p.w}%`,
-                  height: `${p.h}%`,
+                  "--x": `${p.x}%`,
+                  "--y": `${p.y}%`,
+                  "--w": `${p.w}%`,
+                  "--h": `${p.h}%`,
                 } as React.CSSProperties
               }
               // The hero is the largest paint on the page and it is above the

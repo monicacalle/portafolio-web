@@ -405,6 +405,10 @@ html:not([data-nav-theme]) {
 
 .edicion-hero__panel {
   position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
   object-fit: cover;
   transform-style: preserve-3d;
   backface-visibility: hidden;
@@ -644,3 +648,180 @@ html:not([data-nav-theme]) {
    Giving the leader a minimum keeps the three columns in a stable rhythm. */
 .edicion-rail__indice a { grid-template-columns: auto minmax(1.2rem, 1fr) 1.4rem; }
 .edicion-rail__numeral { text-align: right; }
+
+/* ----------------------------------------------------------------- mobile
+   Section 3: not a scaled-down desktop. The rail is gone, the header grows to
+   60px, and the chapter index moves into a disclosure under the header. */
+@media (max-width: 1023px) {
+  :root { --edicion-cabecera-h: 60px; }
+
+  /* The header's inline jump list cannot hold six Spanish chapter names on a
+     390px screen; it becomes the mobile menu instead. */
+  .edicion-cabecera__centro { display: none; }
+}
+
+.edicion-movil { display: none; position: relative; }
+@media (max-width: 1023px) { .edicion-movil { display: block; } }
+
+.edicion-movil__boton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 0;
+  padding: 0.4rem 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  /* 44px minimum touch target, measured including the padding above. */
+  min-height: 44px;
+}
+.edicion-movil__etiqueta {
+  /* Visible on nothing but a screen reader: the bars carry the meaning
+     visually, and the words carry it to everyone else. */
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.edicion-movil__barras { display: grid; gap: 5px; width: 22px; }
+.edicion-movil__barras i {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 260ms var(--ease-salida);
+}
+.edicion-movil__barras[data-abierto] i:first-child { transform: translateY(3.25px) rotate(45deg); }
+.edicion-movil__barras[data-abierto] i:last-child  { transform: translateY(-3.25px) rotate(-45deg); }
+
+.edicion-movil__panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--edicion-cabecera-h);
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  /* 0fr -> 1fr animates to the content's real height with no measurement, so
+     it is right in both languages and cannot overshoot the way a guessed
+     max-height does. */
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms var(--ease-salida);
+}
+.edicion-movil__panel[data-abierto] { grid-template-rows: 1fr; }
+.edicion-movil__interior { overflow: hidden; }
+
+.edicion-movil__panel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 1.1rem 1.4rem;
+}
+.edicion-movil__panel a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid rgba(246, 243, 239, 0.12);
+}
+.edicion-movil__panel a span:last-child {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section 31: replace the desktop card constellation with a horizontal snap
+   carousel. A six-column grid collapsed to one column on a phone turns a
+   chapter into a very long single file of pictures; a snap rail keeps the
+   editorial rhythm and the scroll length honest. */
+@media (max-width: 767px) {
+  .edicion-capitulo__cuerpo {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1.2rem;
+    /* The scrollbar is a horizontal band across an editorial page; the snap
+       points and the partially-visible next card are the affordance. */
+    scrollbar-width: none;
+  }
+  .edicion-capitulo__cuerpo::-webkit-scrollbar { display: none; }
+  .edicion-ficha { scroll-snap-align: start; grid-column: auto; }
+
+  /* Chapter VI is a reading column, not a gallery, so it opts out. */
+  .edicion-oficio,
+  .edicion-oficio__cierre { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edicion-movil__panel,
+  .edicion-movil__barras i { transition-duration: 1ms; }
+}
+
+/* ------------------------------------------------- the hero, recomposed
+   Four panels squeezed into a 390x844 portrait viewport is not a retablo, it
+   is four slivers, and object-fit: cover crops each of her portraits to do it.
+   Section 3 asks for a deliberate recomposition rather than a scaled-down
+   desktop, so on a phone the hero becomes a POSTER: the dominant panel alone,
+   full bleed and uncropped, with the anachronism still walking in front of it.
+
+   The three wings are not lost -- they open chapter I's carousel two screens
+   later, at a size where they can actually be read. */
+@media (max-width: 1023px) {
+  .edicion-hero__panel { display: none; }
+  .edicion-hero__panel[data-eje="center"] {
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* Her figure sits left of centre in this plate, so the crop is biased that
+       way; centring it would cut her face at the frame edge. */
+    object-position: 38% 42%;
+  }
+  .edicion-hero__escena::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 8, 8, 0.92) 0%,
+      rgba(10, 8, 8, 0.7) 34%,
+      rgba(10, 8, 8, 0.15) 66%,
+      transparent 100%
+    );
+  }
+
+  .edicion-hero__anacronismo { left: auto; right: -6%; width: 46%; bottom: -3%; }
+
+  /* The label moves to the foot of the poster, where the scrim is densest. */
+  .edicion-hero__marco {
+    top: auto;
+    bottom: clamp(1.2rem, 5vw, 2.4rem);
+    left: clamp(1rem, 4vw, 1.6rem);
+    right: clamp(1rem, 4vw, 1.6rem);
+    transform: none;
+    width: auto;
+    border: none;
+    padding: 0;
+  }
+  .motion .edicion-hero__marco { transform: none; }
+  /* Six chapters listed under the label duplicate the menu two taps away and
+     push the standfirst off a 844px screen. */
+  .edicion-hero__indice { display: none; }
+
+  /* The anachronism walks through the lower right at 46% width, so the
+     standfirst has to stop before her or the last words sit behind a cobalt
+     sweater. The wordmark above it is short enough to run full width. */
+  .edicion-hero__pie { max-width: 60%; }
+
+  /* The CTA pushed the menu button off a 390px header. The mail link is in
+     chapter VI and in the footer; the chapters are what a reader needs here. */
+  .edicion-cabecera__cta { display: none; }
+}
