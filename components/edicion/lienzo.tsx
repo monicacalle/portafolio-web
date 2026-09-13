@@ -478,24 +478,50 @@ export function Lienzo() {
         style={{ pointerEvents: "none" }}
         frameloop="always"
       >
-        <Suspense fallback={null}>
-          <DprAdaptativo />
-          <AvisoPrimerCuadro onListo={() => setListo(true)} />
-          {/*
-            Section 90: only the current scene renders, and only while it is on
-            screen. The brief's rule is "continue one chapter ahead" and "do not
-            download all 150+ product assets at initial render" -- a scene whose
-            progress is 0 or 1 is off screen, so its textures are never
-            requested until the reader is within a viewport of it.
+        <DprAdaptativo />
+        <AvisoPrimerCuadro onListo={() => setListo(true)} />
+        {/*
+          Section 90: only the current scene renders, and only while it is on
+          screen. The brief's rule is "continue one chapter ahead" and "do not
+          download all 150+ product assets at initial render" -- a scene whose
+          progress is 0 or 1 is off screen, so its textures are never
+          requested until the reader is within a viewport of it.
 
-            The next scene warms below, one ahead, exactly as the section asks.
-          */}
-          {ESCENAS.map((e) => {
-            const p = progresos[e.clave] ?? 0;
-            if (p <= 0 || p >= 1) return null;
-            return <EscenaCapitulo key={e.clave} escena={e} p={p} />;
-          })}
-        </Suspense>
+          The next scene warms below, one ahead, exactly as the section asks.
+        */}
+        {/*
+          ONE SUSPENSE BOUNDARY PER SCENE, and that is §94's crossfade.
+
+          §94 says that at the midpoint of a scene change "both exist" —
+          outgoing 1 → 0 while incoming 0 → 1. There used to be a single
+          `<Suspense fallback={null}>` around this whole map, and a scene only
+          mounts once its progress leaves 0, which is exactly the boundary. Its
+          three `useLoader` calls suspend on first mount, and in React 19 a
+          synchronous update that suspends an already-revealed boundary hides
+          the revealed content and shows the fallback — so the OUTGOING scene
+          went with it and the canvas was empty for the length of a texture
+          load, at every one of the five handovers.
+
+          `usePrecarga` does not save it: `new Image()` warms the HTTP cache,
+          which is not suspend-react's cache, so the first mount still
+          suspends. What it does do is make that suspension short.
+
+          The canvas being empty is worse here than a missing crossfade, because
+          two other rules assume it is not: the static intro plate is at
+          `opacity: 0` once `data-lienzo="activo"` and the chapter's own ground
+          is at 22%, so an arriving chapter with no scene behind it is a
+          near-black wash. A boundary each means the outgoing scene simply
+          stays on screen while the incoming one loads.
+        */}
+        {ESCENAS.map((e) => {
+          const p = progresos[e.clave] ?? 0;
+          if (p <= 0 || p >= 1) return null;
+          return (
+            <Suspense key={e.clave} fallback={null}>
+              <EscenaCapitulo escena={e} p={p} />
+            </Suspense>
+          );
+        })}
       </Canvas>
       ) : null}
     </div>

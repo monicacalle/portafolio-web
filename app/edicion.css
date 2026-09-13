@@ -342,7 +342,7 @@ html:not([data-nav-theme]) {
    This is the state's consumer: without one it would be an attribute computed
    every frame for nobody, which is the reason three of §92's other states are
    declined rather than written. */
-html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
+html[data-final] .edicion-rail__pie { opacity: 0.85; }
 
 /* --------------------------------------------------------------- chapters
    Section 2: content is pushed into the right-hand 80%. The reference does this
@@ -553,8 +553,12 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
 /* ------------------------------------------------------------------ hero */
 .edicion-hero {
   position: relative;
-  /* Section 13: 150svh, so the retablo can hold, fold, and hand over. */
-  min-height: 150svh;
+  /* Section 13: 150svh, so the retablo can hold, fold, and hand over. The
+     number itself is `HERO_SVH` in lib/edicion/capitulos.ts, published here as
+     `--hero-svh` by hero.tsx — it used to be a literal in both places with
+     nothing reading the one in the data module, which is §103's own failure
+     case. The fallback is the same number, for the frame before hydration. */
+  min-height: var(--hero-svh, 150svh);
   background: var(--edicion-negro);
 }
 .edicion-hero__pegajoso {
@@ -2194,15 +2198,35 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 .edicion-triptico {
   grid-column: span 6;
   position: relative;
+}
+/*
+  THE RESERVE AND THE PIN ARE ARMED, which they were not.
+
+  Both were on the base selector, so with JavaScript off the block still
+  reserved 495svh and still pinned: 495 minus the roughly one viewport the
+  pinned child occupies is about four screens of scrolling during which nothing
+  on the page changes, because every scrubbed behaviour underneath IS gated —
+  the camera, the three readings, §49's progressive specs — and correctly falls
+  back to static. The component's own comment claimed "all three readings stack
+  in the flow", and they stacked inside a block that was still pinned.
+
+  §42's sequence, built later, already does this correctly and says so in as
+  many words ("everything above renders a plain vertical strip … the scrub is
+  added here and nowhere else"). Same shape here: the strip is three readings
+  and one photograph, in the flow, at its own height.
+*/
+[data-scrub].edicion-triptico {
   /* Three beats of 165svh. Chapter V's own height accounts for it. */
   min-height: 495svh;
 }
-.edicion-triptico__fijo {
+[data-scrub] .edicion-triptico__fijo {
   position: sticky;
   top: 110px;
   /* 100svh minus the offset, or the pinned block runs past the viewport foot
      and the reader never sees the bottom of it. */
   min-height: calc(100svh - 110px);
+}
+.edicion-triptico__fijo {
   /* Flex, not grid: a grid with min-height stretches its single row, so
      align-content had nothing to centre and the composition sat at the top
      with 600px of nothing under it. */
@@ -2353,8 +2377,11 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    the object once, then its three readings in order — "stable representative
    scene states", which is the section's own phrase. */
 @media (prefers-reduced-motion: reduce) {
-  .edicion-triptico { min-height: 0; }
-  .edicion-triptico__fijo { position: static; min-height: 0; padding-block: 2rem; }
+  /* The reserve and the pin are behind [data-scrub] now, which reduced motion
+     never sets, so these two only have to undo what the base rule still
+     carries. Kept at matched specificity anyway: a stale override that has
+     become a no-op is cheaper to leave correct than to re-derive later. */
+  .edicion-triptico__fijo { padding-block: 2rem; }
   .edicion-triptico__objeto img { transform: none; }
 }
 

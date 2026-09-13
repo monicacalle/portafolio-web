@@ -161,6 +161,7 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
         down in edicion-declinaciones.md rather than implied:
 
           data-fase      hero | capitulos            HERO_ACTIVE, CHAPTER_*
+          data-final     present in the last body     END
           data-subfase   intro | editorial           INTRO_ACTIVE, EDITORIAL_ACTIVE
           data-capitulo  the anchor                  which CHAPTER_*
 
@@ -208,10 +209,23 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
         sits at 0.45 opacity for the whole scroll because it is furniture until
         it is not. A state with no consumer is a value computed every frame for
         nobody, so this state got one rather than the attribute alone.
+
+        ITS OWN ATTRIBUTE, because it used to overwrite `data-fase` — and END
+        is not an alternative to CHAPTER_*, it is something true AT THE SAME
+        TIME as the last chapter. Two stylesheet rules key off the value it was
+        replacing, and one of them matters: `html[data-fase="capitulos"]
+        .edicion-rail__frame { opacity: 0.18 }` against a base of `opacity: 0`
+        with a 700ms transition. So the moment the reader reached chapter VI's
+        body the rail's frame — §17 step 4's "draws in as the morph completes
+        and stays as the rail's edge" — faded to nothing and never came back,
+        for the whole of the closing chapter. `data-fase` stays "capitulos" now
+        and END is `data-final`.
       */
       const ultimo = CAPITULOS[CAPITULOS.length - 1]?.anclaje;
       if (cap === ultimo && raiz.dataset.subfase === "editorial") {
-        raiz.dataset.fase = "fin";
+        raiz.dataset.final = "";
+      } else {
+        delete raiz.dataset.final;
       }
       // setActivo with an unchanged value is a no-op in React, so the common
       // case -- scrolling within one chapter -- costs nothing.

@@ -6,9 +6,14 @@ import { Link } from "@/lib/i18n/navigation";
 /**
  * The Edition's shared primitives — brief section 102.
  *
- * §102 lists fifteen reusable primitives. Most of them already exist here under
- * this page's own names, and renaming working components to match a list would
- * be the kind of change that reads as architecture and is only relabelling:
+ * §102 lists FOURTEEN reusable primitives — this said fifteen, and the list is
+ * countable: ChapterIntro, CinematicScene, EditorialSection, FeatureCard,
+ * MediaFeature, RiveMedia, VideoFeature, CompactUpdateList, StickyNarrative,
+ * SectionHeading, CTA, InlineLink, SkillTag, Modal.
+ *
+ * Nine of them already exist here under this page's own names, and renaming
+ * working components to match a list would be the kind of change that reads as
+ * architecture and is only relabelling:
  *
  *   CinematicScene    → Lienzo            (components/edicion/lienzo.tsx)
  *   ChapterIntro      → Capitulo's intro  (components/edicion/capitulo.tsx)
@@ -28,11 +33,18 @@ import { Link } from "@/lib/i18n/navigation";
  * same shared modal system", so it needed a name before a second one could use
  * it rather than after.
  *
- * SectionHeading and InlineLink are deliberately NOT here. Headings differ by
- * role (a chapter's h2, a section's h3, a card's h4) and are one element each;
- * the inline prose link is `t.rich`'s own element, so it cannot be a component
- * at the call site, and `.edicion-capitulo__cuerpo p a` styles it in one place
- * already. A primitive whose body is one styled tag is indirection, not reuse.
+ * That is twelve of fourteen. SectionHeading is the one genuinely not built:
+ * headings differ by role (a chapter's h2, a section's h3, a card's h4) and are
+ * one element each, and a primitive whose body is one styled tag is
+ * indirection, not reuse.
+ *
+ * This paragraph used to put InlineLink beside it as "deliberately NOT here",
+ * contradicting `Enlace` forty lines below, which its own docstring calls
+ * "§102's InlineLink at its loudest". The true statement is narrower: the
+ * UNDERSTATED inline link inside running prose is `t.rich`'s own element and
+ * cannot be a component at the call site, so `.edicion-capitulo__cuerpo p a`
+ * styles that one in a single place while `Enlace` is the primitive for the
+ * loud case.
  */
 
 /**

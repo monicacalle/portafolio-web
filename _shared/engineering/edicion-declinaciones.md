@@ -71,7 +71,7 @@ portfolio.
 | 66 | "3D environment should transition toward a brighter technical world" | Chapter VI has no scene at all, which is a different thing from a scene that brightens. §23 sends the closing chapter into the light world and a cinematic ground under contact details would fight it; the brightening is the cut itself. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
-| 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the sitemap all read from one list. |
+| 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the mobile menu all read from one list in `lib/edicion/capitulos.ts`. NOT the sitemap, which this row used to name: `app/sitemap.ts` builds from the case-study slugs and emits no chapter fragment at all. Fragments are not sitemap entries — a crawler resolves them to the page they hang off — so that is correct behaviour and the wrong evidence for it. |
 
 ### 2b. There is an equivalent and it is declined
 
@@ -161,16 +161,31 @@ retablo, built in CSS 3D. It is built that way because it is also §17's
 hero-to-rail morph, which has to survive WebGL being off. §81 and §82 bless a
 non-WebGL cinematic path explicitly.
 
-**§102 — eleven of the fifteen primitives exist under this page's own names.**
+**§102 — twelve of the fourteen primitives exist under this page's own names.**
+The count was wrong in both directions and is worth correcting rather than
+rounding: §102's list is ChapterIntro, CinematicScene, EditorialSection,
+FeatureCard, MediaFeature, RiveMedia, VideoFeature, CompactUpdateList,
+StickyNarrative, SectionHeading, CTA, InlineLink, SkillTag and Modal —
+**fourteen**, not fifteen.
+
 `components/edicion/primitivas.tsx` carries the three that were genuinely
-duplicated: the modal, the pill and the underlined action link. Its header maps
-the rest — CinematicScene is Lienzo, FeatureCard is Ficha, RiveMedia is
-Plancha, CompactUpdateList is ListaCompacta, StickyNarrative is Triptico — and
-renaming working components to match a list would be relabelling presented as
-architecture. `SectionHeading` and `InlineLink` are deliberately absent:
-headings differ by role and are one element each, and the inline prose link is
-`t.rich`'s own element, so it cannot be a component at the call site. A
-primitive whose body is one styled tag is indirection, not reuse.
+duplicated: Modal, CTA, and InlineLink as `Enlace`. Its header maps nine more —
+CinematicScene is Lienzo, ChapterIntro and EditorialSection are Capitulo's two
+halves, FeatureCard is Ficha, MediaFeature is ParedDeObras, RiveMedia is
+Plancha, VideoFeature is VideoFeature, CompactUpdateList is ListaCompacta,
+StickyNarrative is Triptico — and renaming working components to match a list
+would be relabelling presented as architecture.
+
+Two are absent. `SkillTag` is declined with §33–36 above, Shopify's playful
+register. `SectionHeading` is not built because headings differ by role — a
+chapter's h2, a section's h3, a card's h4 — and are one element each; a
+primitive whose body is one styled tag is indirection, not reuse. An earlier
+version of this paragraph listed InlineLink as absent alongside SectionHeading,
+which contradicted `primitivas.tsx` in the same repository: `Enlace` is exported
+there and its own docstring calls it "§102's InlineLink at its loudest". What is
+true is narrower — the understated inline link inside running prose is
+`t.rich`'s own element and cannot be a component at the call site, so `Enlace`
+covers the loud case and `.edicion-capitulo__cuerpo p a` covers the quiet one.
 
 **§103 — data-driven, but not a layout engine.** `placa` and `obras` (with the
 section's own `layout` field on each card) are in `lib/edicion/capitulos.ts`

@@ -5,8 +5,10 @@
  * `capitulos.<anchor>`. What is here is the stuff a translator has no opinion
  * about: anchors, order, heights, themes, and which of her files each chapter
  * shows. Keeping the two apart is the project rule (conventions.md), and it is
- * also what lets the rail, the scroll spine and the sitemap read one list
- * instead of three that drift.
+ * also what lets the rail, the header, the hero index, the mobile menu and the
+ * scroll spine read one list instead of five that drift. NOT the sitemap: it
+ * builds from the case-study slugs and emits no chapter fragment, which this
+ * sentence used to claim it did.
  *
  * Heights are deliberately uneven. The live Shopify page measures 245svh to
  * 924svh across its twelve chapters, and that 3.8x spread is the rhythm; six
@@ -211,7 +213,10 @@ export const CAPITULOS = [
  */
 export type Capitulo = (typeof CAPITULOS)[number];
 
-export const ANCLAJES = CAPITULOS.map((c) => c.anclaje);
+/* `ANCLAJES` used to be here, a derived array of the six strings that nothing
+   imported — the exact "dead configuration that reads as live configuration"
+   the §103 note above says was removed. Every consumer maps `CAPITULOS`
+   itself. The type stays, because it is used. */
 export type Anclaje = Capitulo["anclaje"];
 
 /**
@@ -230,5 +235,11 @@ export const POR_ANCLAJE = Object.fromEntries(
 /**
  * The hero's own length, before chapter I begins. 150svh per brief section 13:
  * enough for the retablo to hold, then fold, then hand over to the rail.
+ *
+ * IT IS NOW THE ONE PLACE THIS NUMBER LIVES. It used to be a second copy of a
+ * literal that `app/edicion.css` also carried as `min-height: 150svh`, read by
+ * nothing — so changing it here changed nothing, which is the failure this
+ * module's own §103 note says was removed. `hero.tsx` publishes it as
+ * `--hero-svh` and the stylesheet reads that.
  */
 export const HERO_SVH = 150;

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { medidas } from "@/lib/edicion/medidas";
 import { useTranslations } from "next-intl";
-import { CAPITULOS } from "@/lib/edicion/capitulos";
+import { CAPITULOS, HERO_SVH } from "@/lib/edicion/capitulos";
 import { MarcaTema } from "./estado";
 import { Geometria } from "./geometria";
 
@@ -77,7 +77,14 @@ export function Hero() {
   }, []);
 
   return (
-    <div id="edicion-hero" className="edicion-hero" ref={ref}>
+    <div
+      id="edicion-hero"
+      className="edicion-hero"
+      ref={ref}
+      /* §103: the hero's length comes from the data module, not from a second
+         copy of the same literal in the stylesheet. */
+      style={{ "--hero-svh": `${HERO_SVH}svh` } as React.CSSProperties}
+    >
       <MarcaTema tema="oscuro" />
       <div className="edicion-hero__pegajoso">
         <div className="edicion-hero__escena">
