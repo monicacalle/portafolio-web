@@ -8,9 +8,17 @@ import { CAPITULOS } from "@/lib/edicion/capitulos";
  * The mobile chapter menu (brief sections 3 and 11).
  *
  * Below the large breakpoint the rail is gone and the header's jump list will
- * not fit, so the six chapters move in here. It is a disclosure, not an overlay:
- * a panel that pushes down from the header rather than a full-screen takeover,
- * which keeps the chapter you were reading visible behind it.
+ * not fit, so the six chapters move in here. It is a full-height panel under
+ * the header, opaque, that covers the chapter behind it — measured at 390x844
+ * it is `position: fixed`, 784px of a 844px viewport, on #120f0e.
+ *
+ * This paragraph used to call it "a disclosure, not an overlay… which keeps
+ * the chapter you were reading visible behind it", which is neither what it
+ * looks like nor what §11 asks for: the section wants the panel to slide down
+ * from the header and the six links to stagger in, and says nothing about
+ * keeping the page visible. The MECHANISM below is still a disclosure's — a
+ * grid-template-rows animation rather than a transform — and that part of the
+ * comment was always the useful half.
  *
  * The open/close animation is grid-template-rows 0fr → 1fr. Animating height to
  * a fixed value means guessing the content's height and being wrong in the other

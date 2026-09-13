@@ -69,6 +69,7 @@ portfolio.
 | 9 | Editions dropdown | The reference's menu switches between separately published editions. There is one of these. A menu that opens to reveal a single item is theatre; the six chapters are in the header, the rail and the hero index instead. |
 | 18 | The rail's middle standfirst, Terms / Privacy links, and the index inside the frame | The reference's sidebar carries a second line of copy and two legal links. There are no such routes on this site and inventing a Terms page for a personal portfolio would be furniture. The standfirst it would carry is the hero's own `entradilla`, a screen above; repeating it in the rail is the same sentence twice on one viewport. The third is a composition call and it is measured: §18 asks for the "navigation composition centered vertically inside a roughly 340:464 frame", and only the wordmark is inside it. At 1440x900 the frame occupies y 66→405 and the chapter index y 669→845, so the six chapters sit 264px below its foot; at 1280x768, 537→713 against a frame ending at 339. The frame is the right ratio and the right place — it is §17 step 4's endpoint, the thing the hero's wordmark morphs into — and filling it with the index would mean either shrinking a 100svh rail's navigation into its top third or floating the index in the vertical middle of the column, where it crosses whatever artwork is behind it. The index is pushed to just above the legal line instead, which is what the live reference does (referencia-shopify.md) and what keeps the upper rail open for the morph to land in. |
 | 66 | "3D environment should transition toward a brighter technical world" | Chapter VI has no scene at all, which is a different thing from a scene that brightens. §23 sends the closing chapter into the light world and a cinematic ground under contact details would fight it; the brightening is the cut itself. |
+| 40 | The light separator after the film | §40 ends "after completion: transition into a light separator/blank surface before Online. This creates a deliberate visual reset." In the reference that clause belongs to the Agentic chapter's video, and §45's Tinker outro — the OTHER dark insert — ends instead with "once finished, move into Retail", no separator. This page has one dark beat and it plays both roles: it wraps chapter III's film, and it is the last block in its chapter. At that position §45's clause is the one that applies, and §40's would put a cream band between two dark worlds — which is exactly what `vuelveAClaro` exists to prevent and what the fifth audit measured as a seam: 72px of body padding plus a 100px §77-C scrim, sampled as near-black at y=760, (242, 240, 238) at 840, and back down. The separator is declined rather than built badly; the beat hands straight into chapter IV. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
 | 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the mobile menu all read from one list in `lib/edicion/capitulos.ts`. NOT the sitemap, which this row used to name: `app/sitemap.ts` builds from the case-study slugs and emits no chapter fragment at all. Fragments are not sitemap entries — a crawler resolves them to the page they hang off — so that is correct behaviour and the wrong evidence for it. |
@@ -410,6 +411,35 @@ while the audit was running (§70, §71, §90) or wrong about the brief (§25, �
 Two more came out of measuring rather than from the audit: the header wore the
 wrong theme for 3,200px of the page because §5 and §93 were sharing a line, and
 its nav links measured 4.07:1 over her artwork against AA's 4.5.
+
+### The fifth audit
+
+Run against the fixed code, same shape: seven readers, two refuters each
+defaulting to refuted. Thirty-five findings raised, twenty-one survived. Two
+were `alta` and both were real behaviour, not records:
+
+- **§26 — the modal never locked the background.** `body { overflow: hidden }`
+  locks the browser's scroller and Lenis runs in root mode, calling
+  `preventDefault()` and then `window.scrollTo`. Measured: a wheel of deltaY
+  600 on an open dialog moved the page 600px.
+- **§6 — the header CTA went invisible on hover over most of the page.** The
+  pill inverts, and only one half of the pair was themed: in the light world it
+  painted #17100c on #120f0e, 1.014:1.
+
+The rest, all fixed: §94's crossfade still put two scenes at full strength for
+88–166px because the square root was applied after the clamp; §90's warm-up
+fired for every chapter BEHIND the reader, 442kB in one burst on a deep link;
+§84 wrote the scroll position after Lenis had started gliding and only ever
+read it on `popstate`; §47/§49's pinned block ran 105px below the fold between
+1024 and 1150px wide; §17's Renaissance frame arrived 485px after the morph it
+bounds; §5's language switcher was the fixed white nav the section forbids by
+name; §1's GSAP bridge shipped 46kB to drive zero triggers; §31's snap fade ran
+at §28's 700ms because both wanted `opacity`.
+
+And nine records that described code the build does not have — §8, §11, §18,
+§20, §28, §43, §71, §88, §92, §100 — including a `.motion` class named in five
+places that no script has written since it was removed for being stripped by
+hydration.
 
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.
