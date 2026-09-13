@@ -286,6 +286,19 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
 .edicion-capitulo > * {
   width: 100%;
 }
+/* The floor is a DESKTOP reserve and only a desktop reserve.
+
+   `alturaSvh` holds scroll length for the cinematic choreography — the camera
+   moves through a chapter's scene — and below 1024px there is no canvas to
+   choreograph, so the floor was buying empty page. Measured at 390x844 once
+   the bodies stopped being stretched to their tallest carousel item: 417px of
+   nothing between chapter III's dark beat and chapter IV, 495px at the foot of
+   chapter V, 967px across the page. The intro keeps its own 70svh from §85, so
+   a chapter is still a screen of title before a screen of reading; what goes
+   is the reserve for something that does not run at this width. */
+@media (max-width: 1023px) {
+  .edicion-capitulo { min-height: 0; }
+}
 @media (min-width: 1024px) {
   .edicion-capitulo > * {
     width: calc(100% - var(--edicion-rail));
@@ -995,71 +1008,109 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   font-variant-numeric: tabular-nums;
 }
 
-/* Section 31: replace the desktop card constellation with a horizontal snap
-   carousel. A six-column grid collapsed to one column on a phone turns a
-   chapter into a very long single file of pictures; a snap rail keeps the
-   editorial rhythm and the scroll length honest.
+/* ===================================================================== §3 / §31
+   THE CAROUSEL IS THE CARD GROUP, NOT THE CHAPTER.
 
-   Every number here is §31's and four of them were wrong: cards snapped to
-   `start` rather than `center`, the width was 78% rather than ~65vw, there was
-   no tablet size at all (the carousel stopped at 767px, so the ~50% case never
-   existed), and the first and last cards had no room to reach the centre.
-   The padding is what gives them that room: half the difference between the
-   scrollport and one card, on each side. */
+   §31 replaces one thing below the large breakpoint: "the desktop floating
+   constellation" of app cards. This file made the whole editorial BODY the
+   scroller instead, and three chapters paid for it.
+
+   Measured at 390x844 before this rewrite:
+
+     - Chapter I was a 375px-wide horizontal scroller holding three items —
+       a paragraph, the five drawings and the compact list — each 250px wide
+       and 2,040px tall, because a column-flow grid is one row and every item
+       stretches to the tallest. Reading the chapter meant scrolling 2,000px
+       down an almost-empty column and then sideways.
+     - `.edicion-lista` had `scroll-snap-align: none` inside
+       `scroll-snap-type: x mandatory`, so it was UNREACHABLE: setting
+       scrollLeft to 270 to centre it snapped back to 0 and left 45px of a
+       254px block on screen. The compact register of chapters I and II —
+       §37's whole point, ten rows of her own writing — could not be read on
+       any phone or tablet.
+     - Chapters IV, V and VI had already opted out of the flow but kept the
+       carousel's centring padding, so 121px of a 390px phone was empty margin
+       either side of the contact chapter. §3 says "main content becomes full
+       width" in as many words.
+
+   So the body is a reading column at every width, in the same six tracks as
+   the desktop, and §31's numbers move onto `[data-carril]` — the plate wall
+   and the constellation, which are the card groups the section is about. */
 @media (max-width: 1023px) {
-  .edicion-capitulo__cuerpo {
+  .edicion-capitulo__cuerpo { grid-auto-flow: row; }
+  /* The class twice, deliberately: `.edicion-capitulo__cuerpo > *` is (0,1,0)
+     and so is `.edicion-lista { grid-column: span 6 }` four hundred lines
+     later, which then wins on source order. Repeating the class makes it
+     (0,2,0) and ends the argument for every child, including ones added by a
+     later block. A reading column is one column. */
+  .edicion-capitulo__cuerpo.edicion-capitulo__cuerpo > * { grid-column: span 6; }
+}
+
+/* The plate wall's rail. At 1024px and up it is not an element at all:
+   `display: contents` hands its cards straight to the body's grid, so §44's
+   uneven row is untouched and the wrapper costs nothing.
+
+   `.edicion-carril` and not `[data-carril]`, which is the difference between a
+   wrapper and a composition. The other rail is the constellation, and it is a
+   real box on desktop: §29's five cards are `position: absolute` against it
+   and it reserves 92svh for them to expand into. `display: contents` generates
+   no box, so the attribute selector took the containing block away and the
+   whole cloud reflowed against the chapter body with no height reserved. The
+   rail RULES below are shared; this one declaration is not. */
+.edicion-carril { display: contents; }
+
+@media (max-width: 1023px) {
+  [data-carril] {
+    display: grid;
+    grid-column: span 6;
+    /* §31: "card width ~65vw on phones", "~50% on larger tablet widths". */
     --carrusel: 65vw;
-    grid-template-columns: none;
     grid-auto-flow: column;
     grid-auto-columns: var(--carrusel);
+    gap: clamp(0.9rem, 2vw, 2rem);
+    /* Cards differ in height and a column-flow grid is one row, so without
+       this the shortest card is stretched to the tallest and its caption ends
+       up floating in the middle of a column of nothing. */
+    align-items: start;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
+    /* §31: "first and last items receive generous outer margins so they can
+       center". Half the difference between the scrollport and one card, on
+       each side — which also puts the snap point on the viewport's centre
+       rather than the rail's, because the rail's own padding is symmetric. */
     padding-inline: calc((100% - var(--carrusel)) / 2);
     scroll-padding-inline: calc((100% - var(--carrusel)) / 2);
     /* The scrollbar is a horizontal band across an editorial page; the snap
        points and the partially-visible next card are the affordance. */
     scrollbar-width: none;
   }
-  /* §31: "≈50% on larger tablet widths". */
   @media (min-width: 768px) {
-    .edicion-capitulo__cuerpo { --carrusel: 50vw; }
+    [data-carril] { --carrusel: 50vw; }
   }
-  .edicion-capitulo__cuerpo::-webkit-scrollbar { display: none; }
-  .edicion-ficha { scroll-snap-align: center; grid-column: auto; }
+  [data-carril]::-webkit-scrollbar { display: none; }
+  [data-carril] > * { scroll-snap-align: center; grid-column: auto; }
 
   /* §31's active state. The centred card is at 1 and the rest at 0.7, and the
      `data-activo` that decides which is written by the observer in
      capitulo.tsx as the snap changes — CSS has no way to ask which item a
-     scroll container is snapped to. */
-  .edicion-capitulo__cuerpo > * {
-    opacity: 0.7;
+     scroll container is snapped to.
+
+     THROUGH A CUSTOM PROPERTY, because one of the two rails holds cards that
+     compute their own opacity. `.edicion-carta` multiplies three values for
+     §29's reveal and §30's dim, and its declaration is nine hundred lines
+     below this one at the same specificity, so a plain `opacity: 0.7` here
+     would simply lose and the constellation would have no active state at all.
+     The property is the one thing both can agree on. */
+  [data-carril] > * {
+    --carril-opacidad: 0.7;
+    opacity: var(--carril-opacidad);
     transition: opacity var(--t-menu) var(--ease-cine);
   }
-  .edicion-capitulo__cuerpo > *[data-activo] { opacity: 1; }
+  [data-carril] > *[data-activo] { --carril-opacidad: 1; }
   /* Until the observer has run, nothing is dimmed: a carousel that arrives at
      0.7 with JS off would be §100's "inaccessible without JavaScript" again. */
-  .edicion-capitulo__cuerpo:not([data-carrusel]) > * { opacity: 1; }
-
-  /* These are reading structures, not galleries, so they opt out of the
-     carousel. The triptych especially: it measured 1634px inside a 375px
-     overflow-x scroller, which put the whole sticky story off-screen sideways
-     on every phone -- and overflow-x: auto computes overflow-y: auto, so the
-     pin stopped referencing the viewport too. */
-  /* EVERY child, by the parent, not a list of class names.
-
-     The list version kept being outrun: `.edicion-declaracion` and
-     `.edicion-lista` each have a later unconditional `grid-column: span 6`
-     at the same specificity, so the opt-out lost on source order and both came
-     out 300vw wide inside the scroller. Selecting through the body raises the
-     specificity above every one of them and cannot be missed by the next
-     block that adds a span. */
-  /* The class twice, deliberately: `.edicion-capitulo__cuerpo > *` is (0,1,0)
-     and so is `.edicion-lista { grid-column: span 6 }` four hundred lines
-     later, which then wins on source order and comes out 2,542px wide inside
-     an 805px scroller. Repeating the class makes it (0,2,0) and ends the
-     argument for every child, including ones added later. */
-  .edicion-capitulo__cuerpo.edicion-capitulo__cuerpo > * { grid-column: auto; }
+  [data-carril]:not([data-carrusel]) > * { --carril-opacidad: 1; }
 }
 
 /* §87 again: the panel's height still opens instantly, because that is the
@@ -1207,10 +1258,6 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   font-variant-numeric: tabular-nums;
   opacity: 0.5;
 }
-@media (max-width: 767px) {
-  /* The statement is prose, so it stays out of the snap carousel. */
-  .edicion-declaracion { grid-column: auto; scroll-snap-align: start; }
-}
 
 /* ------------------------------------------------------------ las planchas
    Chapter IV's product demonstrations: her delivered screen travelling through
@@ -1266,51 +1313,20 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   .edicion-plancha__pantalla { transform: none; }
 }
 
-/* ------------------------------------------ chapter VI is not a carousel
-   The snap carousel below 768px turned the closing chapter into a horizontal
-   swipe, which put the only contact affordance on a phone off-screen: the
-   mailto was clipped at x=308 in a 390px viewport and LinkedIn and the CV were
-   entirely past the right edge. The header CTA is hidden at this width and
-   there is no footer on the homepage, so that swipe WAS the contact path.
-   A closing chapter is a reading column. */
+/* Chapter VI's actions stack on a phone. Everything the block around this used
+   to do — taking chapters IV, V and VI out of the snap carousel one id at a
+   time — is the default now that the carousel belongs to the card group; see
+   the §3 / §31 block above for what that cost while it was per-chapter. */
 @media (max-width: 1023px) {
-  /* Chapters whose body is a READING STRUCTURE opt out of the carousel
-     wholesale. grid-column: auto is not enough: under grid-auto-flow: column
-     every child becomes its own auto-sized column, so the triptych still
-     measured 1634px inside a 375px scroller and the whole sticky story sat
-     off-screen sideways. The flow itself has to change. */
-  #oficio .edicion-capitulo__cuerpo,
-  #impreso .edicion-capitulo__cuerpo,
-  /* Chapter IV joined this list when §42's sequence landed in it. The sequence
-     pins, and overflow-x: auto computes overflow-y: auto -- which is the exact
-     fault that once stopped the hero pinning at all. A chapter holding a
-     pinned four-state story, two planchas and a method table is a reading
-     structure, not a gallery. */
-  #producto .edicion-capitulo__cuerpo {
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    grid-template-columns: repeat(6, 1fr);
-    overflow-x: visible;
-    scroll-snap-type: none;
-  }
-  /* And every child of one of those bodies takes the whole width. Without
-     this the row grid hands each item ONE of its six columns and then has to
-     grow the columns to the items' min-content: chapter IV measured 449px of
-     tracks inside a 375px body, the first horizontal overflow this page has
-     had. A reading column is one column. */
-  #oficio .edicion-capitulo__cuerpo > *,
-  #impreso .edicion-capitulo__cuerpo > *,
-  #producto .edicion-capitulo__cuerpo > * { grid-column: span 6; }
-
   .edicion-oficio__acciones { flex-direction: column; align-items: stretch; }
   .edicion-oficio__acciones .edicion-cta { justify-content: center; }
 }
 
 /* The horizontal scrollers are keyboard-reachable. Chrome does not make an
-   overflow container focusable on its own, and four of the five contain no
-   focusable children at all, so 60% of the work on the page was unreachable
-   without a pointer. WCAG 2.1.1. */
-.edicion-capitulo__cuerpo:focus-visible,
+   overflow container focusable on its own, and the plate walls contain no
+   focusable children at all, so the work inside them was unreachable without a
+   pointer. WCAG 2.1.1. */
+[data-carril]:focus-visible,
 .edicion-plancha__marco:focus-visible {
   outline: 2px solid var(--edicion-acento);
   outline-offset: 3px;
@@ -1899,20 +1915,26 @@ a.edicion-ficha {
 .edicion-capitulo__cuerpo,
 .edicion-capitulo__intro { position: relative; }
 
-/* THE SAME TWO CUTS, ATTACHED TO THE INTRO, FOR THE CAROUSEL BAND.
+/* THE SAME TWO CUTS, ATTACHED TO THE INTRO, BELOW THE LARGE BREAKPOINT.
 
-   Both scrims above hang OUTSIDE the editorial body's box, and below 1024px
-   that body takes `overflow-x: auto` for §31's carousel — which computes
-   `overflow-y: auto` and clips them away. So on every phone and tablet,
+   Both scrims above hang OUTSIDE the editorial body's box. That used to be
+   fatal below 1024px, where the body took `overflow-x: auto` for §31's
+   carousel — which computes `overflow-y: auto` and clipped them away, so
    chapters I, II and III got the instantaneous background swap §77-C forbids
-   by name, while IV, V and VI kept their bands because they opt out of the
-   carousel entirely. It is the same computed-overflow trap this file
-   documents twice already, found a third time.
+   by name while IV, V and VI kept their bands. The body is a reading column at
+   every width now and clips nothing, so that reason has expired.
 
-   The intro is not a scroller, so here the bands sit INSIDE its box: cut B at
-   its foot, rising into the light body that follows, and cut C at its head,
-   arriving out of the light body above. Chapter I is exempt from C because
-   what precedes it is the hero, which is already dark. */
+   The cuts stay on the intro anyway, and this is the reason that replaces it:
+   the two placements are not equivalent at this width. A scrim hung outside
+   the body's top edge covers the last 101px of the intro, and on a 390x844
+   phone the standfirst's own foot is 89px above that edge — the band would
+   land on the words. On a 1440x900 desktop the same standfirst sits 520px
+   clear of a 108px band, which is why the outside placement is fine there and
+   wrong here: a 70svh intro has no air where a 140svh one has half a screen.
+
+   So: cut B at the intro's foot, rising into the light body that follows, and
+   cut C at its head, arriving out of the light body above. Chapter I is exempt
+   from C because what precedes it is the hero, which is already dark. */
 @media (max-width: 1023px) {
   .edicion-capitulo__cuerpo::before,
   .edicion-capitulo__cuerpo::after { display: none; }
@@ -2921,21 +2943,28 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   box-shadow: 0 22px 48px -18px rgba(23, 16, 12, 0.66);
 }
 
-/* Below the large breakpoint a five-card absolute cloud becomes a pile, so it
-   reverts to the flow. Section 31 asks for a carousel at this width and the
-   chapter body already provides one. */
+/* Below the large breakpoint the absolute cloud becomes §31's carousel, and
+   this element IS the carousel: it carries `data-carril`, so everything that
+   makes a snap rail — the 65vw / 50vw card, the centring padding, the active
+   card at 1 and the rest at 0.7 — comes from the block up beside the plate
+   wall's. It used to say "the chapter body already provides one", which was
+   true and was the bug: the body provided one carousel for the whole chapter,
+   so the five drawings were a single 254px card in it, stacked vertically and
+   2,036px tall.
+
+   What is left here is only what the cloud has to stop doing: the absolute
+   placement, the per-card scale and the reveal, none of which survive a rail.
+   The cards keep their own aspect ratios, which is why the rail sets
+   `align-items: start`. */
 @media (max-width: 1023px) {
-  .edicion-constelacion {
-    grid-column: auto;
-    min-height: 0;
-    display: grid;
-    gap: 1rem;
-  }
+  .edicion-constelacion { min-height: 0; }
   .edicion-carta {
     position: static;
     width: 100%;
     transform: none;
-    opacity: 1;
+    /* The cloud's three-value opacity is gone; what is left is §31's active
+       state, which the rail publishes as `--carril-opacidad`. */
+    opacity: var(--carril-opacidad, 1);
   }
   .edicion-carta[data-primaria] { width: 100%; }
 }
@@ -3019,38 +3048,17 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   background: linear-gradient(to bottom, var(--edicion-negro), transparent);
   pointer-events: none;
 }
-/* On a phone the dark beat is a CARD, not a band.
+/* Nothing here below the large breakpoint any more, and that is the change.
 
-   §31 turns the cinematic chapters' bodies into a horizontal snap carousel,
-   and `grid-column: span 6` inside `grid-auto-flow: column` does not mean "the
-   full width" there -- it means six 78% columns, which measured 1677px inside
-   a 375px scroller. The film sat a screen and a half off to the right behind a
-   blank dark field, which is what a reader actually got on a 390px phone.
-   A band needs a page to cross; a rail of cards has none.
-
-   1023px, not 767: the carousel this escapes from runs to 1023 (it gained a
-   ~50vw tablet size for §31), and the escape did not follow it. Between 768
-   and 1023 the beat kept `grid-column: span 6` inside `grid-auto-flow: column`
-   — six implicit 50vw tracks, 300vw wide, with the film two and a half screens
-   off to the right behind a blank dark field. Exactly the defect this block
-   was written to fix, at a band the fix did not cover. */
-@media (max-width: 1023px) {
-  .edicion-beat-oscuro {
-    grid-column: auto;
-    margin-inline: 0;
-    /* 25vh above a card in a horizontal rail is not breathing room, it is an
-       offset that shoves one card below its neighbours. */
-    margin-top: 0;
-    padding: clamp(1.1rem, 4vw, 2rem);
-    scroll-snap-align: start;
-    /* The carousel is one grid ROW, so every item stretches to the tallest.
-       On a transparent card that is invisible; on this one it painted a column
-       of black three times the height of its own content. */
-    align-self: start;
-  }
-  .edicion-beat-oscuro::before,
-  .edicion-beat-oscuro[data-vuelve]::after { display: none; }
-}
+   This block used to undo the whole beat on a phone — `grid-column: auto`,
+   `margin-inline: 0`, no 25vh, no scrims — because the chapter BODY was a
+   horizontal snap carousel and `grid-column: span 6` inside
+   `grid-auto-flow: column` meant six 65vw tracks, 390vw wide, with the film
+   two and a half screens off to the right behind a blank dark field. The
+   carousel moved onto the card group (see the §3 / §31 block), the body is a
+   six-track reading column at every width, and §45's band gets to be a band on
+   a phone: full-bleed out of the editorial measure, 25vh of separation, and
+   both cuts. */
 
 .edicion-beat-oscuro__interior { max-width: 100%; }
 

@@ -308,5 +308,27 @@ had a comment beside it claiming the opposite:
 
 All of them are fixed and each fix is measured in its commit message.
 
+A twelfth was found afterwards, while checking that §30's new card links
+behaved on a phone, and it is the largest of the set:
+
+12. **§31's carousel was the whole chapter body, not the card group.** §31
+    replaces one thing below 1024px — "the desktop floating constellation" of
+    app cards — and this build made the entire editorial body the scroller.
+    Measured at 390×844: chapter I was a 375px-wide horizontal scroller holding
+    three items, each 250px wide and 2,040px tall, so reading it meant scrolling
+    2,000px down an almost-empty column and then sideways. `.edicion-lista` had
+    `scroll-snap-align: none` inside `scroll-snap-type: x mandatory` and was
+    therefore UNREACHABLE — setting scrollLeft to centre it snapped back to 0
+    and left 45px of a 254px block visible — so §37's compact register, ten rows
+    of her own writing across chapters I and II, could not be read on any phone
+    or tablet. And chapters IV, V and VI, which had already opted out of the
+    flow one id at a time, kept the carousel's centring padding: 121px of a
+    390px phone was empty margin either side of the contact chapter, against
+    §3's "main content becomes full width". The carousel moved onto
+    `[data-carril]` — the plate wall and the constellation, which are the card
+    groups §31 is about — and the body is a six-track reading column at every
+    width. §45's dark beat got to be a full-bleed band on a phone for the first
+    time as a side effect, and 967px of reserved empty page went with it.
+
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.

@@ -99,9 +99,30 @@ export function CuerpoIlustracion() {
  * a half and two thirds, and that unevenness is what stops the light sections
  * reading as a CMS listing.
  */
-export function ParedDeObras({ obras }: { obras: readonly ObraConTexto[] }) {
+export function ParedDeObras({
+  obras,
+  etiqueta,
+}: {
+  obras: readonly ObraConTexto[];
+  /** Accessible name for the rail below 1024px. See `data-carril`. */
+  etiqueta: string;
+}) {
   return (
-    <>
+    /*
+      §31's carousel is THIS element, not the chapter body.
+
+      `[data-carril]` is `display: contents` at 1024px and up, so the cards go
+      straight into the body's six-track grid and §44's uneven row is untouched
+      — the wrapper costs nothing there. Below it, the wrapper becomes the snap
+      scroller, which is what §31 actually asks for: it replaces "the desktop
+      card constellation", not the chapter.
+
+      tabIndex and the name are here rather than on the body for the same
+      reason: this is the element that scrolls, and a plate wall contains no
+      focusable children, so without a tab stop on the scroller itself the work
+      inside it is unreachable without a pointer.
+    */
+    <div className="edicion-carril" data-carril tabIndex={0} role="group" aria-label={etiqueta}>
       {obras.map((o, i) => (
         <Ficha key={o.src + i} ancho={o.ancho}>
           {/* alt is empty on purpose: the figcaption below carries the name and
@@ -113,7 +134,7 @@ export function ParedDeObras({ obras }: { obras: readonly ObraConTexto[] }) {
           <p>{o.nota}</p>
         </Ficha>
       ))}
-    </>
+    </div>
   );
 }
 
@@ -150,6 +171,7 @@ export function CuerpoMarca() {
         }))}
       />
       <ParedDeObras
+        etiqueta={t("capitulos.marca.titulo")}
         obras={POR_ANCLAJE.marca.obras.map((o) => ({
           ...o,
           titulo: t(`capitulos.marca.obras.${o.clave}.titulo`),
@@ -213,6 +235,7 @@ export function CuerpoCampana() {
         <p>{t("capitulos.campana.declaracion")}</p>
       </div>
       <ParedDeObras
+        etiqueta={t("capitulos.campana.titulo")}
         obras={POR_ANCLAJE.campana.obras.map((o) => ({
           ...o,
           titulo: t(`capitulos.campana.obras.${o.clave}.titulo`),
@@ -254,6 +277,7 @@ export function CuerpoImpreso() {
           list that used to sit here is §49's now, inside the third reading,
           where the object it describes is still on screen. */}
       <ParedDeObras
+        etiqueta={t("capitulos.impreso.titulo")}
         obras={POR_ANCLAJE.impreso.obras.map((o) => ({
           ...o,
           titulo: t(`capitulos.impreso.obras.${o.clave}.titulo`),

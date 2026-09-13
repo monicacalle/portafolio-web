@@ -16,7 +16,7 @@ import { VolverNav } from "./volver-nav";
  * the chapter's declared height belongs to its editorial body.
  */
 /**
- * §31's active card, for the horizontal carousel the editorial body becomes
+ * §31's active card, for the horizontal carousels inside the editorial body
  * below 1024px.
  *
  * "Active centered card: opacity 1. Inactive cards: opacity approximately 0.7.
@@ -28,10 +28,18 @@ import { VolverNav } from "./volver-nav";
  * It also writes `data-carrusel` on the scroller, and the dimming is gated on
  * that — without it a reader with JS off would get every card at 0.7 and the
  * page would be relying on script to be legible.
+ *
+ * THE SCROLLERS ARE `[data-carril]`, NOT THE BODY. The body used to be the
+ * carousel, which made a chapter's paragraph and its compact list two cards in
+ * a rail beside the pictures; the §3 / §31 block in edicion.css has the
+ * measurements. A chapter can hold more than one rail, so this collects them
+ * rather than assuming one.
  */
-/* MarcaTema is a child of the body too: a 1px absolutely positioned marker
-   spanning the full width, which intersects the detection band at every scroll
-   position and would be permanently "active". Only real cards are observed. */
+/* A rail's children are all cards, but `querySelectorAll` is scoped to the
+   chapter body and MarcaTema is a child of that body: a 1px absolutely
+   positioned marker spanning the full width, which would intersect the
+   detection band at every scroll position and be permanently "active". Only a
+   rail's own children are observed, and the marker is never inside one. */
 function tarjetas(caja: HTMLElement) {
   return Array.from(caja.children).filter(
     (n): n is HTMLElement => n instanceof HTMLElement && !n.hasAttribute("aria-hidden"),
@@ -40,32 +48,39 @@ function tarjetas(caja: HTMLElement) {
 
 function useCarrusel(ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
-    const caja = ref.current;
-    if (!caja) return;
+    const cuerpo = ref.current;
+    if (!cuerpo) return;
     const mq = window.matchMedia("(max-width: 1023px)");
+    const carriles = Array.from(cuerpo.querySelectorAll<HTMLElement>("[data-carril]"));
+    if (carriles.length === 0) return;
 
-    let io: IntersectionObserver | null = null;
+    let ios: IntersectionObserver[] = [];
     const montar = () => {
       desmontar();
       if (!mq.matches) return;
-      caja.dataset.carrusel = "";
-      io = new IntersectionObserver(
-        (entradas) => {
-          for (const e of entradas) {
-            const el = e.target as HTMLElement;
-            if (e.isIntersecting) el.dataset.activo = "";
-            else delete el.dataset.activo;
-          }
-        },
-        { root: caja, rootMargin: "0px -40% 0px -40%", threshold: 0.01 },
-      );
-      for (const hijo of tarjetas(caja)) io.observe(hijo);
+      for (const carril of carriles) {
+        carril.dataset.carrusel = "";
+        const io = new IntersectionObserver(
+          (entradas) => {
+            for (const e of entradas) {
+              const el = e.target as HTMLElement;
+              if (e.isIntersecting) el.dataset.activo = "";
+              else delete el.dataset.activo;
+            }
+          },
+          { root: carril, rootMargin: "0px -40% 0px -40%", threshold: 0.01 },
+        );
+        for (const hijo of tarjetas(carril)) io.observe(hijo);
+        ios.push(io);
+      }
     };
     const desmontar = () => {
-      io?.disconnect();
-      io = null;
-      delete caja.dataset.carrusel;
-      for (const hijo of tarjetas(caja)) delete hijo.dataset.activo;
+      for (const io of ios) io.disconnect();
+      ios = [];
+      for (const carril of carriles) {
+        delete carril.dataset.carrusel;
+        for (const hijo of tarjetas(carril)) delete hijo.dataset.activo;
+      }
     };
 
     montar();
@@ -133,17 +148,12 @@ export function Capitulo({
       </div>
 
       {children ? (
-        <div
-          ref={cuerpo}
-          className="edicion-capitulo__cuerpo"
-          // Focusable because below 768px this becomes a horizontal snap
-          // scroller, and Chrome does not make overflow containers focusable on
-          // their own -- so a keyboard-only reader could not reach the work
-          // inside it at all. tabIndex 0 plus a name is the standard remedy.
-          tabIndex={0}
-          role="group"
-          aria-label={t(`capitulos.${a}.titulo`)}
-        >
+        /* No tabIndex here any more. The body used to be the horizontal
+           scroller and needed a tab stop for that reason; it is a reading
+           column at every width now, and a tab stop on a block of prose is a
+           dead stop. The tab stop moved to the elements that actually scroll —
+           the plate wall and the constellation, both `[data-carril]`. */
+        <div ref={cuerpo} className="edicion-capitulo__cuerpo">
           {/* The body always turns light. That alternation is the page's pulse
               (brief 77), and it is what makes a 780svh chapter readable. */}
           <MarcaTema tema="claro" capitulo={capitulo.anclaje} subfase="editorial" />

@@ -111,69 +111,92 @@ export function Constelacion() {
   const pieza = CARTAS.find((c) => c.slug === abierta);
 
   return (
-    <div
-      className="edicion-constelacion"
-      ref={ref}
-      {...(armado ? { "data-scrub": "" } : {})}
-    >
+    <>
       {/* One label for all five, referenced by each card's accessible name, so
           a screen reader hears "Cobre, verlo más grande" rather than five
-          copies of the same string sitting in the markup. */}
+          copies of the same string sitting in the markup.
+
+          OUTSIDE the rail, with the dialog below. Past 1024px the element
+          under this one is §31's snap carousel, and everything inside it is
+          one of its cards: this span and an open modal were both picking up
+          `scroll-snap-align: center`, the inactive card's 0.7 opacity, and a
+          slot in the active-card observer. */}
       <span id="carta-ampliar" className="visually-hidden">
         {t("cta.ampliar")}
       </span>
 
-      {CARTAS.map((c) => (
-        <figure
-          key={c.slug}
-          className="edicion-carta"
-          data-primaria={c.esc === 1 || undefined}
-          style={
-            {
-              "--esc": c.esc,
-              "--ini": c.ini,
-              "--cx": `${c.x}%`,
-              "--cy": `${c.y}%`,
-              "--par": c.par,
-              // Section 29: cards expand from their OWN origins, so each gets
-              // its own slice of the window rather than all five starting at
-              // once. See the note on CARTAS for why these are explicit.
-              "--fase": c.fase,
-            } as React.CSSProperties
-          }
-        >
-          <a
-            href={c.grande}
-            aria-labelledby={`carta-${c.slug} carta-ampliar`}
-            {...(montado ? { "aria-haspopup": "dialog" as const } : {})}
-            onClick={(e) => {
-              // A modified click is a request for the file itself, so only the
-              // plain left click is taken over and the element keeps behaving
-              // as the link it is: ⌘-click, middle-click and "save image as"
-              // all still reach her painting.
-              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-              e.preventDefault();
-              setAbierta(c.slug);
-            }}
+      <div
+        className="edicion-constelacion"
+        ref={ref}
+        /*
+          §31 names this element: "do not use the desktop floating
+          constellation [below the large breakpoint], use a horizontally
+          scrollable carousel." `data-carril` is what turns it into one, and
+          the rules live in edicion.css beside the plate wall's, because it is
+          the same carousel.
+
+          The tab stop and the name are on the scroller rather than on the
+          chapter body: this is what scrolls sideways below 1024px, and Chrome
+          does not make an overflow container focusable on its own.
+        */
+        data-carril
+        tabIndex={0}
+        role="group"
+        aria-label={t("capitulos.ilustracion.titulo")}
+        {...(armado ? { "data-scrub": "" } : {})}
+      >
+        {CARTAS.map((c) => (
+          <figure
+            key={c.slug}
+            className="edicion-carta"
+            data-primaria={c.esc === 1 || undefined}
+            style={
+              {
+                "--esc": c.esc,
+                "--ini": c.ini,
+                "--cx": `${c.x}%`,
+                "--cy": `${c.y}%`,
+                "--par": c.par,
+                // Section 29: cards expand from their OWN origins, so each
+                // gets its own slice of the window rather than all five
+                // starting at once. See CARTAS for why these are explicit.
+                "--fase": c.fase,
+              } as React.CSSProperties
+            }
           >
-            {/* alt is empty because the figcaption right below names the piece:
-                with both, a screen reader announced the title twice per card. */}
-            <img
-              src={c.src}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              {...medidas(c.src, "(max-width: 767px) 60vw, 26vw")}
-            />
-          </a>
-          <figcaption>
-            <strong id={`carta-${c.slug}`}>
-              {t(`capitulos.ilustracion.piezas.${c.slug}.titulo`)}
-            </strong>
-            <span>{t(`capitulos.ilustracion.piezas.${c.slug}.meta`)}</span>
-          </figcaption>
-        </figure>
-      ))}
+            <a
+              href={c.grande}
+              aria-labelledby={`carta-${c.slug} carta-ampliar`}
+              {...(montado ? { "aria-haspopup": "dialog" as const } : {})}
+              onClick={(e) => {
+                // A modified click is a request for the file itself, so only
+                // the plain left click is taken over and the element keeps
+                // behaving as the link it is: ⌘-click, middle-click and "save
+                // image as" all still reach her painting.
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                setAbierta(c.slug);
+              }}
+            >
+              {/* alt is empty because the figcaption right below names the
+                  piece: with both, a screen reader announced it twice. */}
+              <img
+                src={c.src}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                {...medidas(c.src, "(max-width: 767px) 60vw, 26vw")}
+              />
+            </a>
+            <figcaption>
+              <strong id={`carta-${c.slug}`}>
+                {t(`capitulos.ilustracion.piezas.${c.slug}.titulo`)}
+              </strong>
+              <span>{t(`capitulos.ilustracion.piezas.${c.slug}.meta`)}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
 
       {pieza ? (
         <Modal
@@ -193,7 +216,7 @@ export function Constelacion() {
           />
         </Modal>
       ) : null}
-    </div>
+    </>
   );
 }
 
