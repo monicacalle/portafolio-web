@@ -442,5 +442,41 @@ And nine records that described code the build does not have — §8, §11, §18
 places that no script has written since it was removed for being stripped by
 hydration.
 
+### The sixth audit
+
+Same shape again, run against the fifth round's fixes: 41 raised, 29 survived
+two refuters. Two were `alta` and both were real:
+
+- **§40 — the page's only film stretched her drawing 2.66x.** `zoompan` crops
+  `iw/zoom × ih/zoom` and rescales to `s` without preserving aspect, so a 0.669
+  portrait asked for 1280x720 came out anamorphic for all nine seconds: the
+  figure squat, the phone in her hand wider than it is high, her own headline's
+  letterforms stretched. Padding to 16:9 before the zoom fixes it.
+- **§14 — with reduced motion the first-paint scrim never lifted.** The hero is
+  100svh there, so `recorrido` is 0 and the hook wrote `--p: 0.0000` at every
+  scroll position. Zero is a real reading, and every consumer that needs a safe
+  default when the scrub is absent declares a different fallback — so writing it
+  made all of them unreachable. The radial sat at full strength over her four
+  portraits permanently, and §17's frame at 0 for the whole page.
+
+Also behaviour: the film's poster was the full portrait plate inside a 16/9
+`cover` frame, so 62% of it was cropped and a reduced-motion reader saw a torso
+band; the same reader downloaded 539kB of film for a `display: none` element;
+`data-lienzo="activo"` outlived the canvas, hiding all five static plates with
+nothing behind them; chapter I had no portrait fallback and 61px of flat sage
+either side of her paint; §17's morph crossed two typefaces; chapter V kept a
+700svh floor with JS off; §28's stagger skipped chapter VI's document pair;
+§90's second rung was not built; and `.edicion-plancha__marco:focus-visible`
+had never been able to match.
+
+And thirteen records that described code the build does not have — §1's decline
+resting on "nothing animates on the way out" while four rules do, §11 crediting
+§11 with a stagger it forbids, §22's "fraction of a degree" against a 3.2° roll,
+§29's headroom range, §72, §77, §88, §92, §93, §94's safety bound at half its
+real value, and two in §47. Four more facts the refuters dismissed as
+out-of-scope were fixed anyway, because they are this repository's standards:
+the panels' `sizes`, the scene count, nine dead rows in `MEDIDAS`, and
+`@react-three/drei` installed with nothing importing it.
+
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.
