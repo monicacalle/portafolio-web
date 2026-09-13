@@ -1,6 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { ESCENAS, type Escena, type Plano } from "@/lib/edicion/escenas";
@@ -301,21 +308,17 @@ export function Lienzo() {
     ask BEFORE mounting rather than letting R3F throw into an error boundary and
     leave a hole where the scene was.
 
-    A lazy state initialiser, not an effect: the question is synchronous and
-    answered once, and asking it in an effect means a second render pass on
-    every load for a value that never changes. Returns false during SSR, so the
-    server renders the static page and the canvas only ever appears on the
-    client -- which is what we want anyway.
+    A STORE, not a lazy state initialiser, and the difference is a hydration
+    error. The server cannot ask for a WebGL context, so the answer is false
+    there and true on almost every client — and a lazy initialiser gives React
+    that different answer during the FIRST client render, which is the one it
+    matches against the server's HTML. React logged "Hydration failed because
+    the server rendered HTML didn't match the client" on every load and threw
+    the whole tree away to re-render it. `useSyncExternalStore` reads the
+    server snapshot during hydration and the real one immediately after, which
+    is exactly what it is for.
   */
-  const [soportado] = useState(() => {
-    if (typeof document === "undefined") return false;
-    try {
-      const c = document.createElement("canvas");
-      return !!(c.getContext("webgl2") || c.getContext("webgl"));
-    } catch {
-      return false;
-    }
-  });
+  const soportado = useSyncExternalStore(sinCambios, haySoporte, () => false);
 
   useEffect(() => {
     // Section 82: once the canvas has a stable frame, the static fallback is
@@ -327,14 +330,25 @@ export function Lienzo() {
     };
   }, [listo]);
 
-  if (!soportado) return null;
+  /*
+    THE WRAPPER RENDERS ON THE SERVER TOO, and only the Canvas inside it is
+    client-only.
 
+    `soportado` is false during SSR by design — the server cannot ask for a
+    WebGL context — so returning null here meant the server sent no
+    `.edicion-lienzo` at all and the client sent one. React called that a
+    hydration mismatch and REGENERATED THE WHOLE TREE on every load: "Hydration
+    failed because the server rendered HTML didn't match the client", pointing
+    at this line. An empty aria-hidden div with pointer-events: none costs
+    nothing in the markup and costs a full client re-render when it is absent.
+  */
   return (
     <div
       className="edicion-lienzo"
       data-listo={listo || undefined}
       aria-hidden
     >
+      {soportado ? (
       <Canvas
         // dpr is driven by DprAdaptativo; this is only the starting guess.
         dpr={1}
@@ -364,10 +378,35 @@ export function Lienzo() {
           })}
         </Suspense>
       </Canvas>
+      ) : null}
     </div>
   );
 }
 
+
+/**
+ * Does this browser have a WebGL context to give?
+ *
+ * Answered once and cached, because `useSyncExternalStore` calls its snapshot
+ * on every render and a function that built a fresh canvas each time would
+ * both leak and churn. It never changes within a document, so `subscribe` has
+ * nothing to subscribe to.
+ */
+let soporteCache: boolean | null = null;
+function haySoporte() {
+  if (soporteCache !== null) return soporteCache;
+  if (typeof document === "undefined") return false;
+  try {
+    const c = document.createElement("canvas");
+    soporteCache = !!(c.getContext("webgl2") || c.getContext("webgl"));
+  } catch {
+    soporteCache = false;
+  }
+  return soporteCache;
+}
+function sinCambios() {
+  return () => {};
+}
 
 /**
  * Section 90's preloading strategy, in the shape the brief asks for: one chapter

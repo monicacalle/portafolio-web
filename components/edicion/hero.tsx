@@ -122,7 +122,11 @@ export function Hero() {
             alt=""
             className="edicion-hero__anacronismo"
             decoding="async"
-            {...medidas("/edicion/ceguera-figura.avif", "(max-width: 1023px) 46vw, 27vw")}
+            /* Measured, not guessed: 44.2vw at 390 and 13.9vw at 1024, 1440
+               and 1680. `sizes` is a PROMISE, and 27vw was twice the truth on
+               every desktop width, which is what made the browser reach past
+               the 640px variant for a 200px slot. */
+            {...medidas("/edicion/ceguera-figura.avif", "(max-width: 1023px) 45vw, 14vw")}
           />
         </div>
 
