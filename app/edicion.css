@@ -32,7 +32,6 @@
 
   /* Section 99. Ease-out cubic for interface, expo for anything cinematic. */
   --ease-salida: cubic-bezier(0.33, 1, 0.68, 1);
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ---------------------------------------------------------------- theming
@@ -131,7 +130,7 @@ html:not([data-nav-theme]) {
   padding: 0.34rem 0.9rem;
   font-size: 0.76rem;
   font-weight: 600;
-  transition: background-color 220ms var(--ease-salida), color 220ms var(--ease-salida);
+  transition: background-color var(--t-micro) var(--ease-salida), color var(--t-micro) var(--ease-salida);
 }
 .edicion-cabecera__cta:hover {
   background: var(--edicion-nav-fg);
@@ -148,7 +147,7 @@ html:not([data-nav-theme]) {
    header is simply already in place. */
 @media (prefers-reduced-motion: no-preference) {
   .edicion-cabecera [style*="--i"] {
-    animation: edicion-entrada 520ms var(--ease-salida) backwards;
+    animation: edicion-entrada var(--t-medio) var(--ease-salida) backwards;
     animation-delay: calc(500ms + (var(--i) * 40ms));
   }
 }
@@ -213,7 +212,7 @@ html:not([data-nav-theme]) {
   gap: 0.4rem;
   padding: 0.055rem 0;
   opacity: 0.58;
-  transition: opacity 240ms var(--ease-salida);
+  transition: opacity var(--t-hover) var(--ease-salida);
 }
 .edicion-rail__indice a:hover { opacity: 0.9; }
 .edicion-rail__indice li[data-activo] a { opacity: 1; }
@@ -759,6 +758,11 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
   transition: grid-template-rows 300ms var(--ease-salida);
 }
 .edicion-movil__panel[data-abierto] { grid-template-rows: 1fr; }
+/* Section 11: the menu fills the available viewport below the 60px header
+   rather than sitting at its content height. */
+.edicion-movil__panel[data-abierto] .edicion-movil__interior {
+  min-height: calc(100svh - var(--edicion-cabecera-h));
+}
 .edicion-movil__interior { overflow: hidden; }
 
 .edicion-movil__panel ol {
@@ -878,9 +882,17 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
      sweater. The wordmark above it is short enough to run full width. */
   .edicion-hero__pie { max-width: 60%; }
 
-  /* The CTA pushed the menu button off a 390px header. The mail link is in
-     chapter VI and in the footer; the chapters are what a reader needs here. */
-  .edicion-cabecera__cta { display: none; }
+  /* Section 6 asks for brand + CTA + hamburger on mobile. The CTA was hidden
+     because at full size it pushed the menu button off a 390px header -- it is
+     compact here instead, which keeps all three. */
+  .edicion-cabecera__cta {
+    padding: 0.3rem 0.66rem;
+    font-size: 0.72rem;
+  }
+  .edicion-cabecera { gap: 0.5rem; }
+  .edicion-cabecera__izq { min-width: 0; }
+  .edicion-cabecera__nombre { font-size: 0.82rem; }
+  .edicion-cabecera__edicion { display: none; }
 }
 
 /* Chapter I's statement: it opens the editorial body, at reading size, before
@@ -1051,6 +1063,8 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
 }
 .edicion-video__medio { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+.edicion-video__marco { cursor: pointer; }
+.edicion-video__marco:focus-visible { outline: 2px solid var(--edicion-acento); outline-offset: 3px; }
 .edicion-video__play {
   position: absolute;
   left: 50%; top: 50%;
@@ -1091,7 +1105,13 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
   display: grid;
   place-items: center;
 }
-.edicion-modal::backdrop { background: rgba(8, 6, 6, 0.88); }
+/* Section 26: the overlay fades in. A backdrop that simply appears is the hard
+   cut the section's entrance spec exists to avoid. */
+.edicion-modal::backdrop {
+  background: rgba(8, 6, 6, 0.88);
+  animation: edicion-fondo-entra var(--t-hover) var(--ease-cine) both;
+}
+@keyframes edicion-fondo-entra { from { opacity: 0; } to { opacity: 1; } }
 .edicion-modal__panel {
   width: min(92vw, 1400px);
   aspect-ratio: 16 / 9;
@@ -1260,19 +1280,22 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
    from section 99, so a value can be checked against the brief rather than
    argued about. */
 :root {
-  --t-estado: 50ms;      /* very small state response */
   --t-micro: 200ms;      /* input and button micro-interactions */
   --t-hover: 300ms;      /* hover and simple fades (250–350 band) */
   --t-menu: 300ms;       /* menu, dropdown, theme */
-  --t-posicion: 400ms;   /* springy positional changes */
-  --t-elastico: 500ms;   /* elastic scale */
   --t-medio: 700ms;      /* major media reveals and canvas fades (600–800) */
+  /* 50ms (state response), 400ms (springy positional) and 500ms (elastic) are
+     in section 98's families but nothing on this page needs them, and a token
+     with no consumer is a claim the stylesheet does not keep. They go in when
+     something uses them. */
 
   /* §99 core: cinematic UI reveals. */
   --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
-  /* §99 elastic. Section 99 restricts it to playful elements and forbids bounce
-     for general page content, so it is defined once and used sparingly. */
-  --ease-elastico: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Section 99's elastic curve is deliberately NOT defined here. The section
+     restricts it to "playful Sidekick Skill elements" and forbids bounce for
+     general page content -- and those elements are declined (see
+     edicion-declinaciones.md), so there is nothing on this page entitled to
+     use it. */
 }
 
 /* ===================================================================== §28
@@ -1329,14 +1352,16 @@ a.edicion-ficha {
   color: inherit;
   text-decoration: none;
 }
-.edicion-ficha img { transition: transform var(--t-hover) var(--ease-cine); }
-.edicion-ficha:hover img,
-.edicion-ficha:focus-within img { transform: scale(1.018); }
-.edicion-ficha h3 {
-  transition: color var(--t-hover) var(--ease-cine);
-}
-.edicion-ficha:hover h3,
-.edicion-ficha:focus-within h3 { color: var(--edicion-acento); }
+/* Scoped to cards that CONTAIN A LINK. A hover state on something that cannot
+   be clicked is the inverse of section 71 -- it promises a destination that is
+   not there. The plate walls in chapters II, III and V are decorative repeats
+   of work the surrounding copy already names, so they stay inert. */
+.edicion-ficha:has(a) img { transition: transform var(--t-hover) var(--ease-cine); }
+.edicion-ficha:has(a):hover img,
+.edicion-ficha:has(a):focus-within img { transform: scale(1.015); }
+.edicion-ficha:has(a) h3 { transition: color var(--t-hover) var(--ease-cine); }
+.edicion-ficha:has(a):hover h3,
+.edicion-ficha:has(a):focus-within h3 { color: var(--edicion-acento); }
 /* §72: the CTA glyph moves on hover rather than the whole control. */
 .edicion-plancha__ver span,
 .edicion-oficio__acciones a span {

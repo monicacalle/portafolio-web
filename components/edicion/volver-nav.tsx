@@ -18,7 +18,25 @@ import { useTranslations } from "next-intl";
  */
 export function VolverNav({ etiqueta }: { etiqueta: string }) {
   return (
-    <a className="edicion-volver" href="#edicion-indice">
+    <a
+      className="edicion-volver"
+      href="#edicion-indice"
+      /*
+        Below 1024px the rail is display: none, so #edicion-indice is a node
+        with no offsetParent -- unreachable and unfocusable, which made this
+        control point at nothing on every phone. There it opens the mobile menu
+        instead, which is where the chapter index actually lives at that width.
+      */
+      onClick={(e) => {
+        if (window.innerWidth >= 1024) return;
+        e.preventDefault();
+        const boton = document.querySelector<HTMLButtonElement>(
+          ".edicion-movil__boton",
+        );
+        boton?.click();
+        boton?.focus();
+      }}
+    >
       {etiqueta}
     </a>
   );
