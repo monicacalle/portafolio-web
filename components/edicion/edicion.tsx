@@ -1,10 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { medidas } from "@/lib/edicion/medidas";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
 import { EstadoEdicion } from "./estado";
 import { Espina } from "./espina";
 import { Lienzo } from "./lienzo";
+import { Revelar } from "./revelar";
 import { Cabecera } from "./cabecera";
 import { Rail } from "./rail";
 import { Hero } from "./hero";
@@ -29,6 +31,7 @@ export function Edicion() {
       <Espina />
       <div className="edicion">
         <Lienzo />
+        <Revelar />
         <Cabecera />
         <Rail />
 
@@ -97,7 +100,7 @@ function placaDe(anclaje: string) {
 }
 
 function Escena({ src }: { src: string }) {
-  return <img src={src} alt="" decoding="async" loading="lazy" />;
+  return <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />;
 }
 
 /** The light editorial body under each chapter intro. */
@@ -148,7 +151,7 @@ function CuerpoPlacas({ anclaje }: { anclaje: string }) {
   return (
     <>
       {declaracion ? (
-        <div className="edicion-declaracion">
+        <div className="edicion-declaracion animate-show-media">
           <p>{declaracion}</p>
         </div>
       ) : null}
@@ -160,7 +163,7 @@ function CuerpoPlacas({ anclaje }: { anclaje: string }) {
               than one who hears the chapter's prose once. Plates that carry
               information a sighted reader gets ONLY from the image are given
               real alt text where they appear. */}
-          <img src={o.src} alt="" loading="lazy" decoding="async" />
+          <img src={o.src} alt="" loading="lazy" decoding="async" {...medidas(o.src)} />
         </Ficha>
       ))}
     </>

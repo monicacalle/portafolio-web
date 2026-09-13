@@ -1212,3 +1212,128 @@ html[data-lienzo="activo"] .edicion-capitulo__intro {
 
 /* Same for the hero: its own near-black would otherwise sit over the canvas. */
 html[data-lienzo="activo"] .edicion-hero { background: transparent; }
+
+/* ================================================================ §98 / §99
+   The micro-timing and easing systems, as named tokens.
+
+   Section 98 is explicit: "Do not randomly choose animation durations." Every
+   duration on this page now comes from one of its families, and every easing
+   from section 99, so a value can be checked against the brief rather than
+   argued about. */
+:root {
+  --t-estado: 50ms;      /* very small state response */
+  --t-micro: 200ms;      /* input and button micro-interactions */
+  --t-hover: 300ms;      /* hover and simple fades (250–350 band) */
+  --t-menu: 300ms;       /* menu, dropdown, theme */
+  --t-posicion: 400ms;   /* springy positional changes */
+  --t-elastico: 500ms;   /* elastic scale */
+  --t-medio: 700ms;      /* major media reveals and canvas fades (600–800) */
+
+  /* §99 core: cinematic UI reveals. */
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+  /* §99 elastic. Section 99 restricts it to playful elements and forbids bounce
+     for general page content, so it is defined once and used sparingly. */
+  --ease-elastico: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===================================================================== §28
+   The shared media reveal. Section 28 names the class and gives every value. */
+.animate-show-media {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  clip-path: inset(3% 0 3% 0);
+  transition:
+    opacity var(--t-medio) var(--ease-cine),
+    transform var(--t-medio) var(--ease-cine),
+    clip-path var(--t-medio) var(--ease-cine);
+}
+.animate-show-media[data-visible] {
+  opacity: 1;
+  transform: none;
+  clip-path: none;
+}
+/* Copy leads media by 80–140ms, per §28. */
+.edicion-declaracion.animate-show-media { transition-delay: 0ms; }
+.edicion-ficha.animate-show-media,
+.edicion-video.animate-show-media,
+.edicion-plancha.animate-show-media { transition-delay: 110ms; }
+
+/* Without JS, or with motion reduced, media is simply present. §78 also warns
+   against over-animating the white content, which is why this is the only
+   reveal on the editorial side.
+
+   Two separate rules: a media query cannot sit inside a selector list, and
+   writing it that way silently voids the whole block -- which would have left
+   every card at opacity 0 for anyone with reduced motion on. */
+html:not(.motion) .animate-show-media {
+  opacity: 1;
+  transform: none;
+  clip-path: none;
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-show-media {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+}
+
+/* ===================================================================== §71 / §30
+   Card interaction. Cards are links; §71 asks for a clear pressable affordance
+   and §30 for a hover state on the media itself. */
+.edicion-ficha a,
+a.edicion-ficha {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.edicion-ficha img { transition: transform var(--t-hover) var(--ease-cine); }
+.edicion-ficha:hover img,
+.edicion-ficha:focus-within img { transform: scale(1.018); }
+.edicion-ficha h3 {
+  transition: color var(--t-hover) var(--ease-cine);
+}
+.edicion-ficha:hover h3,
+.edicion-ficha:focus-within h3 { color: var(--edicion-acento); }
+/* §72: the CTA glyph moves on hover rather than the whole control. */
+.edicion-plancha__ver span,
+.edicion-oficio__acciones a span {
+  display: inline-block;
+  transition: transform var(--t-hover) var(--ease-cine);
+}
+.edicion-plancha__ver:hover span { transform: translate(2px, -2px); }
+
+/* ===================================================================== §77
+   Section cut language. Three cuts, and none of them is an instantaneous
+   background swap.
+
+   B (cinematic → editorial light) and C (light → cinematic) both get a scrubbed
+   scrim at the seam, so the ground changes over 400–800ms of scroll rather than
+   at a razor edge. The scrim is a child of the block it leads into, so it can
+   never be mistaken for part of the artwork above it. */
+.edicion-capitulo__cuerpo::before,
+.edicion-capitulo__intro::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(90px, 12vh, 190px);
+  pointer-events: none;
+  z-index: 3;
+}
+/* B: the light surface rises out of the cinematic block above it. */
+.edicion-capitulo__cuerpo::before {
+  top: 0;
+  transform: translateY(-100%);
+  background: linear-gradient(to bottom, transparent, var(--edicion-crema));
+}
+/* C: the dark ground takes over gradually before the next scene dominates. */
+.edicion-capitulo__intro::before {
+  top: 0;
+  transform: translateY(-100%);
+  background: linear-gradient(to bottom, transparent, var(--cap-fondo));
+}
+.edicion-capitulo__cuerpo,
+.edicion-capitulo__intro { position: relative; }

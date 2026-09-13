@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { medidas } from "@/lib/edicion/medidas";
 import { useTranslations } from "next-intl";
 import { CAPITULOS } from "@/lib/edicion/capitulos";
 import { MarcaTema } from "./estado";
@@ -102,6 +103,7 @@ export function Hero() {
               // LCP candidate rather than competing with one.
               fetchPriority="high"
               decoding="async"
+              {...medidas(p.src)}
             />
           ))}
 
@@ -117,6 +119,7 @@ export function Hero() {
             alt=""
             className="edicion-hero__anacronismo"
             decoding="async"
+            {...medidas("/edicion/ceguera-figura.avif")}
           />
         </div>
 

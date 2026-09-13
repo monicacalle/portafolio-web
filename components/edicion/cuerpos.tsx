@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { medidas } from "@/lib/edicion/medidas";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
@@ -32,7 +33,7 @@ export function CuerpoIlustracion() {
 
   return (
     <>
-      <div className="edicion-declaracion">
+      <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.ilustracion.declaracion")}</p>
       </div>
 
@@ -46,6 +47,7 @@ export function CuerpoIlustracion() {
             alt={t(`capitulos.ilustracion.piezas.${p.slug}.titulo`)}
             loading="lazy"
             decoding="async"
+            {...medidas(p.src)}
           />
           <h3>{t(`capitulos.ilustracion.piezas.${p.slug}.titulo`)}</h3>
           <p>{t(`capitulos.ilustracion.piezas.${p.slug}.linea`)}</p>
@@ -66,7 +68,7 @@ export function CuerpoProducto() {
   const t = useTranslations("edicion");
   return (
     <>
-      <div className="edicion-declaracion">
+      <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.producto.planchasTitulo")}</p>
       </div>
       <Plancha
@@ -100,7 +102,7 @@ export function CuerpoCampana() {
   const t = useTranslations("edicion");
   return (
     <>
-      <div className="edicion-declaracion">
+      <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.campana.declaracion")}</p>
       </div>
       <VideoFeature
@@ -113,10 +115,10 @@ export function CuerpoCampana() {
         etiquetaCerrar={t("cta.cerrar")}
       />
       <Ficha ancho="medio">
-        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" />
+        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-loreal.avif")} />
       </Ficha>
       <Ficha ancho="medio">
-        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" />
+        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-ingres.avif")} />
       </Ficha>
     </>
   );

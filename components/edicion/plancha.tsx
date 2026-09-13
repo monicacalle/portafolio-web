@@ -60,7 +60,7 @@ export function Plancha({
   useProgreso(ref, "--s");
 
   return (
-    <div className="edicion-plancha" ref={ref}>
+    <div className="edicion-plancha animate-show-media" ref={ref}>
       <div className="edicion-plancha__marco" style={{ aspectRatio: `${ancho} / 812` }}>
         <img
           src={src}
@@ -72,6 +72,8 @@ export function Plancha({
           style={{ "--recorrido": `${(1 - 812 / alto) * 100}%` } as React.CSSProperties}
           loading="lazy"
           decoding="async"
+          width={ancho}
+          height={alto}
         />
       </div>
       <div className="edicion-plancha__pie">

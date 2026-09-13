@@ -93,7 +93,7 @@ export function Ficha({
   children: ReactNode;
 }) {
   return (
-    <article className="edicion-ficha" data-ancho={ancho}>
+    <article className="edicion-ficha animate-show-media" data-ancho={ancho}>
       {children}
     </article>
   );

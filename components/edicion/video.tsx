@@ -38,7 +38,7 @@ export function VideoFeature({
   const [abierto, setAbierto] = useState(false);
 
   return (
-    <div className="edicion-video">
+    <div className="edicion-video animate-show-media">
       <div
         className="edicion-video__marco"
         // Consumed by the reduced-motion rule, which hides the <video> and
