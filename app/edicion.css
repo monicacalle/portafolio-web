@@ -996,13 +996,28 @@ html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
      measured 1634px inside a 375px scroller and the whole sticky story sat
      off-screen sideways. The flow itself has to change. */
   #oficio .edicion-capitulo__cuerpo,
-  #impreso .edicion-capitulo__cuerpo {
+  #impreso .edicion-capitulo__cuerpo,
+  /* Chapter IV joined this list when §42's sequence landed in it. The sequence
+     pins, and overflow-x: auto computes overflow-y: auto -- which is the exact
+     fault that once stopped the hero pinning at all. A chapter holding a
+     pinned four-state story, two planchas and a method table is a reading
+     structure, not a gallery. */
+  #producto .edicion-capitulo__cuerpo {
     grid-auto-flow: row;
     grid-auto-columns: auto;
     grid-template-columns: repeat(6, 1fr);
     overflow-x: visible;
     scroll-snap-type: none;
   }
+  /* And every child of one of those bodies takes the whole width. Without
+     this the row grid hands each item ONE of its six columns and then has to
+     grow the columns to the items' min-content: chapter IV measured 449px of
+     tracks inside a 375px body, the first horizontal overflow this page has
+     had. A reading column is one column. */
+  #oficio .edicion-capitulo__cuerpo > *,
+  #impreso .edicion-capitulo__cuerpo > *,
+  #producto .edicion-capitulo__cuerpo > * { grid-column: span 6; }
+
   .edicion-oficio__acciones { flex-direction: column; align-items: stretch; }
   .edicion-oficio__acciones a { text-align: center; }
 }
@@ -1535,6 +1550,282 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   .edicion-beat__objeto img { transform: none; }
 }
 
+/* ===================================================================== §42
+   The state-to-state sequence.
+
+   Section 42 asks for an oversized light editorial sequence with ~25vh of
+   breathing room before the content settles, a dedicated media layer fading in
+   over ~700ms ease-in-out, and one state visibly transitioning into another
+   under the scroll -- explicitly "avoid a basic static screenshot".
+
+   Every number below is that section's, and the structure obeys its last rule:
+   OPACITY belongs to the state, TRANSFORM belongs to the screen inside it. The
+   white card and its shadow are identical in all four states and never move, so
+   what the reader sees is one phone whose screen is being replaced, not four
+   photographs being cross-faded. */
+/* min-width: 0 on every box down the chain. A grid item's automatic minimum
+   is its content's min-content size, so one 34ch caption inside pushed the
+   whole six-column body to 449px inside a 390px phone -- 34ch is 406px at
+   this font. Nothing here may be wider than its track. */
+.edicion-secuencia { grid-column: span 6; min-width: 0; }
+
+.edicion-secuencia__titular h3 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display, var(--font-sans));
+  /* "Oversized", per §42, and sized against the viewport rather than the grid
+     column because this heading is the section's whole announcement. */
+  font-size: clamp(1.9rem, 5vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: min(17ch, 100%);
+  text-wrap: balance;
+}
+.edicion-secuencia__titular p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.5;
+  max-width: min(48ch, 100%);
+  color: rgba(23, 16, 12, 0.72);
+}
+
+.edicion-secuencia__recorrido { position: relative; }
+
+.edicion-secuencia__fijo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1rem, 2.6vw, 2rem);
+}
+
+/* One grid cell per state in the scrubbed layout, one row per state otherwise.
+   Declared here so the figure's own rules are shared by both. */
+.edicion-secuencia__escenario {
+  display: grid;
+  gap: clamp(1.6rem, 4vw, 3rem);
+  align-items: center;
+  min-width: 0;
+}
+
+.edicion-secuencia__estado {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 900px) {
+  .edicion-secuencia__estado {
+    flex-direction: row;
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+}
+
+/* The frame. Same treatment as the planchas -- a white card, not a drawn
+   device bezel -- because these four sit a screen above two of them and the
+   pipeline already cropped the mockup's own bezel away. */
+.edicion-secuencia__marco {
+  position: relative;
+  flex: 0 0 auto;
+  /* Sized against the viewport's HEIGHT as well as its width. On a 1024x800
+     laptop the width rule alone gave a 360px frame, which is 784px tall
+     against a 690px pinned stage: the foot of the phone and the whole index
+     sat below the fold of a screen that is pinned precisely so nothing has to.
+     392/854 is the plate's own ratio, and 11rem covers the sticky offset plus
+     the index and its gap. */
+  --ancho: min(20rem, 62vw, calc((100svh - 11rem) * 392 / 854));
+  width: var(--ancho);
+  aspect-ratio: 392 / 854;
+  /* THE FRAME DOES ALL THE ROUNDING. The plates are square rectangles -- the
+     pipeline extends the screen's own corner colour outwards rather than
+     masking the device arc to white -- because during a wipe two plates are
+     side by side inside this frame and a rounded plate puts a notch at the
+     seam. 14% of the width is the iPhone 15 Pro's own screen radius against
+     its own 393pt width, so the card reads as a screen, not as a card. */
+  border-radius: calc(var(--ancho) * 0.14);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 26px 64px -30px rgba(23, 16, 12, 0.5);
+}
+.edicion-secuencia__pantalla {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* The plate is cut at exactly 392x854, the frame's own ratio, so cover here
+     crops nothing; it is only insurance against a rounding pixel. */
+  object-fit: cover;
+  display: block;
+}
+
+.edicion-secuencia__nota { max-width: min(34ch, 100%); min-width: 0; }
+.edicion-secuencia__nota strong {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.edicion-secuencia__nota strong span {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--edicion-acento, #4e0909);
+}
+.edicion-secuencia__nota p {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.25vw, 1.02rem);
+  line-height: 1.55;
+  color: rgba(23, 16, 12, 0.74);
+}
+
+/* ------------------------------------------------------------ armed only
+   Everything above renders a plain vertical strip of four captioned states,
+   which is what a reader gets with JS off or motion reduced. The scrub is
+   added here and nowhere else. */
+
+/* §42: "approximately 25vh breathing room before the content settles." The
+   title is read, then a quiet screen-quarter, and only then does the stage
+   pin. It is gated because 25vh of nothing above a static strip is not
+   breathing room, it is a hole. */
+[data-scrub] .edicion-secuencia__recorrido {
+  margin-top: 25vh;
+  /* Four states: one screen to arrive and three transitions of ~53svh each.
+     The chapter record accounts for the total. */
+  min-height: 260svh;
+}
+[data-scrub] .edicion-secuencia__fijo {
+  position: sticky;
+  top: 110px;
+  /* 100svh minus the offset, or the pinned block runs past the viewport foot
+     and the index under it is never seen. */
+  min-height: calc(100svh - 110px);
+}
+
+/* All four states in the same cell. Grid rather than absolute positioning, so
+   the row is still sized by the tallest of them and the stage needs no height
+   declared in two places. */
+[data-scrub] .edicion-secuencia__escenario { gap: 0; }
+[data-scrub] .edicion-secuencia__estado {
+  grid-area: 1 / 1;
+  /* --s is the sequence's own 0->1 scroll progress; --d is this state's
+     arrival, --ds the next state's, which is this one's departure. Arithmetic
+     inside clamp() has to be wrapped in calc() or the whole declaration is
+     dropped without a word. */
+  --tr: 0.16;
+  --llega: clamp(0, calc((var(--s, 0) - var(--d)) / var(--tr)), 1);
+  --sale: clamp(0, calc((var(--s, 0) - var(--ds)) / var(--tr)), 1);
+}
+
+/* THE TRANSITION IS A WIPE, NOT A DISSOLVE, and the first version of this was
+   a dissolve. Two of her screens cross-faded at 50% each read as a double
+   exposure: her marble ground doubled, two headings on top of one another, and
+   the four-digit cycle number sitting inside a calendar grid. A wipe keeps
+   both states fully opaque at every point of the travel.
+
+   Every state after the first is clipped in from the right while its screen
+   slides the same distance the other way, so the screen's left edge stays
+   welded to the clip edge -- which is the push a phone performs -- and the
+   state underneath drifts left behind it. */
+[data-scrub] .edicion-secuencia__estado + .edicion-secuencia__estado .edicion-secuencia__marco {
+  /* No shadow on the states that wipe. The first state's card is never
+     clipped and never leaves, so it carries the shadow for all four; a
+     clip-path on a box cuts its drop shadow off, and four identical shadows
+     stacked would darken at the edges as the sequence advanced. */
+  box-shadow: none;
+  clip-path: inset(0 0 0 calc((1 - var(--llega)) * 100%));
+}
+[data-scrub] .edicion-secuencia__pantalla {
+  /* In from the right, its left edge welded to the clip edge; then 28% to the
+     left as the next state covers it. The 28% is smaller than the wipe on
+     purpose: the gap it opens at the frame's right edge is always narrower
+     than the incoming state's clip, so no blank card is ever visible between
+     the two. */
+  transform: translate3d(calc((1 - var(--llega)) * 100% - var(--sale) * 28%), 0, 0);
+  will-change: transform;
+}
+
+/* The caption swaps, it does not cross-fade, and for the same reason: two
+   paragraphs at half opacity on top of each other are unreadable, which is
+   exactly what the first version did. The outgoing line leaves over the first
+   45% of the transition and the incoming one arrives over the last 45%, so
+   there is never more than one on screen. */
+[data-scrub] .edicion-secuencia__nota {
+  --ct: calc(var(--tr) * 0.45);
+  --llega-t: clamp(0, calc((var(--s, 0) - var(--d) - var(--tr) * 0.55) / var(--ct)), 1);
+  --sale-t: clamp(0, calc((var(--s, 0) - var(--ds)) / var(--ct)), 1);
+  opacity: calc(var(--llega-t) - var(--sale-t));
+  transform: translate3d(0, calc((1 - var(--llega-t)) * 14px), 0);
+}
+
+/* The index. Also the affordance that says there are four of these at all --
+   without it a reader who does not scroll far enough sees one screen and no
+   reason to think there is more. */
+.edicion-secuencia__indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.edicion-secuencia__indice button {
+  appearance: none;
+  border: 1px solid rgba(23, 16, 12, 0.16);
+  background: transparent;
+  color: rgba(23, 16, 12, 0.62);
+  border-radius: 999px;
+  padding: 0.38rem 0.85rem;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color var(--t-corto, 220ms) var(--ease-cine),
+    border-color var(--t-corto, 220ms) var(--ease-cine),
+    background-color var(--t-corto, 220ms) var(--ease-cine);
+}
+.edicion-secuencia__indice button:hover {
+  color: rgba(23, 16, 12, 0.9);
+  border-color: rgba(23, 16, 12, 0.35);
+}
+.edicion-secuencia__indice button[aria-current] {
+  color: var(--edicion-crema, #f4f2f0);
+  background: rgba(23, 16, 12, 0.88);
+  border-color: rgba(23, 16, 12, 0.88);
+}
+
+/* The phone has to fit the phone, chips and all.
+
+   At the desktop numbers a 390x844 viewport put the fourth chip below the fold
+   of its own pinned screen: 110px of header offset plus a 527px frame plus the
+   caption left nothing for the index. The offset comes down to the mobile
+   header's own height and the frame comes down with it. */
+@media (max-width: 767px) {
+  [data-scrub] .edicion-secuencia__fijo {
+    top: 72px;
+    min-height: calc(100svh - 72px);
+  }
+  /* 15rem, not 11: below 900px the caption sits UNDER the phone rather than
+     beside it, so it comes out of the same vertical budget. */
+  .edicion-secuencia__marco { --ancho: min(18rem, 54vw, calc((100svh - 15rem) * 392 / 854)); }
+  .edicion-secuencia__indice button { font-size: 0.72rem; padding: 0.3rem 0.62rem; }
+}
+
+/* §42 names this one exactly: the media layer fades in over ~700ms ease-in-out.
+   Higher specificity than the shared §28 reveal so it overrides the duration
+   and the curve, and it sets ONLY those two longhands -- transition-property
+   is left alone, so the reduced-motion rule that switches it off still wins. */
+.edicion-secuencia__escenario.animate-show-media,
+.edicion-secuencia__escenario.animate-show-media[data-armado]:not([data-visible]) {
+  transition-duration: 700ms;
+  transition-timing-function: ease-in-out;
+  transition-delay: 110ms;
+}
+
 /* =============================================== the compact update list
    Measured off the live reference: two columns, bold label left, grey sentence
    right, many rows, on a warm paper ground. Section 37 asks for this register
@@ -1974,6 +2265,32 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   background: linear-gradient(to bottom, var(--edicion-negro), transparent);
   pointer-events: none;
 }
+/* On a phone the dark beat is a CARD, not a band.
+
+   §31 turns the cinematic chapters' bodies into a horizontal snap carousel,
+   and `grid-column: span 6` inside `grid-auto-flow: column` does not mean "the
+   full width" there -- it means six 78% columns, which measured 1677px inside
+   a 375px scroller. The film sat a screen and a half off to the right behind a
+   blank dark field, which is what a reader actually got on a 390px phone.
+   A band needs a page to cross; a rail of cards has none. */
+@media (max-width: 767px) {
+  .edicion-beat-oscuro {
+    grid-column: auto;
+    margin-inline: 0;
+    /* 25vh above a card in a horizontal rail is not breathing room, it is an
+       offset that shoves one card below its neighbours. */
+    margin-top: 0;
+    padding: clamp(1.1rem, 4vw, 2rem);
+    scroll-snap-align: start;
+    /* The carousel is one grid ROW, so every item stretches to the tallest.
+       On a transparent card that is invisible; on this one it painted a column
+       of black three times the height of its own content. */
+    align-self: start;
+  }
+  .edicion-beat-oscuro::before,
+  .edicion-beat-oscuro[data-vuelve]::after { display: none; }
+}
+
 .edicion-beat-oscuro__interior { max-width: 100%; }
 
 /* Inside the dark beat the video's caption inverts. */

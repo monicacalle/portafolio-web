@@ -93,6 +93,29 @@
     "producto": {
       "titulo": "PRODUCTO",
       "entradilla": "Dos aplicaciones, y la investigación que decidió cómo son.",
+      "secuencia": {
+        "titulo": "Vibe pide dos datos y devuelve una semana.",
+        "nota": "Cuatro pantallas, en el orden en que las pone la app. No he redibujado ninguna para esta página.",
+        "indice": "Estados de Vibe",
+        "estados": {
+          "datos": {
+            "etiqueta": "Datos de tu ciclo",
+            "nota": "Longitud media del ciclo, y los días de la última regla. Con eso entra."
+          },
+          "ciclo": {
+            "etiqueta": "Mi ciclo",
+            "nota": "De esas dos respuestas sale todo lo demás: día 23, fase lútea, próxima regla en cinco días."
+          },
+          "checkin": {
+            "etiqueta": "Check in",
+            "nota": "Un registro diario: ánimo, energía, estrés, sueño. Corrige la predicción del día siguiente."
+          },
+          "agenda": {
+            "etiqueta": "Agenda",
+            "nota": "Y la semana cambia con la fase: energía variable, sensibilidad alta, prioridad de cierre y orden."
+          }
+        }
+      },
       "planchasTitulo": "El producto que entregué",
       "planchas": {
         "vibe": {

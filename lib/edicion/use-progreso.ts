@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 /**
  * Write an element's scroll progress to a CSS custom property on itself.
@@ -31,7 +31,26 @@ export function useProgreso(
    * hero and for pinned sequences.
    */
   modo: "dentro" | "pegajoso" = "dentro",
+  /**
+   * Optional observer, called with the same value on the same frame.
+   *
+   * It exists so a component that needs a DISCRETE fact about the scroll — the
+   * index of the state currently on screen, say — can have it without opening a
+   * second scroll listener and forcing a second layout read per frame for a
+   * rect this one has already measured. Callers are expected to no-op unless
+   * the discrete value actually changed; anything that calls setState on every
+   * frame here defeats the reason this hook writes a CSS variable at all.
+   */
+  alLeer?: (p: number) => void,
 ) {
+  /* Held in a ref so an inline arrow at the call site does not re-run the
+     effect — and assigned in its own effect rather than during render, which
+     is a side effect in the render phase and a lint error in this project. */
+  const observador = useRef(alLeer);
+  useEffect(() => {
+    observador.current = alLeer;
+  }, [alLeer]);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -50,7 +69,9 @@ export function useProgreso(
         const recorrido = r.height + vh;
         p = recorrido <= 0 ? 0 : (vh - r.top) / recorrido;
       }
-      el.style.setProperty(propiedad, Math.min(1, Math.max(0, p)).toFixed(4));
+      const v = Math.min(1, Math.max(0, p));
+      el.style.setProperty(propiedad, v.toFixed(4));
+      observador.current?.(v);
     };
 
     const alScroll = () => {

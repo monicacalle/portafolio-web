@@ -31,8 +31,10 @@ the CLI docs, not in the Terms of Service. An undocumented grant is not a grant.
 
 **Replaced by** `components/edicion/plancha.tsx`: her own full-length delivered
 app screens scrubbed through a phone-sized frame. §43 asks for "a major
-interactive product demonstration" and the planchas satisfy it as written. The
-departure is that a plancha is a single linear pan, not a state machine.
+interactive product demonstration" and the planchas satisfy it as written. A
+plancha is a single linear pan; the state-to-state half of what a `.riv` would
+have carried is `components/edicion/secuencia.tsx`, built for §42 and sitting
+directly above them in the same chapter.
 
 Rive would have lost on merits at $0 anyway: 882kB gzip of runtime before any
 content, text baked out of `messages/` and out of `ghost`, and a blank rectangle
@@ -49,6 +51,7 @@ portfolio. These sections have no equivalent to build.
 |---|---|---|
 | 54, 56, 58, 60, 62, 64 | Checkout, Operations, Shop app, B2B, Finance, Shipping chapter intros | Six chapters, not twelve. Her body of work supports six; padding to twelve would put single images under chapter titles. Settled with the user at the start. |
 | 55, 57, 59, 61, 63, 65 | The light content sections belonging to those six chapters | Declined with their intros. Named explicitly here because an audit counted them as unscored otherwise. |
+| 52 | "Products surfacing across multiple merchant surfaces" | The dark featured story §52 asks for is built (see §39/40/45 below); its SUBJECT is not. One designer's two apps do not surface across a network of merchant surfaces, and drawing a diagram that says they do would be the only invented claim on the page. |
 | 74 | "Coming soon / get notified" product modal | Nothing on this site is unreleased. |
 | 75 | Product / merch modal | There is no merchandise. |
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
@@ -83,11 +86,17 @@ These are absent. They are not declined, they are unfinished.
 
 | § | Requirement | Note |
 |---|---|---|
-| 29 | Card constellation with hover | The editorial grid is uneven per §44 but there is no constellation layout. |
-| 39, 40, 45, 52 | A second dark featured beat INSIDE a chapter | The video feature and the shared full-screen modal both exist now; what is missing is only the dark placement — every chapter still cuts dark→light exactly once, so a featured beat never lands back in the cinematic world. |
-| 42 | A state-to-state scrubbed product sequence | The planchas pan; they do not transition between states. |
 | 67, 69 | Chapter VI media | The closing chapter is text only. |
+| 102 | Extracted primitives | `ChapterIntro`, `SectionHeading`, `CTA`, `InlineLink` and `Modal` exist as markup inside their own components rather than as named primitives. |
 | 103 | Full data consolidation | `PLACAS`, `OBRAS` and the piece lists still live beside the components rather than inside the chapter records. |
+
+§29 and §30 (the five-card constellation and its hover) landed in
+`components/edicion/constelacion.tsx`; §39, §40 and §45 (a second dark featured
+beat inside a chapter) landed in `components/edicion/beat-oscuro.tsx`, wrapping
+chapter III's film. Both were on this list and are struck from it. §52's dark
+featured story is the same beat; the part of §52 that is not built is its
+subject, "products surfacing across multiple merchant surfaces", which is in
+section 2's table with the rest of Shopify's own content.
 
 ---
 
@@ -106,6 +115,23 @@ it, and Geist carries the grotesque role for UI and body. It is a departure from
 retablo, built in CSS 3D. It is built that way because it is also §17's
 hero-to-rail morph, which has to survive WebGL being off. §81 and §82 bless a
 non-WebGL cinematic path explicitly.
+
+**§42 — the four states are Vibe's, not Rollouts'.** The section is built:
+`components/edicion/secuencia.tsx`, a pinned stage in chapter IV where four
+states wipe one into the next under the scroll, with 25vh of breathing room
+before it settles and a media layer that fades in over 700ms ease-in-out. What
+differs is the content. §42 offers "website version A / website version B /
+experiment controls / timing states", which is an A/B testing product she has
+never worked on. The four states are the ones her own app performs: the two
+questions onboarding asks, the day-23 cycle it computes from them, the daily
+check-in that corrects the prediction, and the week the phase rewrites.
+
+This is NOT the four-phase state machine refused under §79 above, and the line
+between them is worth keeping. That one would have meant writing three phases
+of health advice about a shipped product under her name, because only `fase
+lútea` exists at high fidelity. Nothing is authored here: the four plates are
+cropped out of her own Figma exports by `produccion/edicion.py`, and the loop
+between them is stated on the screens themselves.
 
 **§47 / §48 — the sticky triptych is in chapter V, not chapter IV.** §48 is
 about circling a physical artifact, and her printed portfolio is the only thing
@@ -145,6 +171,12 @@ and 22 FAIL — and then found three blockers, all since fixed:
    and ten sections failed from one cause.
 3. The hero never pinned, because `overflow-x: hidden` made its ancestor a
    scroll container.
+
+Since that audit: §29 and §30 (the constellation and its hover), §39/§40/§45
+(the second dark beat), and §42 (the state-to-state sequence) have landed, and
+one horizontal-overflow defect the sequence exposed has been fixed — `MarcaTema`
+was absolutely positioned with `width: 100%` and no `left`, so inside the dark
+beat it hung 48px past the right edge of the document on every desktop width.
 
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.

@@ -77,35 +77,23 @@ export default async function RootLayout({
 
   return (
     <html lang={l} className={`${geist.variable} ${garamond.variable} ${bodoni.variable}`} suppressHydrationWarning>
-      <head>
-        {/* Progressive enhancement, inline and before paint.
+      {/* NO GLOBAL MOTION FLAG ON <html>. There was one here -- an inline
+          pre-paint script setting data-motion="1" -- and it did not work, in
+          the same way its predecessor did not work. React owns this element
+          because the layout renders it, and hydration resets it: the class was
+          stripped about 10ms after paint, and so was the data attribute. The
+          comment left behind claimed the opposite. Measured on 2026-09-13:
+          document.documentElement.dataset.motion was undefined in the live
+          DOM, nothing in any stylesheet read it, and React 19 logged "
+          Encountered a script tag while rendering React component" on every
+          client render for it.
 
-            [data-reveal] used to be opacity: 0 unconditionally, so any failure --
-            a JS error anywhere in the bundle, a blocked script, a hydration
-            mismatch, an observer that never fires -- left the whole page blank.
-            A comment claimed a .no-js fallback; nothing set it.
-
-            The default HTML is now the finished page. This adds the flag that
-            opts INTO animation, and only when motion is wanted. It has to be
-            inline in <head> rather than an effect: an effect runs after paint,
-            so it flashes, and it does not run at all in the hydration-failure
-            case this exists to survive.
-
-            IT SETS A DATA ATTRIBUTE, NOT A CLASS. React owns className on this
-            <html> because the layout renders one, so it RESET the element on
-            hydration and stripped the class about 10ms after paint, on every
-            load. Every motion-gated rule in the stylesheets was dead and the
-            desktop page shipped permanently in its reduced-motion
-            presentation. React does not render a data-motion prop, so the
-            attribute survives. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
-              "document.documentElement.dataset.motion='1'}catch(e){}",
-          }}
-        />
-      </head>
+          What replaces it is per-element self-arming: `Revelar` writes
+          data-armado on each target and `Secuencia` renders data-scrub on
+          itself, so the hidden state exists only where JS has actually run and
+          there is no global flag left to lose. Plain CSS conditions use
+          @media (prefers-reduced-motion: no-preference) directly, which needs
+          no flag at all. */}
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
           <SmoothScroll>{children}</SmoothScroll>

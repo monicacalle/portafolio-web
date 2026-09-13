@@ -3,14 +3,7 @@
 import { ReactLenis, useLenis } from "lenis/react";
 import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "@/lib/i18n/navigation";
-import { prefersReducedMotion } from "@/lib/motion-gate";
-
-/** The OS setting can be toggled while the page is open, so it is a store, not a snapshot. */
-function subscribeToReducedMotion(onChange: () => void) {
-  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  mq.addEventListener("change", onChange);
-  return () => mq.removeEventListener("change", onChange);
-}
+import { prefersReducedMotion, subscribeToReducedMotion } from "@/lib/motion-gate";
 
 /*
   Land at the top of the page you navigated to.

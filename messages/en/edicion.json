@@ -93,6 +93,29 @@
     "producto": {
       "titulo": "PRODUCT",
       "entradilla": "Two apps, and the research that decided what they are.",
+      "secuencia": {
+        "titulo": "Vibe asks for two facts and hands back a week.",
+        "nota": "Four screens, in the order the app puts them in. I did not redraw any of them for this page.",
+        "indice": "Vibe states",
+        "estados": {
+          "datos": {
+            "etiqueta": "Your cycle",
+            "nota": "Average cycle length, and the days of the last period. That is all."
+          },
+          "ciclo": {
+            "etiqueta": "My cycle",
+            "nota": "Everything else comes out of those two answers: day 23, luteal phase, next period in five days."
+          },
+          "checkin": {
+            "etiqueta": "Check in",
+            "nota": "A daily record: mood, energy, stress, sleep. It corrects tomorrow's prediction."
+          },
+          "agenda": {
+            "etiqueta": "Agenda",
+            "nota": "Then the week moves with the phase: variable energy, high sensitivity, a priority of closing and ordering."
+          }
+        }
+      },
       "planchasTitulo": "The product I delivered",
       "planchas": {
         "vibe": {

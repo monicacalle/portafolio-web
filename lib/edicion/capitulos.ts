@@ -13,6 +13,14 @@
  * chapters of equal length would read as a template no matter how good the
  * motion is. The spread here is 3.9x.
  *
+ * THEY ARE FLOORS, NOT MEASUREMENTS. `alturaSvh` becomes a min-height, and as
+ * the editorial bodies filled every chapter grew past its own number. Measured
+ * at 1680x1000 on 2026-09-13: 300 / 342 / 373 / 661 / 772 / 228 against the
+ * 300 / 260 / 280 / 340 / 700 / 190 declared below. The numbers are kept as
+ * the reserved minimum each chapter gets before its content is counted, and
+ * the ratio between them is still what sets the rhythm; they are not a claim
+ * about what the page measures.
+ *
  * These were CUT after the gate measured 12,739px of empty near-black across
  * the page -- 11.7 viewport-heights of nothing, 5,455px of it inside chapter IV
  * alone, which holds her two finished case studies. The extra length was
@@ -78,8 +86,10 @@ export const CAPITULOS = [
     alturaSvh: 340,
     tema: "oscuro",
     obras: ["vibe", "voluntee"],
-    // Vibe's own dark. This is the longest chapter because it is the only one
-    // with two finished bilingual case studies already written behind it.
+    // Vibe's own dark. This is the longest chapter after V, because it is the
+    // only one with two finished bilingual case studies already written behind
+    // it -- and since §42's four-state sequence landed in its body it measures
+    // ~661svh against the 340 reserved here.
     fondo: "#141019",
   },
   {
@@ -111,7 +121,8 @@ export const CAPITULOS = [
  *
  * - `anclaje`   URL hash. Lowercase, no accents — a fragment identifier, not prose.
  * - `numeral`   Roman numeral in the rail. Editorial, so written not derived.
- * - `alturaSvh` Total scroll length. See the header note on why these differ.
+ * - `alturaSvh` Reserved minimum scroll length, not the measured height. See
+ *               the header note.
  * - `tema`      Where the INTRO sits. The body that follows always turns light;
  *               that alternation is the page's pulse (brief section 77).
  * - `fondo`     The flat ground, sampled from her own files, not chosen at a desk.
@@ -121,9 +132,6 @@ export type Capitulo = (typeof CAPITULOS)[number];
 
 export const ANCLAJES = CAPITULOS.map((c) => c.anclaje);
 export type Anclaje = Capitulo["anclaje"];
-
-/** Total page length in svh, used to size the scroll spine's master timeline. */
-export const ALTURA_TOTAL = CAPITULOS.reduce((n, c) => n + c.alturaSvh, 0);
 
 /**
  * The hero's own length, before chapter I begins. 150svh per brief section 13:

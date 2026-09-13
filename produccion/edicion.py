@@ -255,6 +255,122 @@ print('\nPLANCHAS — her delivered screens, for chapter IV')
 planchas()
 
 
+# ------------------------------------------------------------- LA SECUENCIA
+# Chapter IV's state-to-state sequence — brief section 42.
+#
+# Section 42 asks for a scrubbed sequence in which "scroll should reveal one
+# state transitioning into another", and says in as many words: "avoid a basic
+# static screenshot." The planchas above pan down ONE screen; that is section
+# 43's demonstration, not this one.
+#
+# THESE ARE FOUR REAL STATES OF VIBE, and the distinction from the four-phase
+# state machine refused above matters. That one was refused because only `fase
+# lutea` exists at high fidelity and building it would have meant WRITING three
+# phases of health advice about a shipped product, under her name. Nothing is
+# written here. These are four screens she delivered, at full fidelity, in the
+# order the product itself puts them in:
+#
+#   1  Datos de tu ciclo   the two questions onboarding asks
+#   2  Mi ciclo            what it computes from them: day 23, fase lutea
+#   3  Check in            the daily record that corrects the prediction
+#   4  Agenda              the week rewritten from the phase
+#
+# Screen 2 carries a button reading "Ver mi agenda / Optimiza tu semana por
+# fase" and screen 3 reads "Tu actualizacion diaria nos ayudara a mejorar
+# nuestras predicciones", so the loop between them is the product's own claim
+# and not an edge invented here to make a sequence.
+#
+# The 2x export name is wishful: every file is 432x886, which is a 1x iPhone 15
+# Pro. pdfimages confirms the memoria embeds the same mockups at 431x885, so
+# 393px is the best resolution that exists and the frame is capped to suit.
+SECUENCIA = [
+    ('iPhone 15 Pro - White (1).png',         'estado-vibe-1', 'Datos de tu ciclo'),
+    ('iPhone 15 Pro - White flatten-4.png',   'estado-vibe-2', 'Mi ciclo, dia 23'),
+    ('iPhone 15 Pro - White flatten-3.png',   'estado-vibe-3', 'Check in diario'),
+    ('iPhone 15 Pro - White flatten-1.png',   'estado-vibe-4', 'Agenda, fase lutea'),
+]
+
+# The screen rect inside the drawn device.
+#
+# MEASURED BY COLUMN, NOT BY A SINGLE ROW, and that distinction cost a render.
+# Reading one row across the middle put the left edge at 19, which is an
+# antialiased pixel on that row alone: column 19 is the black bezel for 745 of
+# the 853 rows, and it shipped as a hard black hairline down the left edge of
+# every state. What decides each edge here is the share of rows (or columns)
+# on which a candidate line is bright, over the whole run, for all four files.
+# 392x854 against the iPhone 15 Pro's own 393x852pt, so it checks out against
+# the device the mockup claims to be.
+PANTALLA = (20, 17, 412, 871)
+
+# The device is kept OUT. The page's rule (see .edicion-plancha__marco) is that
+# a drawn bezel around a screenshot is the oldest tell in a junior portfolio,
+# and these four sit a screen above two planchas that already obey it.
+#
+# Cropping to the screen rect still leaves the arc of the device's own rounded
+# screen in each corner, and the obvious answer -- mask the corners to the
+# frame's white -- IS WRONG HERE, which is worth writing down because it was
+# built that way first. The states transition by wiping one over another, so
+# two of them are on screen side by side for the length of every transition,
+# and a plate with rounded corners puts a white quarter-disc at the seam. The
+# frame does the rounding; the plate must be a plain rectangle.
+#
+# So the corner is not masked, it is EXTENDED: every pixel outside the screen's
+# rounded corner is replaced by the nearest pixel on the arc, projected
+# radially. The corners of all four screens are her flat marble ground, so what
+# the extension paints is the colour that was already there.
+RADIO = 62
+
+
+def secuencia():
+    base = os.path.join(RAIZ, 'produccion', 'fuentes', 'drive', '04-apps',
+                        'vibe-figma-2x')
+    for archivo, nombre, nota in SECUENCIA:
+        ruta = os.path.join(base, archivo)
+        if not os.path.exists(ruta):
+            print(f'  {nombre:22s} SKIP (source not on disk)')
+            continue
+        pant = np.asarray(Image.open(ruta).convert('RGB').crop(PANTALLA)).copy()
+        h, w = pant.shape[:2]
+        r = RADIO
+        ys, xs = np.mgrid[0:r, 0:r]
+        # Distance from the corner circle's centre, for the top-left quadrant.
+        d = np.hypot(r - 1 - xs, r - 1 - ys)
+        fuera = d > r - 1
+        # The point on the arc that this pixel projects onto, in quadrant
+        # coordinates. Clamped so a pixel exactly on the centre cannot divide
+        # by zero.
+        k = (r - 1) / np.maximum(d, 1e-6)
+        px = np.rint((r - 1) - (r - 1 - xs) * k).astype(int)
+        py = np.rint((r - 1) - (r - 1 - ys) * k).astype(int)
+        px = np.clip(px, 0, r - 1)
+        py = np.clip(py, 0, r - 1)
+        for vol_y, vol_x in ((False, False), (False, True), (True, False), (True, True)):
+            # One quadrant at a time, flipped into place, so the same maths
+            # serves all four corners.
+            cuad = pant[h - r:, :] if vol_y else pant[:r, :]
+            cuad = cuad[:, w - r:] if vol_x else cuad[:, :r]
+            trabajo = cuad[::-1] if vol_y else cuad
+            trabajo = trabajo[:, ::-1] if vol_x else trabajo
+            trabajo = trabajo.copy()
+            trabajo[fuera] = trabajo[py[fuera], px[fuera]]
+            trabajo = trabajo[:, ::-1] if vol_x else trabajo
+            trabajo = trabajo[::-1] if vol_y else trabajo
+            if vol_y and vol_x:
+                pant[h - r:, w - r:] = trabajo
+            elif vol_y:
+                pant[h - r:, :r] = trabajo
+            elif vol_x:
+                pant[:r, w - r:] = trabajo
+            else:
+                pant[:r, :r] = trabajo
+        guardar(Image.fromarray(pant), nombre, None, q=58)
+        print(f'  {"":22s} {nota}')
+
+
+print('\nLA SECUENCIA — four delivered states of Vibe, for chapter IV')
+secuencia()
+
+
 # ------------------------------------------------------- PLACAS DE CAPITULO
 # The chapter opening plates.
 #

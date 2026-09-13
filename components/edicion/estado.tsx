@@ -200,6 +200,13 @@ export function MarcaTema({
       style={{
         position: "absolute",
         [borde === "arriba" ? "top" : "bottom"]: 0,
+        /* left: 0, not just width: 100%.
+           Without it the marker takes its STATIC position -- inside the
+           parent's left padding -- and then measures 100% of the padding box
+           from there, so it hangs off the right edge by exactly one padding.
+           Inside the dark beat, whose padding is clamp(1.2rem, 4vw, 3.5rem),
+           that was 48px of horizontal document overflow on every desktop. */
+        left: 0,
         height: 1,
         width: "100%",
       }}

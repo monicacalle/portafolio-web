@@ -9,6 +9,7 @@ import { BeatOscuro } from "./beat-oscuro";
 import { Triptico } from "./triptico";
 import { Constelacion } from "./constelacion";
 import { ListaCompacta } from "./lista-compacta";
+import { Secuencia } from "./secuencia";
 
 /**
  * Chapter I's editorial body — the five drawings, each with what she says
@@ -52,6 +53,16 @@ export function CuerpoIlustracion() {
   );
 }
 
+/**
+ * Chapter IV's editorial body, in the brief's own order: section 42's
+ * state-to-state sequence first, then section 43's demonstration.
+ *
+ * They are two different things and the sequence exists because reading 43 as
+ * covering both was wrong. The sequence swaps STATES behind a frame that never
+ * moves; the planchas PAN one long delivered screen through the same frame.
+ * The handover is deliberate too — the sequence ends on the Agenda, and the
+ * first plancha is that screen at full length, where it can be read.
+ */
 export function CuerpoProducto() {
   const t = useTranslations("edicion");
   return (
@@ -59,6 +70,7 @@ export function CuerpoProducto() {
       <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.producto.planchasTitulo")}</p>
       </div>
+      <Secuencia />
       <Plancha
         src="/edicion/plancha-vibe.avif"
         ancho={428}
