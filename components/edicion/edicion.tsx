@@ -59,12 +59,20 @@ export function Edicion() {
  * first is also what makes the mobile path (section 86) free.
  */
 function Escena({ anclaje }: { anclaje: string }) {
+  /*
+    No chapter plate may be LETTERING. The chapter title is set at ~150px in
+    white Bodoni across this image, and two of these were her own wordmarks:
+    MARCA landed on top of the Viña Esmeralda lockup and PRODUCTO on a page of
+    Vibe body copy. Type on type, both illegible, and it disrespected the work
+    it was sitting on. Plates are objects and photographs now; her lettering
+    appears in the light editorial bodies below, at a size where it can be read.
+  */
   const PLACAS: Record<string, string> = {
     ilustracion: "/cine/pelo-cobre.avif",
-    marca: "/cine/a2-esmeralda.avif",
+    marca: "/images/mockupraiz.png",
     campana: "/cine/a3-loreal.avif",
-    producto: "/cine/a2-vibe.avif",
-    impreso: "/cine/a3-lobo.avif",
+    producto: "/images/iphone.webp",
+    impreso: "/images/portafolioabierto.png",
   };
   const src = PLACAS[anclaje];
   if (!src) return null;

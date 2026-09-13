@@ -276,7 +276,27 @@ html:not([data-nav-theme]) {
     transparent 100%
   );
 }
-.edicion-capitulo__escena img { width: 100%; height: 100%; object-fit: cover; }
+/* scale-down, NOT cover.
+   cover was silently undoing the pipeline. Measured in the browser: chapter II
+   was her 1200x262 Viña Esmeralda lockup blown up 5.6x and sliced to a 20%
+   fragment, with MARCA set in white on top of her own giant letterforms; chapter
+   IV was body copy from the Vibe deck at 3.5x, soft enough to read as a
+   rendering error. produccion/edicion.py refuses to upscale and its panel()
+   refuses to crop, and one CSS line was overriding both.
+   scale-down behaves as contain but never exceeds the file's intrinsic size, so
+   a small plate stays small and the chapter's ground grows around it -- which is
+   the plan's own small-art law, applied where it was being broken. */
+.edicion-capitulo__escena img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  /* Held right of centre so the title, which is set bottom-left, never lands on
+     her artwork. */
+  object-position: 78% 50%;
+}
+@media (max-width: 1023px) {
+  .edicion-capitulo__escena img { object-position: 50% 42%; }
+}
 
 .edicion-capitulo__portada {
   position: relative;
