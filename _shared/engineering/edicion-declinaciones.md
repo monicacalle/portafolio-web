@@ -64,8 +64,7 @@ portfolio. These sections have no equivalent to build.
 | 86 | Simplified mobile 3D | The canvas is removed below 1024px rather than simplified, which is the first of §86's six bullets ("switch some scenes entirely to optimized static images") applied to all of them. Tablets between 768 and 1023 get the static path too, although §85 gives them 110svh of intro specifically for 3D choreography. Lower-resolution textures and reduced environmental layers are not built. |
 | 1 | Step 2 of §1.1's grammar, "text begins to leave" | The chapter title enters (step 6 is built) and never exits. `Revelar` unobserves after revealing, per §78's warning against scroll-scrubbing the editorial world, so nothing on this page animates on the way out. Giving the chapter titles an exit means a second scrubbed value per chapter for a moment the reader is already past. |
 | 8 | A transitioned background between dark and light nav themes | The header's veil fades in once, from transparent, and then swaps `background-image` at each theme boundary. Gradients do not interpolate, so a real transition means two stacked pseudo-elements cross-fading. The band itself is soft and the swap happens inside §77's cut, where the whole viewport is already changing. |
-| 30 | Focus parity for the constellation cards | "Focus state should behave equivalently to hover." The cards are `<figure>` elements with no link and no `tabindex`, so `:focus-within` can never fire. The hover rules name it anyway, which costs nothing and becomes correct the day a card gets a destination; giving five images a tab stop that leads nowhere would not. |
-| 32 | A CTA on every editorial card | Title and description are built. The cards that HAVE a destination carry one — the planchas, the two documents. The plate-wall cards do not have one: each is a piece of finished work with no page behind it, and a button that scrolls nowhere is worse than no button. |
+| 32 | An action on the ten plate-wall cards (the other half of §32 is built) | Title and description are built everywhere. So is the action, on every card that has somewhere to go: the planchas, the two documents, and — since the §30 work — the five constellation cards, which open her own painting at 2000px. The ten plate-wall cards in chapters II, III and V get none, and the file sizes are the reason. The shared modal panel is `min(92vw, 1400px)` wide. Six of the ten sources are 900 × 640, so "see it larger" would put them on screen at 1.56x upscale; a seventh, the Isabella poster, is 596px wide and would sit at 2.35x. They would be bigger and visibly worse — a control that promises more detail and delivers interpolation. Behind each of the five constellation cards there is a 2000px file against a card that renders at 146–307px, which is 7–14x of real headroom and no upscale at any viewport. The split is by whether the pixels exist, not by which chapter the card is in. |
 | 92 | Three of the per-chapter transitional sub-states | The machine publishes `data-fase` (hero / capitulos / fin), `data-subfase` (intro / editorial, carried explicitly by each block rather than inferred from its colour) and `data-capitulo`. BOOT and HERO_LOADING have no equivalent because there is no loading state to be in — the page is server-rendered complete and the canvas fades in over it. SIDEBAR_TRANSITION is `--hp`, a continuous value, because §17 asks for a scrub rather than a step. INTRO_ENTER, CONTENT_TRANSITION and INTRO_EXIT are not built: they are transitional states with nothing to read them, and a state nothing consumes is a value computed every frame for nobody. |
 | 53 | Chapter III's compact product updates | The section's other clauses are built — two-column media, the standard reveal, restrained text movement. Its compact list is not, because chapter III is one campaign and a film, and a list of "updates" about it would be four rows of copy invented to fill a register. Chapters I, II and IV carry that register on material that exists, and chapter V's is inside §49. |
 | 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
@@ -105,7 +104,8 @@ These are absent. They are not declined, they are unfinished.
 vary with content), §80's DPR re-evaluation and §92's END state and sub-phase
 have all since been built and are struck from the table above.
 
-§29 and §30 (the five-card constellation and its hover) landed in
+§29 and §30 (the five-card constellation, its hover, and — since the cards
+became links to her own paintings — the focus parity §30 asks for) landed in
 `components/edicion/constelacion.tsx`; §39, §40 and §45 (a second dark featured
 beat inside a chapter) landed in `components/edicion/beat-oscuro.tsx`, wrapping
 chapter III's film. Both were on this list and are struck from it. §52's dark
@@ -205,8 +205,8 @@ between them is stated on the screens themselves.
 about circling a physical artifact, and her printed portfolio is the only thing
 on the page that genuinely is one.
 
-**§32 — the cards name the work now, and one mark went back on its own
-colour.** §32 asks every editorial card for a title and a short description and
+**§32 — the cards name the work now, five of them open it, and one mark went
+back on its own colour.** §32 asks every editorial card for a title and a short description and
 they had neither: four pieces of her branding work were on screen unnamed, and
 chapter II's statement above them names one of the three studios. The captions
 are at `capitulos.<anclaje>.obras.<clave>` and every line is checkable against
@@ -222,6 +222,18 @@ mark is back on the ground she gave it.
 Chapter II's fourth card was also the open printed portfolio, which is chapter
 V's subject sitting unlabelled in the brand chapter. It is five cards now:
 three marks, then two of them applied.
+
+The five constellation cards got the other half of §32 — an action — and with
+it the focus parity of §30, which was on the declined list because a `<figure>`
+with nothing focusable inside it can never match `:focus-within`. Each card is
+now an `<a href>` to her own painting at 2000px, taken over on a plain left
+click to open in §26's shared modal and left alone on a modified one, so
+⌘-click and "save image as" still reach the file. The destination is the
+`lamina-*` plate, not the `panel-*` one: `panel()` rescales her subject onto a
+synthesised altarpiece ground, which would make each card's own caption —
+"3000 × 3000 px" — a claim about a composite. The modal's alt text is her own
+`linea`. The ten plate-wall cards still get nothing, and section 2 now carries
+the file sizes that decide it.
 
 **§37 — chapter I's compact register, out of copy that existed.** The five
 `linea` texts were written for her five drawings, went through ghost, and

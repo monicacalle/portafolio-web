@@ -1527,6 +1527,39 @@ html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
   overflow: hidden;
 }
 .edicion-modal__medio { width: 100%; height: 100%; display: block; }
+/* §32's destination for the five constellation cards: her own painting, at
+   2000px, which is not a video and must not be treated as one.
+
+   The panel above is a 16/9 black letterbox because everything that opened in
+   it until now was footage. A 2000x2000 painting inside that box is matted on
+   black with 44% of the panel unused, and a 2048x2732 one is scaled down to
+   fit a landscape frame it does not share. So for this one child the panel
+   stops having a shape of its own and takes the image's: `width: auto` lets
+   the grid centre shrink-to-fit, and the two maxima below are what actually
+   bound it. */
+.edicion-modal__panel:has(.edicion-modal__lamina) {
+  width: auto;
+  aspect-ratio: auto;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+/* Bounded on BOTH axes, because a square is the common case here: capped only
+   by width, the 1324px a 1440-wide viewport allows would render 1324px tall
+   inside 900px of screen and the bottom third of every square painting would
+   be off-screen with no way to reach it. Whichever limit binds first wins and
+   the intrinsic ratio does the rest. */
+.edicion-modal__lamina {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(92vw, 1400px);
+  /* Not 100dvh: the close button sits at top: 1rem and the image would run
+     under it. */
+  max-height: 86dvh;
+  border-radius: 4px;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+}
 @media (prefers-reduced-motion: no-preference) {
   .edicion-modal[open] .edicion-modal__panel {
     animation: edicion-modal-entra 320ms var(--ease-salida) both;
@@ -1804,8 +1837,13 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
 }
 
 /* ===================================================================== §71 / §30
-   Card interaction. Cards are links; §71 asks for a clear pressable affordance
-   and §30 for a hover state on the media itself. */
+   Card interaction. §71 asks for a clear pressable affordance and §30 for a
+   hover state on the media itself.
+
+   NOT EVERY CARD IS A LINK, which this comment used to claim and the very next
+   rule contradicts: the ten plate-wall cards in chapters II, III and V are
+   decorative repeats of work the surrounding copy already names, and they stay
+   inert on purpose. Everything here is scoped to cards that contain one. */
 .edicion-ficha a,
 a.edicion-ficha {
   display: block;
@@ -2819,6 +2857,22 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   z-index: 2;
 }
 
+/* §32: each of the five goes somewhere, and the anchor is what makes §30's
+   "focus should behave equivalently to hover" possible at all — a <figure>
+   with nothing focusable in it can never match :focus-within. */
+.edicion-carta a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 3px;
+}
+/* The cloud's own hover treatment is a scale and a shadow, neither of which a
+   keyboard reader can see coming; this is the ring that says which card Enter
+   would open. Offset outward so it does not sit on the artwork. */
+.edicion-carta a:focus-visible {
+  outline: 2px solid var(--edicion-acento);
+  outline-offset: 4px;
+}
 .edicion-carta img {
   width: 100%;
   height: auto;
@@ -2885,10 +2939,37 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   }
   .edicion-carta[data-primaria] { width: 100%; }
 }
+/* The hover rule up there is (0,4,0) — `.edicion-constelacion:hover
+   .edicion-carta:hover` — and a media query adds no specificity, so
+   `.edicion-carta { transform: none }` at (0,1,0) loses to it. A TAP sets and
+   keeps :hover, so touching a full-width card applied the cloud's scale and
+   shrank it: "El cuello" goes from 1 to 0.686, a 31% collapse, over 300ms.
+   Matched specificity, placed after, so the tie resolves on source order. */
+@media (max-width: 1023px) {
+  .edicion-constelacion:hover .edicion-carta:hover,
+  .edicion-constelacion:focus-within .edicion-carta:focus-within {
+    transform: none;
+  }
+}
 
+/* §87 for the cloud: no travel, but §30's non-motion half survives — the
+   active card reaches 1, the surrounding cards lose 12%, the shadow grows,
+   `filter: none` clears the desaturation. What goes is the scale, and it has
+   to go at matching specificity for the same reason as the tap above: the
+   hover rule is (0,4,0) and this block's base rule is (0,1,0), so hovering a
+   card under reduced motion was applying a 31% shrink over 300ms to exactly
+   the reader who asked for less movement. */
 @media (prefers-reduced-motion: reduce) {
-  .edicion-carta { transform: none; opacity: 1; }
+  .edicion-carta {
+    transform: none;
+    opacity: 1;
+    transition: opacity var(--t-micro) linear, filter var(--t-micro) linear;
+  }
   .edicion-carta[data-primaria] { opacity: 1; }
+  .edicion-constelacion:hover .edicion-carta:hover,
+  .edicion-constelacion:focus-within .edicion-carta:focus-within {
+    transform: none;
+  }
 }
 
 /* ============================================================ §39 / §40 / §45

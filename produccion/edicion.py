@@ -135,9 +135,52 @@ retablo = Image.new('RGB', (W, H), (18, 15, 14))
 for archivo, x, y, pw, ph, ocu, anc in PANELES:
     p = panel(archivo, pw, ph, ocu, anc)
     retablo.paste(p, (x, y))
-    guardar(p, 'panel-' + archivo.split()[-1].replace('.png', ''), pw)
+    # THE CARD IS THE SAME COMPOSITION AT 2x, and the retablo keeps the 1x
+    # paste so the hero plate is unchanged.
+    #
+    # §29's cloud renders these at 172-361 CSS px on a 1680 desktop and they
+    # shipped at their panel size: 240px for Untitled_Artwork 9 against a 198px
+    # box. At DPR 1 that is fine and on any retina display all four are
+    # upscaled — the smallest of her four paintings by 1.65x, on the chapter
+    # about her drawing. The panel geometry is unchanged; only the resolution
+    # it is rendered at doubles.
+    guardar(panel(archivo, pw * 2, ph * 2, ocu, anc),
+            'panel-' + archivo.split()[-1].replace('.png', ''), pw * 2)
 
 guardar(retablo, "hero-retablo", 1680, q=68)
+
+# ------------------------------------------------------------------ LAMINAS
+# §30 and §32's destination for the five constellation cards.
+#
+# §32 asks every editorial card for a title, a short body AND a CTA, and §30
+# asks the cloud's cards for a focus state equivalent to their hover state.
+# Both were half-built for the same reason: the cards had nowhere to go, so
+# `:focus-within` could never fire and a CTA would have pointed at nothing.
+#
+# NOT the retablo panel, which is a composite: panel() above rescales the
+# subject to 90-96% of an altarpiece aspect and puts it on a ground synthesised
+# from the median of the source's four corners. This is her original file,
+# reduced and nothing else, which is what makes the cards' own captions —
+# "3000 × 3000 px", "2048 × 2732 px" — true of the thing that opens.
+#
+# The ten plate-wall cards get no destination and that is measured rather than
+# assumed: six of their ten sources are 900px or smaller against a modal panel
+# of min(92vw, 1400px), so "see it larger" would display them UP TO 1.56x
+# upscaled — blurrier per pixel than the card it came from. A control making a
+# claim the file cannot keep is the invention rule applied to an affordance.
+# Here there is 7-11x of her own headroom behind every one of the five.
+LAMINAS = [
+    ('pelo-cobre', 'Untitled_Artwork 3.png'),
+    ('panuelo',    'Untitled_Artwork 7.png'),
+    ('modigliani', 'Untitled_Artwork 6.png'),
+    ('nube',       'Untitled_Artwork 9.png'),
+    ('ceguera',    'Untitled_Artwork 8.png'),
+]
+
+print('\nLAMINAS — the five drawings whole, for the card destinations')
+for _slug, _archivo in LAMINAS:
+    guardar(Image.open(os.path.join(ILUS, _archivo)).convert('RGB'),
+            'lamina-' + _slug, 2000, q=58)
 
 # The one anachronism, on its NATIVE cream. Measured: the sweater is #3060A0,
 # so on a cobalt ground it would sit at 1.06:1 and the black contour would drop
@@ -797,6 +840,10 @@ print('\nSRCSET — narrow variants for the plates that are worth it')
 _anchos = (640, 1024)
 for _f in sorted(os.listdir(OUT)):
     if not _f.endswith('.avif') or '-w' in _f:
+        continue
+    # A lamina is fetched once, on an explicit open, at one size. At 29-89 kB
+    # a narrow ladder adds more files to the repository than bytes it saves.
+    if _f.startswith('lamina-'):
         continue
     _ruta = os.path.join(OUT, _f)
     _im = Image.open(_ruta)
