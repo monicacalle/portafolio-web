@@ -3,7 +3,6 @@
 import { medidas } from "@/lib/edicion/medidas";
 import { CAPITULOS, type Capitulo } from "@/lib/edicion/capitulos";
 import { EstadoEdicion } from "./estado";
-import { Espina } from "./espina";
 import { Lienzo } from "./lienzo";
 import { Revelar } from "./revelar";
 import { Cabecera } from "./cabecera";
@@ -33,7 +32,6 @@ import {
 export function Edicion() {
   return (
     <EstadoEdicion>
-      <Espina />
       <div className="edicion">
         <Lienzo />
         <Revelar />

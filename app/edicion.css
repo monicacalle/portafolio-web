@@ -225,6 +225,41 @@ html:not([data-nav-theme]) {
   color: var(--edicion-nav-bg);
 }
 
+/*
+  §5 REACHES THE LANGUAGE SWITCHER TOO, and it did not.
+
+  "The global header and desktop sidebar must automatically switch foreground
+  colour according to the underlying content… Do not fake this with a fixed
+  white navigation." Every other element in this header reads
+  `--edicion-nav-fg`; `<LanguageSwitcher />` is the site's shared control and
+  was dropped in bare, so it kept `app/site.css`'s fixed palette — a 55% white
+  pill with rgba(36, 14, 6, 0.62) type, keyed to nothing. Over the dark world
+  that composites to roughly #4d3e36 on #918f8f, about 3.2:1 at 0.68rem, which
+  is both below AA and the literal "fixed white navigation" the section names.
+
+  It follows the theme here. The active chip keeps the oxblood accent, which is
+  the one structural colour that belongs to both worlds, and takes its label
+  from the ground rather than from a fixed paper token.
+*/
+.edicion-cabecera .lang {
+  border-color: color-mix(in srgb, var(--edicion-nav-fg) 22%, transparent);
+  background: color-mix(in srgb, var(--edicion-nav-fg) 8%, transparent);
+  transition: border-color 300ms var(--ease-salida), background-color 300ms var(--ease-salida);
+}
+.edicion-cabecera .lang__btn {
+  /* 70% of the foreground rather than `--edicion-nav-fg-suave`, which is 0.62
+     dark and 0.60 light: composited on the pill those measured 6.38:1 and
+     4.49:1, and 0.68rem is normal text, so the light world sat a hundredth
+     under AA. At 0.70 it is 7.73 and 6.19. */
+  color: color-mix(in srgb, var(--edicion-nav-fg) 70%, transparent);
+  transition: color 300ms var(--ease-salida), background-color var(--t-micro) var(--ease-salida);
+}
+.edicion-cabecera .lang__btn:hover { color: var(--edicion-nav-fg); }
+.edicion-cabecera .lang__btn.is-active {
+  background: var(--edicion-acento);
+  color: #f6f3ef;
+}
+
 /* Section 7. Each item begins translated up by its own height at opacity 0 and
    drops into place. The stagger is the reference's, measured: 500ms for the
    brand then 40ms per item. --i carries the index from the component.
@@ -1229,11 +1264,29 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
      §29's reveal and §30's dim, and its declaration is nine hundred lines
      below this one at the same specificity, so a plain `opacity: 0.7` here
      would simply lose and the constellation would have no active state at all.
-     The property is the one thing both can agree on. */
+     The property is the one thing both can agree on — and the filter below is
+     what keeps it out of `opacity`'s way entirely. */
+  /*
+    THE SNAP DIM IS A FILTER, NOT AN OPACITY, and the reason is that the cards
+    already have an opacity transition belonging to something else.
+
+    Every plate-wall card carries `.animate-show-media`, whose §28 reveal
+    transitions `opacity` over `var(--t-medio)` — 700ms — with
+    `.edicion-ficha.animate-show-media { transition-delay: 110ms }` on top.
+    Both rules are (0,1,0) and (0,2,0) and both sit seven hundred lines below
+    this block, so §31's 300ms snap fade lost the property outright: the
+    active-card change took 700ms after a 110ms wait, which is §98's "major
+    media reveal" band applied to what §98 classes as a simple fade.
+
+    Raising specificity here would have won the property and taken §28's
+    stagger with it, because one element cannot transition one property at two
+    durations for two reasons. `filter: opacity()` is a different property, so
+    the two coexist: the reveal keeps `opacity` and its 700ms, the snap keeps
+    `filter` and §31's 300ms, and neither has to know about the other.
+  */
   [data-carril] > * {
     --carril-opacidad: 0.7;
-    opacity: var(--carril-opacidad);
-    transition: opacity var(--t-menu) var(--ease-cine);
+    filter: opacity(var(--carril-opacidad));
   }
   [data-carril] > *[data-activo] { --carril-opacidad: 1; }
   /* Until the observer has run, nothing is dimmed: a carousel that arrives at
@@ -1991,16 +2044,35 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
     clip-path var(--t-medio) var(--ease-cine);
 }
 .animate-show-media {
+  /*
+    FOUR PROPERTIES, TWO DURATIONS, ONE LIST — and `filter` is here rather than
+    in §31's own block because a shorthand replaces the whole list.
+
+    §31 dims the inactive cards of a snap carousel, and every one of those
+    cards also carries this class. Doing it with `opacity` put the two in
+    direct conflict: this rule is (0,1,0) and sits seven hundred lines below
+    §31's, so it won the property and the snap fade inherited §28's 700ms and
+    110ms delay — §98's "major media reveal" band applied to what §98 classes
+    as a simple fade. Raising specificity over there would have won the
+    property back and taken §28's reveal with it.
+
+    So the snap dim is `filter: opacity()`, a different property, and its
+    duration rides in this list at §31's own 300ms. Elements that never carry a
+    carousel state never change their filter, so it costs them nothing.
+  */
   transition:
     opacity var(--t-medio) var(--ease-cine),
     transform var(--t-medio) var(--ease-cine),
-    clip-path var(--t-medio) var(--ease-cine);
+    clip-path var(--t-medio) var(--ease-cine),
+    filter var(--t-menu) var(--ease-cine);
 }
-/* Copy leads media by 80–140ms, per §28. */
+/* Copy leads media by 80–140ms, per §28. The fourth delay is 0: §28's stagger
+   belongs to the reveal, and a snap carousel that waits 110ms before
+   acknowledging the card you just swiped to is not staggered, it is slow. */
 .edicion-declaracion.animate-show-media { transition-delay: 0ms; }
 .edicion-ficha.animate-show-media,
 .edicion-video.animate-show-media,
-.edicion-plancha.animate-show-media { transition-delay: 110ms; }
+.edicion-plancha.animate-show-media { transition-delay: 110ms, 110ms, 110ms, 0s; }
 
 /* THE UNCONDITIONAL COPY OF THIS RULE KILLED THE WHOLE REVEAL.
 
@@ -3267,9 +3339,10 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
     position: static;
     width: 100%;
     transform: none;
-    /* The cloud's three-value opacity is gone; what is left is §31's active
-       state, which the rail publishes as `--carril-opacidad`. */
-    opacity: var(--carril-opacidad, 1);
+    /* The cloud's three-value opacity is gone, and §31's active state is a
+       filter on the rail's child rather than an opacity, so there is nothing
+       left here for this to compute. */
+    opacity: 1;
   }
   .edicion-carta[data-primaria] { width: 100%; }
 }
