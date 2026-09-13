@@ -106,7 +106,7 @@ export function Hero() {
               // LCP candidate rather than competing with one.
               fetchPriority="high"
               decoding="async"
-              {...medidas(p.src)}
+              {...medidas(p.src, `(max-width: 1023px) 100vw, ${Math.round(p.w)}vw`)}
             />
           ))}
 
@@ -122,7 +122,7 @@ export function Hero() {
             alt=""
             className="edicion-hero__anacronismo"
             decoding="async"
-            {...medidas("/edicion/ceguera-figura.avif")}
+            {...medidas("/edicion/ceguera-figura.avif", "(max-width: 1023px) 46vw, 27vw")}
           />
         </div>
 

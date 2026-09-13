@@ -463,3 +463,31 @@ for _src, _nombre, _caja in [
     # what a chapter ground is for, and it is still recognisably her screen.
     _c = _c.filter(ImageFilter.GaussianBlur(_c.width * 0.02))
     guardar(ImageEnhance.Brightness(_c).enhance(0.66), _nombre, 900, q=52)
+
+
+# ------------------------------------------------------------------ SRCSET
+# Section 91 asks for proper image loading. Intrinsic width/height answers the
+# reflow half; this answers the other half -- a 1680px plate was being
+# downloaded whole by a 390px phone.
+#
+# Two extra widths per plate, not a ladder: these are AVIF at delivery size
+# already, so the win is on the largest few files and a five-rung ladder would
+# be more bytes in the repo than it saves on the wire.
+print('\nSRCSET — narrow variants for the plates that are worth it')
+_anchos = (640, 1024)
+for _f in sorted(os.listdir(OUT)):
+    if not _f.endswith('.avif') or '-w' in _f:
+        continue
+    _ruta = os.path.join(OUT, _f)
+    _im = Image.open(_ruta)
+    # Only worth it where a phone would otherwise pull something much larger.
+    if _im.width <= 900:
+        continue
+    _base = _f[:-5]
+    for _w in _anchos:
+        if _w >= _im.width:
+            continue
+        _v = _im.resize((_w, round(_im.height * _w / _im.width)), Image.LANCZOS)
+        _p = os.path.join(OUT, f'{_base}-w{_w}.avif')
+        _v.save(_p, quality=54)
+        print(f'  {_base}-w{_w:<5} {_w}x{_v.height}  {os.path.getsize(_p)//1024} KB')
