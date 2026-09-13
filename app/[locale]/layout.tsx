@@ -4,16 +4,10 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { geist, newYork } from "../fonts";
 import "../globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
-import { Backdrop } from "@/components/site/backdrop";
-import { NegativeReveal } from "@/components/site/negative-reveal";
-import { Preloader } from "@/components/site/preloader";
-import { Cursor } from "@/components/site/cursor";
-import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SITE_URL, PERSON } from "@/lib/site";
-import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
+import { type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
-import { shareImage } from "@/lib/og/card";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -106,12 +100,7 @@ export default async function RootLayout({
       </head>
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
-          <Backdrop />
-          <Preloader />
-          <Cursor />
-          <ScrollProgress />
           <SmoothScroll>{children}</SmoothScroll>
-          <NegativeReveal />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,20 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Header } from "@/components/site/header";
-import { Hero } from "@/components/site/hero";
-import {
-  About,
-  ServicesMarquee,
-  Skills,
-  Curriculum,
-  Projects,
-  Contact,
-} from "@/components/site/sections";
 import { SITE_URL, PERSON } from "@/lib/site";
 import { OG_LOCALE } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/paths";
 import { type Locale } from "@/lib/i18n/config";
 import type { Metadata } from "next";
 import { shareImage } from "@/lib/og/card";
+import { Edicion } from "@/components/edicion/edicion";
 
 /*
   The homepage's whole openGraph block, not just the image.
@@ -121,16 +112,7 @@ export default async function Home({
         // JSON-LD is data, not executed script; this is Next's recommended pattern.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Header />
-      <main>
-        <Hero />
-        <About />
-        <ServicesMarquee />
-        <Skills />
-        <Curriculum />
-        <Projects />
-        <Contact />
-      </main>
+      <Edicion />
     </>
   );
 }

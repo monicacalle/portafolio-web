@@ -1,0 +1,630 @@
+/*
+  The Edition.
+
+  Geometry, colour and motion for the scroll-driven homepage. Numbers here come
+  from two places and nowhere else: the brief (shopify-script.md, cited by
+  section) and measurements taken off the live reference at 1680x1050
+  (_shared/engineering/referencia-shopify.md). Where the two disagreed the
+  measurement won.
+*/
+
+:root {
+  /* Section 2. The rail is 20% of a 1680px canvas = 336px exactly, which is why
+     the brief's "336-340px" range exists. Clamped so it stops being a rail
+     rather than shrinking into a strip on a small laptop. */
+  --edicion-lienzo: 1680px;
+  --edicion-rail: clamp(240px, 20vw, 336px);
+  --edicion-cabecera-h: 50px;
+
+  /* The dark world is WARM near-black, never blue-black. Her work is warm --
+     sage-olive, dusty rose, oxblood, burnt orange -- and a cool ground makes
+     every one of those grounds look dirty. */
+  --edicion-negro: #120f0e;
+  --edicion-negro-2: #1c1817;
+  --edicion-crema: #f4f2f0;
+  --edicion-tinta: #17100c;
+
+  /* The one structural accent: the oxblood of the Estudio Raiz mark, which is
+     also the ground of page 2 of her printed portfolio. It marks state -- the
+     active chapter, its leader, its numeral -- and never appears inside an
+     artwork's area. */
+  --edicion-acento: #4e0909;
+
+  /* Section 99. Ease-out cubic for interface, expo for anything cinematic. */
+  --ease-salida: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------- theming
+   Section 5. The header and rail take their foreground from the block under
+   them, set on <html> by the IntersectionObserver in estado.tsx. CSS reads it,
+   so a theme change re-paints without re-rendering a single component. */
+html[data-nav-theme="dark"] {
+  --edicion-nav-fg: #f6f3ef;
+  --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
+  --edicion-nav-velo: linear-gradient(to bottom, rgba(8, 6, 6, 0.55), transparent);
+}
+html[data-nav-theme="light"] {
+  --edicion-nav-fg: #17100c;
+  --edicion-nav-fg-suave: rgba(23, 16, 12, 0.6);
+  --edicion-nav-velo: linear-gradient(to bottom, rgba(244, 242, 240, 0.72), transparent);
+}
+/* Before the first sentinel fires, the page is the hero, and the hero is dark. */
+html:not([data-nav-theme]) {
+  --edicion-nav-fg: #f6f3ef;
+  --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
+  --edicion-nav-velo: none;
+}
+
+.edicion {
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  /* overflow-x rather than clip: the retablo's outer panels translate past the
+     right edge during the fold, and clip on the root would also clip the
+     position:fixed rail out of existence in Safari. */
+  overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------------- header */
+.edicion-cabecera {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: var(--edicion-cabecera-h);
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding-inline: clamp(0.9rem, 2vw, 1.5rem);
+  color: var(--edicion-nav-fg);
+  /* Section 8: never an obvious solid navbar. A very subtle gradient only,
+     transitioning over ~300ms as the theme underneath changes. */
+  background-image: var(--edicion-nav-velo);
+  transition: color 300ms var(--ease-salida), background-image 300ms var(--ease-salida);
+}
+
+.edicion-cabecera a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.edicion-cabecera__izq { flex: 0 0 auto; }
+.edicion-cabecera__centro {
+  flex: 1 1 auto;
+  display: flex;
+  gap: clamp(0.6rem, 1.6vw, 1.4rem);
+  justify-content: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+.edicion-cabecera__der {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.edicion-cabecera__marca { display: flex; align-items: baseline; gap: 0.5rem; }
+.edicion-cabecera__nombre { font-weight: 700; font-size: 0.9rem; letter-spacing: -0.01em; }
+.edicion-cabecera__edicion { font-size: 0.72rem; color: var(--edicion-nav-fg-suave); }
+
+.edicion-cabecera__salto {
+  opacity: 0.72;
+  transition: opacity 200ms var(--ease-salida);
+}
+.edicion-cabecera__salto:hover { opacity: 1; }
+
+.edicion-cabecera__cta {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.34rem 0.9rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  transition: background-color 220ms var(--ease-salida), color 220ms var(--ease-salida);
+}
+.edicion-cabecera__cta:hover {
+  background: var(--edicion-nav-fg);
+  color: var(--edicion-negro);
+}
+
+/* Section 7. Each item begins translated up by its own height at opacity 0 and
+   drops into place. The stagger is the reference's, measured: 500ms for the
+   brand then 40ms per item. --i carries the index from the component.
+
+   Gated on .motion, which the layout's inline script adds before paint ONLY
+   when reduced motion is off. So this is opt-in animation over a finished
+   header, not a hidden header waiting for JS -- if the script never runs, the
+   header is simply already in place. */
+.motion .edicion-cabecera [style*="--i"] {
+  animation: edicion-entrada 520ms var(--ease-salida) backwards;
+  animation-delay: calc(500ms + (var(--i) * 40ms));
+}
+
+@keyframes edicion-entrada {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------------ rail */
+.edicion-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: var(--edicion-rail);
+  height: 100svh;
+  display: none;
+  flex-direction: column;
+  /* Not space-between: that floats the chapter index in the vertical middle of
+     the rail, where it sits across whatever artwork is behind. The index is
+     pushed down to just above the legal line instead, matching the reference
+     and leaving the upper rail open. */
+  justify-content: flex-start;
+  padding: calc(var(--edicion-cabecera-h) + 0.9rem) 1.1rem 1.1rem;
+  color: var(--edicion-crema);
+  pointer-events: none;
+}
+/* Section 3: the rail is a desktop device. Below the large breakpoint the main
+   column takes the full width and navigation moves into the header. */
+@media (min-width: 1024px) {
+  .edicion-rail { display: flex; }
+}
+.edicion-rail a { pointer-events: auto; }
+
+.edicion-rail__marca {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+/* The accent syllable, the way the reference italicises the "ai" of
+   RenAIssance. Which word it falls on differs by language, so the split lives
+   in the message file and this only styles the middle line. */
+.edicion-rail__marca-2 { font-style: italic; font-family: var(--font-serif); }
+
+.edicion-rail__indice { margin-top: auto; }
+.edicion-rail__indice ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+.edicion-rail__indice a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.055rem 0;
+  opacity: 0.58;
+  transition: opacity 240ms var(--ease-salida);
+}
+.edicion-rail__indice a:hover { opacity: 0.9; }
+.edicion-rail__indice li[data-activo] a { opacity: 1; }
+
+/* The dotted leader: a table-of-contents device off a printed book. Only the
+   active chapter draws one, so the rail has exactly one moving part. */
+.edicion-rail__guia {
+  border-bottom: 1px dotted currentColor;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: opacity 260ms var(--ease-salida), transform 320ms var(--ease-salida);
+}
+.edicion-rail__indice li[data-activo] .edicion-rail__guia {
+  opacity: 0.5;
+  transform: scaleX(1);
+}
+.edicion-rail__numeral {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+.edicion-rail__indice li[data-activo] .edicion-rail__numeral { color: var(--edicion-acento); opacity: 1; }
+
+.edicion-rail__pie { margin-top: 1.1rem; font-size: 0.62rem; opacity: 0.45; line-height: 1.4; }
+
+/* --------------------------------------------------------------- chapters
+   Section 2: content is pushed into the right-hand 80%. The reference does this
+   with flex justify-end on the section root; same mechanism here so the rail
+   never overlaps a title. */
+.edicion-capitulo {
+  position: relative;
+  min-height: var(--cap-altura);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.edicion-capitulo > * {
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .edicion-capitulo > * {
+    width: calc(100% - var(--edicion-rail));
+  }
+}
+
+.edicion-capitulo__intro {
+  position: relative;
+  /* Section 85: ~140svh desktop, ~70svh mobile. Not a scaled-down desktop. */
+  min-height: 70svh;
+  display: flex;
+  align-items: center;
+  overflow: clip;
+  background: var(--cap-fondo);
+}
+@media (min-width: 1024px) {
+  .edicion-capitulo__intro { min-height: 140svh; }
+}
+
+.edicion-capitulo__escena { position: absolute; inset: 0; }
+.edicion-capitulo__escena img { width: 100%; height: 100%; object-fit: cover; }
+
+.edicion-capitulo__portada {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1.2rem, 4vw, 3.5rem);
+  max-width: 46ch;
+}
+
+/* Section 4: oversized and architectural. Little text occupying a very large
+   physical area. The six titles are 6-11 characters in both locales, so the
+   measure barely shifts between ES and EN at this size. */
+.edicion-capitulo__titulo {
+  margin: 0;
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 800;
+  font-size: clamp(3.2rem, 13vw, 12rem);
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.edicion-capitulo__entradilla {
+  margin: clamp(0.8rem, 2vw, 1.6rem) 0 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.1rem, 2.4vw, 2rem);
+  line-height: 1.24;
+  max-width: 22ch;
+  opacity: 0.92;
+}
+
+/* ------------------------------------------------------- editorial bodies
+   Section 78: do NOT over-animate the white content. These are reading areas.
+   The uneven grid is the whole trick -- a row mixes widths so it never reads as
+   a CMS listing. */
+.edicion-capitulo__cuerpo {
+  position: relative;
+  background: var(--edicion-crema);
+  color: var(--edicion-tinta);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(0.9rem, 2vw, 2rem);
+  padding: clamp(1.4rem, 5vw, 5rem) clamp(1.2rem, 4vw, 3.5rem);
+  align-content: start;
+}
+
+.edicion-ficha { grid-column: span 6; min-width: 0; }
+@media (min-width: 768px) {
+  .edicion-ficha[data-ancho="completo"]   { grid-column: span 6; }
+  .edicion-ficha[data-ancho="dos-tercios"]{ grid-column: span 4; }
+  .edicion-ficha[data-ancho="medio"]      { grid-column: span 3; }
+  .edicion-ficha[data-ancho="tercio"]     { grid-column: span 2; }
+}
+
+.edicion-ficha img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.edicion-ficha h3 {
+  margin: 0.8rem 0 0.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.edicion-ficha p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72);
+  max-width: 46ch;
+}
+
+/* ------------------------------------------------------------------ hero */
+.edicion-hero {
+  position: relative;
+  /* Section 13: 150svh, so the retablo can hold, fold, and hand over. */
+  min-height: 150svh;
+  background: var(--edicion-negro);
+}
+.edicion-hero__pegajoso {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+}
+.edicion-hero__retablo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------- reduced motion
+   Section 87. Nothing here is decorative-only: with motion off the page must
+   still be the whole page, just still. So transitions collapse rather than
+   elements disappearing. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-cabecera,
+  .edicion-rail__guia,
+  .edicion-rail__indice a,
+  .edicion-cabecera__salto,
+  .edicion-cabecera__cta {
+    transition-duration: 1ms;
+  }
+  .edicion-rail__guia { opacity: 0.5; transform: none; }
+}
+
+/* ------------------------------------------------------------ the retablo
+   Panels close on one scroll value, --p, written by hero.tsx. The fold runs
+   0.35 -> 0.90 of the hero's own length (brief section 17), so there is a beat
+   of stillness at the top to read the title and a beat at the end before the
+   rail takes over.
+
+   --f is the fold's own 0->1, clamped out of --p. Every panel reads the same
+   --f, which is what keeps the wings synchronised without a timeline. */
+.edicion-hero__escena {
+  position: absolute;
+  inset: 0;
+  /* The hinge only reads as a hinge in perspective. Without this the panels
+     scale horizontally instead of rotating, which is the flat-slat failure. */
+  perspective: 2400px;
+  perspective-origin: 38% 50%;
+  --f: clamp(0, calc((var(--p, 0) - 0.35) / 0.55), 1);
+}
+
+.edicion-hero__panel {
+  position: absolute;
+  object-fit: cover;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  /* Wings hinge on their outer edge, the centre stays put — the geometry of a
+     real polyptych closing. */
+  transform-origin: var(--eje, center) center;
+  will-change: transform;
+}
+.edicion-hero__panel[data-eje="left"]  { --eje: left;  --dir: 1; }
+.edicion-hero__panel[data-eje="right"] { --eje: right; --dir: -1; }
+.edicion-hero__panel[data-eje="center"]{ --eje: center; --dir: 0; }
+
+/* The whole composition also compresses leftward as it closes, ending where
+   the rail begins. Two transforms, one value. */
+.motion .edicion-hero__panel {
+  transform:
+    translateX(calc(var(--f) * -18%))
+    rotateY(calc(var(--f) * var(--dir, 0) * 82deg))
+    scale(calc(1 - var(--f) * 0.28));
+}
+
+.edicion-hero__anacronismo {
+  position: absolute;
+  left: 59.8%;
+  /* Dropped so her head clears the Modigliani's face. Two faces at the same
+     height and the same scale muddle each other, and she is meant to read as
+     standing in front of the retablo, not hung inside it. */
+  bottom: -15%;
+  width: 27%;
+  height: auto;
+  z-index: 3;
+  will-change: transform;
+}
+/* She walks on while the panels close, and fades only at the very end. */
+.motion .edicion-hero__anacronismo {
+  transform: translateX(calc(var(--f) * 9%)) translateY(calc(var(--f) * 6%));
+  opacity: calc(1 - clamp(0, calc((var(--f) - 0.72) / 0.28), 1));
+}
+
+/* ------------------------------------------------------------- hero frame */
+.edicion-hero__marco {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(30rem, 74vw);
+  padding: clamp(1rem, 2.2vw, 1.9rem);
+  /* A hairline, not a card. It sits ACROSS the panel joins, which is what makes
+     the retablo read as one object rather than four pictures. */
+  border: 1px solid rgba(246, 243, 239, 0.42);
+  color: #f6f3ef;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.4);
+}
+.motion .edicion-hero__marco {
+  opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.28) / 0.24), 1));
+}
+
+.edicion-hero__titulo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 800;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+.edicion-hero__acento { font-family: var(--font-serif, serif); font-style: italic; font-weight: 400; }
+
+.edicion-hero__pie {
+  margin: clamp(0.9rem, 2vw, 1.6rem) 0 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  line-height: 1.3;
+  /* No max-width: the frame is the measure. A ch-based cap wider than the
+     frame lets the text spill past the column that was cleared for it. */
+}
+
+.edicion-hero__indice {
+  list-style: none;
+  margin: clamp(0.9rem, 2vw, 1.5rem) 0 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.1vw, 0.98rem);
+  line-height: 1.28;
+}
+.edicion-hero__indice li { display: grid; grid-template-columns: 1fr auto; align-items: baseline; }
+.edicion-hero__indice a { color: inherit; text-decoration: none; opacity: 0.92; }
+.edicion-hero__indice a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.edicion-hero__indice span { font-size: 0.68em; opacity: 0.6; font-variant-numeric: tabular-nums; }
+
+/* With motion off, the retablo is simply the retablo: open, still, complete.
+   Nothing is hidden and nothing waits for a scroll value that never arrives. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-hero { min-height: 100svh; }
+  .edicion-hero__panel,
+  .edicion-hero__anacronismo,
+  .edicion-hero__marco { transform: none; opacity: 1; }
+  .edicion-hero__marco { transform: translate(-50%, -50%); }
+}
+
+/* ------------------------------------------------------------- chapter VI */
+.edicion-oficio {
+  grid-column: span 6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: clamp(1.2rem, 3vw, 3rem);
+}
+.edicion-oficio h3 {
+  margin: 0 0 0.9rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.edicion-oficio ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.1rem; }
+.edicion-oficio li { display: grid; gap: 0.12rem; }
+.edicion-oficio__cuando {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+}
+.edicion-oficio__que { font-weight: 700; font-size: 0.94rem; line-height: 1.25; }
+.edicion-oficio__donde { font-size: 0.8rem; opacity: 0.66; line-height: 1.35; }
+
+.edicion-oficio__etiquetas {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+}
+.edicion-oficio__etiquetas li {
+  border: 1px solid rgba(23, 16, 12, 0.2);
+  border-radius: 999px;
+  padding: 0.2rem 0.66rem;
+  font-size: 0.76rem;
+}
+
+.edicion-oficio__cierre {
+  grid-column: span 6;
+  margin-top: clamp(2rem, 6vw, 5rem);
+  display: grid;
+  gap: 1.2rem;
+}
+.edicion-oficio__lead {
+  margin: 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.3rem, 3.4vw, 2.6rem);
+  line-height: 1.18;
+  max-width: 24ch;
+}
+.edicion-oficio__acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.edicion-oficio__acciones a {
+  border: 1px solid rgba(23, 16, 12, 0.28);
+  border-radius: 999px;
+  padding: 0.44rem 1.1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 200ms var(--ease-salida), color 200ms var(--ease-salida);
+}
+.edicion-oficio__acciones a:hover {
+  background: var(--edicion-acento);
+  border-color: var(--edicion-acento);
+  color: var(--edicion-crema);
+}
+
+/* ---------------------------------------------- hero composition, desktop
+   The first render put the title frame dead centre, the way the reference
+   does. That works for Shopify because their hero is two figures REACHING and
+   the gap between their hands is the composition's centre. Ours is a retablo,
+   and a retablo's centre is its most important panel — here, her strongest
+   portrait. Centring the frame put the title across that face.
+
+   So the frame is not a centrepiece competing with the art; it is a wall label
+   beside it. The retablo moves into the right-hand column and the label sits in
+   the dark ground between the rail and the art, which is also the only region
+   of the hero guaranteed to stay quiet at every scroll position. */
+@media (min-width: 1024px) {
+  .edicion-hero__escena {
+    /* A SCALED COPY of the 1680x1050 composition, not a reflow of it.
+
+       Constraining left/right instead re-proportions every panel box while the
+       images inside still object-fit: cover, so the wings got silently cropped
+       — which breaks this project's one rule about her illustrations. Fixing
+       the stage's aspect ratio keeps each panel box exactly proportional to its
+       source file, so cover crops nothing and the geometry in produccion/
+       edicion.py stays the single source of truth for the layout.
+
+       62% leaves the label's column (rail + gutter + 19rem ≈ 664px) clear. */
+    left: auto;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 64%;
+    aspect-ratio: 1680 / 1050;
+    height: auto;
+  }
+  .edicion-hero__marco {
+    left: calc(var(--edicion-rail) + clamp(1rem, 2vw, 2.2rem));
+    top: 50%;
+    transform: translateY(-50%);
+    /* Narrow on purpose: the index's right-aligned numerals were landing on the
+       white wing at 19rem, and white numerals on a white ground are invisible
+       rather than merely low-contrast. */
+    width: min(14rem, 21vw);
+    /* No border on desktop: against flat near-black a hairline box reads as a
+       dialog. The rule under the wordmark does the framing instead. */
+    border: none;
+    padding: 0;
+  }
+  .motion .edicion-hero__marco { transform: translateY(-50%); }
+}
+
+/* The rail sits over her artwork, and four of the five plates are light. White
+   text on a white ground is not a contrast bug to tune, it is unreadable — so
+   the rail carries its own ground rather than depending on what is behind it.
+   A gradient, not a panel: it has to read as part of the art direction, which
+   is what brief section 18 asks for. */
+.edicion-rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to right,
+    var(--edicion-negro) 0%,
+    var(--edicion-negro) 62%,
+    color-mix(in srgb, var(--edicion-negro) 72%, transparent) 86%,
+    transparent 100%
+  );
+}
+
+/* The numerals were drifting away from their titles because the dotted leader
+   is the flexible column and it collapses to nothing until a chapter is active.
+   Giving the leader a minimum keeps the three columns in a stable rhythm. */
+.edicion-rail__indice a { grid-template-columns: auto minmax(1.2rem, 1fr) 1.4rem; }
+.edicion-rail__numeral { text-align: right; }

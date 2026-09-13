@@ -30,5 +30,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "_comment_exclude": "tmp/ and produccion/ are gitignored asset-prep and prototype scratch, not the site. They were being type-checked because include is a bare **/*.ts glob, so a throwaway prototype dropped in tmp/ failed `pnpm build` for the whole app.",
+  "exclude": ["node_modules", "tmp", "produccion"]
 }
