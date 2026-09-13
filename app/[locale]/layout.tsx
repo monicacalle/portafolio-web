@@ -85,16 +85,24 @@ export default async function RootLayout({
             mismatch, an observer that never fires -- left the whole page blank.
             A comment claimed a .no-js fallback; nothing set it.
 
-            The default HTML is now the finished page. This adds the class that
+            The default HTML is now the finished page. This adds the flag that
             opts INTO animation, and only when motion is wanted. It has to be
             inline in <head> rather than an effect: an effect runs after paint,
             so it flashes, and it does not run at all in the hydration-failure
-            case this exists to survive. */}
+            case this exists to survive.
+
+            IT SETS A DATA ATTRIBUTE, NOT A CLASS. React owns className on this
+            <html> because the layout renders one, so it RESET the element on
+            hydration and stripped the class about 10ms after paint, on every
+            load. Every motion-gated rule in the stylesheets was dead and the
+            desktop page shipped permanently in its reduced-motion
+            presentation. React does not render a data-motion prop, so the
+            attribute survives. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
               "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
-              "document.documentElement.classList.add('motion')}catch(e){}",
+              "document.documentElement.dataset.motion='1'}catch(e){}",
           }}
         />
       </head>

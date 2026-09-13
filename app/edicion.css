@@ -146,9 +146,11 @@ html:not([data-nav-theme]) {
    when reduced motion is off. So this is opt-in animation over a finished
    header, not a hidden header waiting for JS -- if the script never runs, the
    header is simply already in place. */
-.motion .edicion-cabecera [style*="--i"] {
-  animation: edicion-entrada 520ms var(--ease-salida) backwards;
-  animation-delay: calc(500ms + (var(--i) * 40ms));
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-cabecera [style*="--i"] {
+    animation: edicion-entrada 520ms var(--ease-salida) backwards;
+    animation-delay: calc(500ms + (var(--i) * 40ms));
+  }
 }
 
 @keyframes edicion-entrada {
@@ -455,11 +457,13 @@ html:not([data-nav-theme]) {
 
 /* The whole composition also compresses leftward as it closes, ending where
    the rail begins. Two transforms, one value. */
-.motion .edicion-hero__panel {
-  transform:
-    translateX(calc(var(--f) * -18%))
-    rotateY(calc(var(--f) * var(--dir, 0) * 82deg))
-    scale(calc(1 - var(--f) * 0.28));
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__panel {
+    transform:
+      translateX(calc(var(--f) * -18%))
+      rotateY(calc(var(--f) * var(--dir, 0) * 82deg))
+      scale(calc(1 - var(--f) * 0.28));
+  }
 }
 
 .edicion-hero__anacronismo {
@@ -475,9 +479,11 @@ html:not([data-nav-theme]) {
   will-change: transform;
 }
 /* She walks on while the panels close, and fades only at the very end. */
-.motion .edicion-hero__anacronismo {
-  transform: translateX(calc(var(--f) * 9%)) translateY(calc(var(--f) * 6%));
-  opacity: calc(1 - clamp(0, calc((var(--f) - 0.72) / 0.28), 1));
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__anacronismo {
+    transform: translateX(calc(var(--f) * 9%)) translateY(calc(var(--f) * 6%));
+    opacity: calc(1 - clamp(0, calc((var(--f) - 0.72) / 0.28), 1));
+  }
 }
 
 /* ------------------------------------------------------------- hero frame */
@@ -495,8 +501,10 @@ html:not([data-nav-theme]) {
   color: #f6f3ef;
   text-shadow: 0 1px 24px rgba(0, 0, 0, 0.4);
 }
-.motion .edicion-hero__marco {
-  opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.28) / 0.24), 1));
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__marco {
+    opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.28) / 0.24), 1));
+  }
 }
 
 .edicion-hero__titulo {
@@ -659,7 +667,7 @@ html:not([data-nav-theme]) {
     border: none;
     padding: 0;
   }
-  .motion .edicion-hero__marco { transform: translateY(-50%); }
+  .edicion-hero__marco { transform: translateY(-50%); }
 }
 
 /* The rail sits over her artwork, and four of the five plates are light. White
@@ -849,7 +857,7 @@ html:not([data-nav-theme]) {
     border: none;
     padding: 0;
   }
-  .motion .edicion-hero__marco { transform: none; }
+  .edicion-hero__marco { transform: none; }
   /* Six chapters listed under the label duplicate the menu two taps away and
      push the standfirst off a 844px screen. */
   .edicion-hero__indice { display: none; }
@@ -1075,8 +1083,10 @@ html:not([data-nav-theme]) {
   overflow: hidden;
 }
 .edicion-modal__medio { width: 100%; height: 100%; display: block; }
-.motion .edicion-modal[open] .edicion-modal__panel {
-  animation: edicion-modal-entra 320ms var(--ease-salida) both;
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-modal[open] .edicion-modal__panel {
+    animation: edicion-modal-entra 320ms var(--ease-salida) both;
+  }
 }
 @keyframes edicion-modal-entra {
   from { opacity: 0; transform: scale(0.97); }
@@ -1153,8 +1163,10 @@ html:not([data-nav-theme]) {
 
 /* The construction fades as the retablo folds away, so it never competes with
    the chapter that follows. */
-.motion .edicion-geometria {
-  opacity: calc(0.3 * (1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.28), 1)));
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-geometria {
+    opacity: calc(0.3 * (1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.28), 1)));
+  }
 }
 
 /* Motion off: the construction is simply finished and still, at a lower
@@ -1244,7 +1256,7 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
 
 /* ===================================================================== §28
    The shared media reveal. Section 28 names the class and gives every value. */
-.animate-show-media {
+.animate-show-media[data-armado]:not([data-visible]) {
   opacity: 0;
   transform: translateY(24px) scale(0.985);
   clip-path: inset(3% 0 3% 0);
@@ -1253,10 +1265,11 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
     transform var(--t-medio) var(--ease-cine),
     clip-path var(--t-medio) var(--ease-cine);
 }
-.animate-show-media[data-visible] {
-  opacity: 1;
-  transform: none;
-  clip-path: none;
+.animate-show-media {
+  transition:
+    opacity var(--t-medio) var(--ease-cine),
+    transform var(--t-medio) var(--ease-cine),
+    clip-path var(--t-medio) var(--ease-cine);
 }
 /* Copy leads media by 80–140ms, per §28. */
 .edicion-declaracion.animate-show-media { transition-delay: 0ms; }
@@ -1271,7 +1284,7 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
    Two separate rules: a media query cannot sit inside a selector list, and
    writing it that way silently voids the whole block -- which would have left
    every card at opacity 0 for anyone with reduced motion on. */
-html:not(.motion) .animate-show-media {
+.animate-show-media {
   opacity: 1;
   transform: none;
   clip-path: none;
@@ -1515,7 +1528,7 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    carry it.
 
    Entrance per the section: opacity up, scale 0.96 -> 1, groups arriving on
-   40-80ms offsets, movement quiet. Gated on .motion so it is simply present
+   40-80ms offsets, movement quiet. Gated on a media query so it is simply present
    with JS broken or motion reduced. */
 /* The label column and the retablo are sized against each other: the title is
    now artwork-scale, so the column has to carry it AND still clear the art.
@@ -1528,13 +1541,21 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   line-height: 0.92;
   letter-spacing: -0.035em;
 }
-.motion .edicion-hero__titulo > span {
-  animation: edicion-titulo-entra 620ms var(--ease-cine) backwards;
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span {
+    animation: edicion-titulo-entra 620ms var(--ease-cine) backwards;
+  }
 }
 /* 40-80ms offsets between groups. */
-.motion .edicion-hero__titulo > span:nth-child(1) { animation-delay: 620ms; }
-.motion .edicion-hero__titulo > span:nth-child(2) { animation-delay: 680ms; }
-.motion .edicion-hero__titulo > span:nth-child(3) { animation-delay: 740ms; }
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(1) { animation-delay: 620ms; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(2) { animation-delay: 680ms; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(3) { animation-delay: 740ms; }
+}
 
 @keyframes edicion-titulo-entra {
   from { opacity: 0; transform: scale(0.96); }

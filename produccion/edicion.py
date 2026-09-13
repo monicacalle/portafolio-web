@@ -267,7 +267,13 @@ planchas()
 PLACAS_CAP = [
     ('images/mockupraiz.png',        'cap-marca',    1680),
     ('images/portafolioabierto.png', 'cap-impreso',  1680),
-    ('images/iphone.webp',           'cap-producto', 1280),
+    # NOT images/iphone.webp. That file is a screenshot of Apple's iPhone
+    # "Titanium" marketing page -- Apple logo, Store/Mac/iPhone/Support nav and
+    # Apple's own campaign typography -- inherited from the old site. It was
+    # chapter IV's ground on every phone, behind the live scene at 0.18, and
+    # with WebGL off. A designer's portfolio published under her own name
+    # cannot present another company's trademark and marketing artwork as its
+    # own chapter ground. Chapter IV's plate is cut from her Vibe work below.
 ]
 
 print('\nPLACAS DE CAPITULO — chapter opening plates')
@@ -419,3 +425,19 @@ _port = Image.open(os.path.join(RAIZ, 'public', 'images', 'portafolioabierto.png
 guardar(_port.convert('RGB'), 'plano-v-fg', 1400, q=56)
 _plak = Image.open(os.path.join(D, '02-campana/plakatstil/POSTER_ANVERSO.png'))
 guardar(_fondo_escena(_plak, 1400, 26, 0.5), 'plano-v-bg', 1400, q=48)
+
+
+# Chapter IV's ground, from her own Vibe deck rather than Apple's website.
+#
+# Blurred and darkened hard on purpose. It is an ENVIRONMENT, not a screen to
+# read: section 46's own failure here was a 141px title landing on legible UI,
+# and this build's rule is that no chapter plate may be lettering. At this blur
+# her interface reads as colour and structure, which is what a ground is for.
+_vibemock = Image.open(os.path.join(
+    D, '04-apps/vibe-figma-2x/iPhone 15 Pro - White (1).png')).convert('RGB')
+_amp = Image.new('RGB', (1280, 796), (20, 16, 25))
+_esc = min(1280 / _vibemock.width, 796 / _vibemock.height) * 2.6
+_big = _vibemock.resize((round(_vibemock.width * _esc), round(_vibemock.height * _esc)), Image.LANCZOS)
+_amp.paste(_big, ((1280 - _big.width) // 2, (796 - _big.height) // 2))
+guardar(ImageEnhance.Brightness(_amp.filter(ImageFilter.GaussianBlur(18))).enhance(0.62),
+        'cap-producto', 1280, q=58)

@@ -40,7 +40,22 @@ export function Revelar() {
       { rootMargin: "0px 0px -12% 0px", threshold: 0.08 },
     );
 
-    objetivos.forEach((o) => io.observe(o));
+    /*
+      SELF-ARMING. The hidden start state is applied here, by JS, rather than
+      declared in CSS behind a global flag.
+
+      The flag used to be `.motion` on <html>, set by an inline script before
+      paint -- and React owns <html> because the layout renders it, so
+      hydration RESET the element and stripped the flag about 10ms later on
+      every load. A data attribute is stripped the same way. Arming each target
+      individually means there is no global flag to lose: if this effect never
+      runs, nothing is ever hidden, which is the progressive-enhancement
+      contract the original class was reaching for and failing to keep.
+    */
+    objetivos.forEach((o) => {
+      o.dataset.armado = "";
+      io.observe(o);
+    });
     return () => io.disconnect();
   }, []);
 

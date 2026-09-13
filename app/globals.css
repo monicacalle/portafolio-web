@@ -169,19 +169,16 @@ img {
    hydration or an observer that never fired left every revealed element
    invisible for good. The comment here claimed a .no-js fallback and nothing
    in the repository ever set that class. */
-html.motion [data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.9s var(--ease-out-expo),
-    transform 0.9s var(--ease-out-expo);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
-}
-
-html.motion [data-reveal].in-view {
-  opacity: 1;
-  transform: none;
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not(.in-view) {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
 }
 
 /* The gate above is read once, before paint. A visitor who turns reduced
@@ -195,7 +192,7 @@ html.motion [data-reveal].in-view {
    Note this sets the FINISHED state, not display: none: reduced motion means
    less movement, not less content. */
 @media (prefers-reduced-motion: reduce) {
-  html.motion [data-reveal] {
+  [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
