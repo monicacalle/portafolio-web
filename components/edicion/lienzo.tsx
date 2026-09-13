@@ -307,20 +307,50 @@ function FondoEscena({ color, vis }: { color: string; vis: number }) {
  * string, because device sniffing is wrong about exactly the machines that
  * matter.
  */
+/** Frames per window. ~0.75s at 60fps: long enough to average out a texture
+ *  upload, short enough to react inside one chapter. */
+const MUESTRA = 45;
+/** Over ~22ms per frame is a machine that will not hold 60fps here. */
+const LENTO = 0.022;
+/** And under ~13ms is one that clearly will. The gap between the two is the
+ *  hysteresis: a machine measuring between them keeps whatever it has, so the
+ *  density cannot oscillate mid-scroll, which is the failure that makes an
+ *  adaptive setting worse than a fixed one. */
+const RAPIDO = 0.013;
+
 function DprAdaptativo() {
   const setDpr = useThree((s) => s.setDpr);
   const muestras = useRef<number[]>([]);
-  const decidido = useRef(false);
+  /* null until the first verdict; after that, the density in force. */
+  const actual = useRef<number | null>(null);
 
   useFrame((_, delta) => {
-    if (decidido.current) return;
     muestras.current.push(delta);
-    if (muestras.current.length < 45) return;
+    if (muestras.current.length < MUESTRA) return;
     const media =
       muestras.current.reduce((a, b) => a + b, 0) / muestras.current.length;
-    // Over ~22ms per frame is a machine that will not hold 60fps here.
-    setDpr(media > 0.022 ? 1 : Math.min(window.devicePixelRatio, 1.75));
-    decidido.current = true;
+    muestras.current = [];
+
+    /*
+      IT KEEPS MEASURING, and the first version did not.
+
+      One 45-frame sample decided the session, and the first 45 frames of this
+      canvas are the worst 45 it will ever run: the textures are still
+      uploading. A machine busy at that moment — a cold tab, a background
+      export, another window compositing — was pinned at DPR 1 until reload,
+      which is a permanently softer page for a transient reason. And a machine
+      that got a good verdict and then genuinely struggled had no way back.
+    */
+    const alto = Math.min(window.devicePixelRatio, 1.75);
+    let siguiente = actual.current;
+    if (media > LENTO) siguiente = 1;
+    else if (media < RAPIDO) siguiente = alto;
+    else if (siguiente === null) siguiente = alto;
+
+    if (siguiente !== null && siguiente !== actual.current) {
+      actual.current = siguiente;
+      setDpr(siguiente);
+    }
   });
 
   return null;

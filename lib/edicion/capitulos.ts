@@ -59,6 +59,9 @@ export const CAPITULOS = [
     // the retablo's centre panel, so the page opens without a colour change.
     fondo: "#888866",
     placa: "/cine/pelo-cobre.avif",
+    // Already 1150x3229, taller than 9:16. It fills a phone as it is, so §81's
+    // portrait fallback is the same file.
+    placaRetrato: undefined,
     // Chapter I's body is the constellation (§29), which carries its own five
     // cards with their titles and dimensions. No plate wall after it.
     obras: [],
@@ -71,6 +74,7 @@ export const CAPITULOS = [
     // Estudio Raíz oxblood. Also the page's one structural accent.
     fondo: "#4E0909",
     placa: "/edicion/cap-marca.avif",
+    placaRetrato: "/edicion/cap-marca-retrato.avif",
     // Three marks, then two of them applied. The fourth card used to be the
     // open printed portfolio, which is chapter V's subject sitting unlabelled
     // in the brand chapter.
@@ -92,6 +96,7 @@ export const CAPITULOS = [
     // vanish and the black contour would drop from 18.4:1 to 3.5:1.
     fondo: "#1B2C47",
     placa: "/cine/a3-loreal.avif",
+    placaRetrato: "/edicion/cap-campana-retrato.avif",
     // Two, not the four the dead map in edicion.tsx carried. That map listed
     // Nespresso and an illustration plate for this chapter and never rendered
     // them, because chapter III's body never reached the renderer holding it;
@@ -110,6 +115,7 @@ export const CAPITULOS = [
     alturaSvh: 340,
     tema: "oscuro",
     placa: "/edicion/cap-producto.avif",
+    placaRetrato: "/edicion/cap-producto-retrato.avif",
     // Chapter IV's body is §42's sequence and §43's two planchas, each of which
     // names its own screen. A plate wall of the same two apps after them would
     // be the third showing.
@@ -131,6 +137,7 @@ export const CAPITULOS = [
     // Plakatstil burnt orange, from her Nespresso homage.
     fondo: "#6B2F14",
     placa: "/edicion/cap-impreso.avif",
+    placaRetrato: "/edicion/cap-impreso-retrato.avif",
     obras: [
       { clave: "portafolio", src: "/trabajo/t-libro.avif", ancho: "dos-tercios" },
       { clave: "lobo", src: "/trabajo/t-lobo.avif", ancho: "tercio" },
@@ -156,6 +163,7 @@ export const CAPITULOS = [
     // decides truthiness from this field, because `escena={<Escena/>}` is an
     // object and therefore truthy even when the component returns null.
     placa: undefined,
+    placaRetrato: undefined,
     obras: [],
   },
 ] as const;
@@ -171,6 +179,16 @@ export const CAPITULOS = [
  *               that alternation is the page's pulse (brief section 77).
  * - `fondo`     The flat ground, sampled from her own files, not chosen at a desk.
  * - `placa`     The chapter intro's plate. Absent means no cinematic ground.
+ * - `placaRetrato` §81's mobile fallback: "desktop: landscape fallback.
+ *               mobile: PORTRAIT fallback." One landscape plate served both
+ *               orientations and `object-fit: scale-down` letterboxed it, so a
+ *               390px phone got a horizontal band of imagery in the chapter's
+ *               ground with the 141px title straddling its lower edge — which
+ *               is §81's own "title legibility" clause failing on the plate
+ *               that exists to guarantee it. Cut by produccion/edicion.py,
+ *               which chooses per plate between extending its field and
+ *               reframing it, because one of those is wrong for a photograph
+ *               and the other is wrong for her own artwork.
  * - `obras`     The editorial plate wall under the body, with §103's layout
  *               field on each and the message key its caption lives under.
  *               Empty where the chapter's body is a bespoke composition that

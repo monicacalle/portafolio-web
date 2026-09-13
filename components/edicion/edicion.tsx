@@ -89,9 +89,25 @@ export function Edicion() {
 */
 function placaDe(capitulo: Capitulo) {
   const src = capitulo.placa;
-  return src ? (
-    <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />
-  ) : undefined;
+  if (!src) return undefined;
+  const retrato = capitulo.placaRetrato;
+  const img = <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />;
+  if (!retrato) return img;
+  /*
+    §81's two fallbacks, chosen by the browser rather than by JavaScript.
+
+    `<picture>` with an orientation media query is the art-direction mechanism:
+    it is the only way to serve a different CROP per orientation, which is what
+    the section asks for and what `srcset` alone cannot do — srcset picks a size
+    of the same image, not a different framing. It needs no script, so a phone
+    with JS off gets the portrait plate too.
+  */
+  return (
+    <picture>
+      <source media="(orientation: portrait)" srcSet={retrato} />
+      {img}
+    </picture>
+  );
 }
 
 /** The light editorial body under each chapter intro. */

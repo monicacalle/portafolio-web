@@ -117,7 +117,7 @@ export function Capitulo({
       }
     >
       <div className="edicion-capitulo__intro">
-        <MarcaTema tema={capitulo.tema} capitulo={capitulo.anclaje} />
+        <MarcaTema tema={capitulo.tema} capitulo={capitulo.anclaje} subfase="intro" />
         {escena ? <div className="edicion-capitulo__escena">{escena}</div> : null}
 
         {/* §1 step 6 and §23's 300ms: the chapter title enters rather than
@@ -146,7 +146,7 @@ export function Capitulo({
         >
           {/* The body always turns light. That alternation is the page's pulse
               (brief 77), and it is what makes a 780svh chapter readable. */}
-          <MarcaTema tema="claro" capitulo={capitulo.anclaje} />
+          <MarcaTema tema="claro" capitulo={capitulo.anclaje} subfase="editorial" />
           {children}
         </div>
       ) : null}

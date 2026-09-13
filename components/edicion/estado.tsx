@@ -104,6 +104,7 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
       const linea = window.innerHeight * LINEA_FRACCION;
       let tema: string | null = null;
       let cap: string | null = null;
+      let sub: string | null = null;
       for (const m of marcas) {
         const top = m.getBoundingClientRect().top;
         // Hysteresis: a marker that is not already active must clear the line
@@ -114,6 +115,7 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
         if (top > umbral) break;
         tema = m.dataset.marcaTema ?? tema;
         cap = m.dataset.marcaCapitulo ?? null;
+        sub = m.dataset.marcaSubfase ?? sub;
       }
       if (tema) raiz.dataset.navTheme = tema;
 
@@ -160,8 +162,26 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
       */
       if (cap) raiz.dataset.capitulo = cap;
       else delete raiz.dataset.capitulo;
-      // The sub-phase: which half of the chapter the reader is in.
-      raiz.dataset.subfase = tema === "light" ? "editorial" : "intro";
+      // The sub-phase: which half of the chapter the reader is in, from the
+      // marker that knows rather than inferred from the colour it happens to
+      // be wearing.
+      raiz.dataset.subfase = sub ?? (cap ? "editorial" : "intro");
+
+      /*
+        §92's END, and it has a consumer: the rail's legal line.
+
+        The brief's diagram ends the machine at END and this build had no
+        equivalent. It is the last chapter's editorial body — there is nothing
+        after it — and what changes is the one thing a reader at the end of a
+        page might want and could not read before: the copyright line, which
+        sits at 0.45 opacity for the whole scroll because it is furniture until
+        it is not. A state with no consumer is a value computed every frame for
+        nobody, so this state got one rather than the attribute alone.
+      */
+      const ultimo = CAPITULOS[CAPITULOS.length - 1]?.anclaje;
+      if (cap === ultimo && raiz.dataset.subfase === "editorial") {
+        raiz.dataset.fase = "fin";
+      }
       // setActivo with an unchanged value is a no-op in React, so the common
       // case -- scrolling within one chapter -- costs nothing.
       setActivo(cap);
@@ -207,9 +227,21 @@ export function MarcaTema({
   tema,
   capitulo = null,
   borde = "arriba",
+  subfase,
 }: {
   tema: "oscuro" | "claro";
   capitulo?: string | null;
+  /**
+   * §92's per-chapter sub-phase, carried explicitly.
+   *
+   * It used to be DERIVED from the theme — dark meant intro, light meant
+   * editorial — which is true of five chapters and wrong about the two places
+   * that matter. The dark beat sits in the middle of chapter III's editorial
+   * body and reported `intro`, and chapter VI's intro is light and reported
+   * `editorial`. A state machine that is wrong about exactly the two blocks
+   * that are interesting is worse than one that does not exist.
+   */
+  subfase?: "intro" | "editorial";
   /**
    * Which edge of the parent the marker sits on.
    *
@@ -225,6 +257,7 @@ export function MarcaTema({
       aria-hidden
       data-marca-tema={tema === "oscuro" ? "dark" : "light"}
       {...(capitulo ? { "data-marca-capitulo": capitulo } : {})}
+      {...(subfase ? { "data-marca-subfase": subfase } : {})}
       style={{
         position: "absolute",
         [borde === "arriba" ? "top" : "bottom"]: 0,

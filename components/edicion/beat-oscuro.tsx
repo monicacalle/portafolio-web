@@ -38,10 +38,12 @@ export function BeatOscuro({
 }) {
   return (
     <section className="edicion-beat-oscuro" data-vuelve={vuelveAClaro || undefined}>
-      <MarcaTema tema="oscuro" capitulo={capitulo} />
+      {/* Dark, but still the editorial body: the beat is an insert inside
+          it, not a second intro. */}
+      <MarcaTema tema="oscuro" capitulo={capitulo} subfase="editorial" />
       <div className="edicion-beat-oscuro__interior">{children}</div>
       {vuelveAClaro ? (
-        <MarcaTema tema="claro" capitulo={capitulo} borde="abajo" />
+        <MarcaTema tema="claro" capitulo={capitulo} borde="abajo" subfase="editorial" />
       ) : null}
     </section>
   );

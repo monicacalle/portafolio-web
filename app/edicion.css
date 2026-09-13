@@ -258,7 +258,19 @@ html:not([data-nav-theme]) {
   opacity: 1;
 }
 
-.edicion-rail__pie { margin-top: 1.1rem; font-size: 0.62rem; opacity: 0.45; line-height: 1.4; }
+.edicion-rail__pie {
+  margin-top: 1.1rem;
+  font-size: 0.62rem;
+  opacity: 0.45;
+  line-height: 1.4;
+  transition: opacity var(--t-menu) var(--ease-cine);
+}
+/* §92's END, arrived at. The legal line is furniture for 28,000px and then it
+   is the thing a reader at the foot of the page might actually want to read.
+   This is the state's consumer: without one it would be an attribute computed
+   every frame for nobody, which is the reason three of §92's other states are
+   declined rather than written. */
+html[data-fase="fin"] .edicion-rail__pie { opacity: 0.85; }
 
 /* --------------------------------------------------------------- chapters
    Section 2: content is pushed into the right-hand 80%. The reference does this
@@ -284,6 +296,12 @@ html:not([data-nav-theme]) {
   position: relative;
   /* Section 85: ~140svh desktop, ~70svh mobile. Not a scaled-down desktop. */
   min-height: 70svh;
+  /* §85's range is "70–90svh DEPENDING ON CONTENT", and the content that
+     varies here is the imagery, not the words: the six standfirsts are 41 to
+     58 characters. Five chapters carry a plate and one does not, and §85's own
+     reason for the range is "this gives more space to imagery above" — so the
+     five with something above get 84svh and the closing chapter, which is a
+     title and a line on cream, keeps the 70 floor. */
   display: flex;
   /* Centred, matching the reference: its chapter titles sit at roughly 45% of
      the intro with the serif standfirst under them. flex-end pushed the title
@@ -293,11 +311,19 @@ html:not([data-nav-theme]) {
   overflow: clip;
   background: var(--cap-fondo);
 }
+@media (max-width: 767px) {
+  .edicion-capitulo:not([data-sin-escena]) .edicion-capitulo__intro {
+    min-height: 84svh;
+  }
+}
 @media (min-width: 1024px) {
   .edicion-capitulo__intro { min-height: 140svh; }
 }
 
 .edicion-capitulo__escena { position: absolute; inset: 0; }
+/* <picture> is a wrapper with no box of its own until it is told to have one,
+   and the plate rules below select the <img>. */
+.edicion-capitulo__escena picture { display: contents; }
 .edicion-capitulo__escena::after {
   content: "";
   position: absolute;

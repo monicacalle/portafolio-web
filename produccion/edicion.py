@@ -471,6 +471,110 @@ print('\nLA MARCA, SOBRE SU COLOR — her wordmark back on her own ground')
 marca_raiz()
 
 
+# --------------------------------------------------- PLACAS DE CAPITULO, RETRATO
+# Brief section 81's mobile fallback.
+#
+# "Every cinematic chapter must have a static fallback. Desktop: landscape
+# fallback. Mobile: PORTRAIT fallback. It must preserve: crop; color; title
+# legibility; chapter transition."
+#
+# The build had one landscape plate per chapter serving both orientations, with
+# `object-fit: scale-down` letterboxing it into a phone. Measured on a 390x844
+# viewport: chapters II and IV came out as a horizontal band of imagery floating
+# in the chapter's ground with the 141px title straddling its lower edge, half
+# on the photograph and half on the field -- which is the "title legibility"
+# clause of the section failing on the plate meant to guarantee it.
+#
+# TWO TREATMENTS, CHOSEN BY WHAT THE PLATE IS, not applied uniformly:
+#
+#   extender  the field is flat ACROSS but graded down, so the plate's own top
+#             and bottom rows are drawn out to fill. Nothing is cropped. This is
+#             the retablo's own rule (see panel() above) applied to a plate.
+#   plano     the ground is flat in every direction, measured: a corner spread
+#             of 0.0. Drawing the edge rows out here SMEARS, because the rows
+#             carry the subject's bleed even where the corners do not -- it
+#             produced a streaked grey wash over chapter IV. The fill is the
+#             corner colour.
+#   recortar  the plate is a PHOTOGRAPH of a mockup, and reframing a photograph
+#             is ordinary art direction rather than cutting her work. Anchored
+#             on the subject, measured column-wise rather than guessed.
+#
+# Chapter I needs neither: /cine/pelo-cobre.avif is already 1150x3229, taller
+# than 9:16, and fills a phone as it is.
+RETRATO_W, RETRATO_H = 900, 1600
+
+PLACAS_RETRATO = [
+    # (origen bajo public/, salida, modo, anclaje x, anclaje y, nota)
+    ('edicion/cap-marca.avif',   'cap-marca-retrato',   'recortar', 0.50, 0.48,
+     'photograph of the Raiz site on a sofa; subject centred at x0.50 y0.48'),
+    ('cine/a3-loreal.avif',      'cap-campana-retrato', 'extender', 0.50, 0.50,
+     'her poster on its own red field; the poster is a designed artefact and is not cut'),
+    ('edicion/cap-producto.avif', 'cap-producto-retrato', 'plano', 0.50, 0.50,
+     'flat #0c0a0f at all four corners, corner spread 0.0, so the fill is that colour'),
+    ('edicion/cap-impreso.avif', 'cap-impreso-retrato', 'recortar', 0.54, 0.49,
+     'photograph of the open portfolio; spread anchored at x0.54 y0.49'),
+]
+
+
+def _estirar_bordes(obra, ancho, alto, y):
+    """The plate at `y`, with its own top and bottom rows drawn out to fill.
+
+    NOT a flat fill and not a resampled field: the extension starts from the
+    exact pixels it continues, so there is no seam to see. A flat corner median
+    banded visibly on the L'Oreal red, which is graded rather than flat, and a
+    stretched low-res field banded too.
+    """
+    a = np.asarray(obra)
+    lienzo = np.empty((alto, ancho, 3), dtype=a.dtype)
+    if a.shape[1] != ancho:
+        a = np.asarray(obra.resize((ancho, obra.height), Image.LANCZOS))
+    fin = y + a.shape[0]
+    lienzo[y:fin] = a
+    if y > 0:
+        lienzo[:y] = a[0]
+    if fin < alto:
+        lienzo[fin:] = a[-1]
+    return Image.fromarray(lienzo)
+
+
+def placas_retrato():
+    for rel, nombre, modo, ax, ay, nota in PLACAS_RETRATO:
+        ruta = os.path.join(RAIZ, 'public', rel)
+        if not os.path.exists(ruta):
+            print(f'  {nombre:22s} SKIP (source not on disk)')
+            continue
+        src = Image.open(ruta).convert('RGB')
+
+        if modo in ('extender', 'plano'):
+            # The plate whole, at the frame's width, with its own edge rows
+            # drawn out above and below it. Nothing is cropped and nothing is
+            # upscaled: the plate is only ever reduced to fit.
+            f = min(RETRATO_W / src.width, 1.0)
+            w, h = max(1, round(src.width * f)), max(1, round(src.height * f))
+            obra = src.resize((w, h), Image.LANCZOS) if f < 1.0 else src
+            y = min(max(0, round((RETRATO_H - h) * ay)), max(0, RETRATO_H - h))
+            if modo == 'plano':
+                lienzo = Image.new('RGB', (RETRATO_W, RETRATO_H), fondo(src))
+                lienzo.paste(obra, (round((RETRATO_W - w) / 2), y))
+            else:
+                lienzo = _estirar_bordes(obra, RETRATO_W, RETRATO_H, y)
+        else:
+            # Cover the frame, then take the window the subject sits in.
+            f = max(RETRATO_W / src.width, RETRATO_H / src.height)
+            w, h = max(1, round(src.width * f)), max(1, round(src.height * f))
+            grande = src.resize((w, h), Image.LANCZOS)
+            x = min(max(0, round(w * ax - RETRATO_W / 2)), w - RETRATO_W)
+            y = min(max(0, round(h * ay - RETRATO_H / 2)), h - RETRATO_H)
+            lienzo = grande.crop((x, y, x + RETRATO_W, y + RETRATO_H))
+
+        guardar(lienzo, nombre, None, q=60)
+        print(f'  {"":22s} {modo} — {nota}')
+
+
+print('\nPLACAS DE CAPITULO, RETRATO — section 81\'s mobile fallback')
+placas_retrato()
+
+
 # ------------------------------------------------------- PLACAS DE CAPITULO
 # The chapter opening plates.
 #
