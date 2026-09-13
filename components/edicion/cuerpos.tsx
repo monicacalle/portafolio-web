@@ -162,20 +162,31 @@ export function CuerpoMarca() {
       <div className="edicion-declaracion animate-show-media">
         <p>{t("capitulos.marca.declaracion")}</p>
       </div>
-      <ListaCompacta
-        id="metodo-marca"
-        titulo={t("capitulos.marca.metodo.titulo")}
-        filas={(["logotipo", "color", "tipografia", "aplicacion", "manual"] as const).map((k) => ({
-          q: t(`capitulos.marca.metodo.filas.${k}.q`),
-          a: t(`capitulos.marca.metodo.filas.${k}.a`),
-        }))}
-      />
+      {/*
+        MEDIA FIRST, THEN THE COMPACT REGISTER, and this chapter had it the
+        other way round.
+
+        §44: "Prominent media features first... Then transition into more
+        compact textual updates." §37 says the same thing in its own words —
+        the compact register follows the heavy block. Chapters I, IV and V all
+        do it; chapter II opened on a five-row table and put the three marks
+        after it, which is the one chapter where the reader met the method
+        before anything it was a method for.
+      */}
       <ParedDeObras
         etiqueta={t("capitulos.marca.titulo")}
         obras={POR_ANCLAJE.marca.obras.map((o) => ({
           ...o,
           titulo: t(`capitulos.marca.obras.${o.clave}.titulo`),
           nota: t(`capitulos.marca.obras.${o.clave}.nota`),
+        }))}
+      />
+      <ListaCompacta
+        id="metodo-marca"
+        titulo={t("capitulos.marca.metodo.titulo")}
+        filas={(["logotipo", "color", "tipografia", "aplicacion", "manual"] as const).map((k) => ({
+          q: t(`capitulos.marca.metodo.filas.${k}.q`),
+          a: t(`capitulos.marca.metodo.filas.${k}.a`),
         }))}
       />
     </>

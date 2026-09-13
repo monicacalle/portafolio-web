@@ -3209,6 +3209,52 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
   background: linear-gradient(to bottom, var(--edicion-negro), transparent);
   pointer-events: none;
 }
+/*
+  §40's "deliberate visual reset" is a BAND, not a seam.
+
+  When the dark beat is the last thing in a chapter's body — which it is in
+  chapter III — it hands straight over to the next chapter's dark intro, and
+  `data-vuelve` is false so its bottom scrim is suppressed for exactly that
+  reason: a dark→cream→dark scrim between two dark blocks reads as a light
+  band nobody asked for.
+
+  The body's own bottom padding was still painting one. Measured at 1440x900:
+  the beat's foot at 11,539 and the body's at 11,611, so 72px of cream sat
+  between §45's black and chapter IV's near-black — a hairline seam rather than
+  §40's reset, and the one place on the page where two dark worlds meet through
+  a sliver of the light one. The padding goes when the beat is the last child;
+  everywhere else it stays, because everywhere else the light body genuinely
+  continues after it.
+*/
+.edicion-capitulo__cuerpo:has(> .edicion-beat-oscuro:last-child) {
+  padding-bottom: 0;
+}
+/*
+  And cut C goes with it. §77-C softens a LIGHT-to-dark seam, and when the body
+  ends on the beat its foot is already black — so the cream scrim hanging below
+  it was painting the exact band `data-vuelve` exists to prevent, one level up.
+  Measured at 1440x900 down a column through the seam: near-black at y=760,
+  then (242, 240, 238) at 840, then a hundred-pixel ramp back down into chapter
+  IV's intro. Two dark worlds meeting need no scrim between them.
+*/
+.edicion-capitulo__cuerpo:has(> .edicion-beat-oscuro:last-child)::after {
+  display: none;
+}
+/*
+  The same seam below 1024px, where cut C lives on the NEXT chapter's intro
+  instead (see the block that moves it there). Same test, one level up: a
+  chapter whose body ends on the beat hands over to a chapter that must not
+  open with a cream scrim. Measured at 390x844 before this: black at y=702,
+  (242, 239, 237) at 784.
+*/
+@media (max-width: 1023px) {
+  .edicion-capitulo:has(> .edicion-capitulo__cuerpo > .edicion-beat-oscuro:last-child)
+    + .edicion-capitulo
+    .edicion-capitulo__intro::before {
+    display: none;
+  }
+}
+
 /* Nothing here below the large breakpoint any more, and that is the change.
 
    This block used to undo the whole beat on a phone — `grid-column: auto`,
