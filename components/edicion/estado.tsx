@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useRef,
   useContext,
   useEffect,
   useMemo,
@@ -28,8 +29,22 @@ const Ctx = createContext<EstadoEdicion>({ activo: null });
 
 export const useEdicion = () => useContext(Ctx);
 
-/** Where the page decides which chapter you are on: just under the header. */
-const LINEA = 64;
+/*
+  Section 93: "Do not determine active section merely when its top reaches the
+  viewport. Use a weighted center threshold... closest to 40-50% of viewport
+  height." 64px was the top-of-viewport reading the section warns against.
+*/
+const LINEA_FRACCION = 0.45;
+
+/*
+  Section 93 also says: "Avoid jitter around boundaries. Use hysteresis."
+
+  A single threshold flickers when a marker sits within a pixel or two of the
+  line and the scroll oscillates -- which a trackpad does constantly at rest.
+  The incoming chapter has to cross the line by this margin before it takes
+  over, so a boundary is crossed once rather than argued over.
+*/
+const HISTERESIS = 56;
 
 /**
  * Active-chapter detection and the dark/light switch for the header and rail.
@@ -55,6 +70,10 @@ const LINEA = 64;
  */
 export function EstadoEdicion({ children }: { children: ReactNode }) {
   const [activo, setActivo] = useState<string | null>(null);
+  // The hysteresis test needs the current value inside a listener that is
+  // registered once; state would be captured stale.
+  const activoRef = useRef<string | null>(null);
+  activoRef.current = activo;
 
   useEffect(() => {
     const raiz = document.documentElement;
@@ -71,12 +90,19 @@ export function EstadoEdicion({ children }: { children: ReactNode }) {
     const leer = () => {
       pendiente = false;
 
-      // Last marker at or above the line wins. Markers are in document order,
-      // so this is a single pass with no sorting and no stored history.
+      // Last marker at or above the weighted line wins. Markers are in
+      // document order, so this is a single pass with no sorting.
+      const linea = window.innerHeight * LINEA_FRACCION;
       let tema: string | null = null;
       let cap: string | null = null;
       for (const m of marcas) {
-        if (m.getBoundingClientRect().top > LINEA) break;
+        const top = m.getBoundingClientRect().top;
+        // Hysteresis: a marker that is not already active must clear the line
+        // by HISTERESIS before it can take over.
+        const umbral = m.dataset.marcaCapitulo === activoRef.current
+          ? linea + HISTERESIS
+          : linea;
+        if (top > umbral) break;
         tema = m.dataset.marcaTema ?? tema;
         cap = m.dataset.marcaCapitulo ?? null;
       }

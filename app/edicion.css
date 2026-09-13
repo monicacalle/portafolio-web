@@ -1578,3 +1578,16 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
   }
   .edicion-rail { left: max(0px, calc((100vw - var(--edicion-lienzo)) / 2)); }
 }
+
+/* ===================================================================== §85
+   The tablet band. Section 85 gives three: desktop 140svh minimum, TABLET
+   roughly 100-120svh, mobile 70-90svh. Only two existed, so a 900px-wide
+   tablet got the phone's 70svh and lost the room the 3D choreography needs. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .edicion-capitulo__intro { min-height: 110svh; }
+}
+/* Section 85: "Mobile title should generally settle lower in the screen rather
+   than being vertically centered. This gives more space to imagery above." */
+@media (max-width: 767px) {
+  .edicion-capitulo__intro { align-items: flex-end; padding-bottom: 8svh; }
+}
