@@ -55,7 +55,35 @@ export function Hero() {
       pendiente = false;
       const r = el.getBoundingClientRect();
       const recorrido = r.height - window.innerHeight;
-      const p = recorrido <= 0 ? 0 : Math.min(1, Math.max(0, -r.top / recorrido));
+      /*
+        NO TRAVEL MEANS NO VALUE, not a value of zero.
+
+        Under reduced motion the hero is 100svh and its only in-flow child is
+        100svh, so `recorrido` is 0 and this used to write "0.0000" at every
+        scroll position. Zero is a real reading — "the hero has not started" —
+        and every consumer that needs a SAFE default when the scrub is absent
+        declares a different fallback for exactly that case. Writing 0 made all
+        of them unreachable:
+
+        - §14's first-paint scrim is `clamp(0, calc(1 - var(--p, 1) / 0.18), 1)`.
+          Its fallback of 1 resolves to 0 — no scrim. With --p written as 0 it
+          resolved to 1, so the radial sat at full strength over her four
+          portraits for the whole hero, permanently. The temporary state became
+          the only state, for exactly the readers §87 is about.
+        - §17 step 4's frame is `0.18 * clamp(0, calc((var(--hp, 1) - 0.7) /
+          0.25), 1)`. The fallback gives 0.18, the held value; --hp at 0 gave 0,
+          so the rail had no edge for the entire page.
+
+        Removing the properties lets every fallback do its job, which is what
+        the reduce block's own comment already promises: "nothing waits for a
+        scroll value that never arrives".
+      */
+      if (recorrido <= 0) {
+        el.style.removeProperty("--p");
+        document.documentElement.style.removeProperty("--hp");
+        return;
+      }
+      const p = Math.min(1, Math.max(0, -r.top / recorrido));
       el.style.setProperty("--p", p.toFixed(4));
       // Published to <html> as well, because the rail is a SIBLING of the hero
       // rather than a descendant and still has to follow the same morph.

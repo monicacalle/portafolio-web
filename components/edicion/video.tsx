@@ -46,6 +46,22 @@ export function VideoFeature({
     stops a decode loop running behind an opaque cream body.
   */
   useEffect(() => {
+    /*
+      §87: "respect prefers-reduced-motion: reduce… show stable representative
+      scene states." The stylesheet already does — `.edicion-video__medio {
+      display: none }` under the reduce query, with the comment "no autoplay
+      loop, no entrance. The poster frame is the work."
+
+      This effect never got the message. It attached the sources, called
+      `load()` and `play()` on approach with no gate at all, so the reader who
+      asked for less motion downloaded 539kB of film for an element that is
+      never painted and then ran a decode loop behind an opaque poster for the
+      rest of the session. `preload="none"` does not save it: `play()` forces
+      the fetch. Every other motion consumer in this build gates exactly here —
+      lienzo, revelar, triptico, secuencia, constelacion — and this one did not.
+    */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const el = marco.current?.querySelector("video");
     if (!el) return;
     let armado = false;

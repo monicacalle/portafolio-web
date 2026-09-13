@@ -685,13 +685,28 @@ def pelicula():
 
     W, H, FPS, SEGS = 1280, 720, 25, 9
     n = FPS * SEGS
-    # Push from the whole poster to the figure's head. z goes 1 -> 2.1 linearly;
-    # the centre drifts up so the move lands on the face rather than the middle.
     vf = (
-        f"scale={W*3}:-2,"
-        f"zoompan=z='1+0.55*on/{n}':"
+        # Scale by HEIGHT and pad to 16:9. This is the whole fix: zoompan crops
+        # `iw/zoom x ih/zoom` and rescales that to `s`, and it does NOT preserve
+        # aspect — so feeding it a 0.669 portrait and asking for 1280x720 scaled
+        # her drawing 0.333 horizontally against 0.1255 vertically. Every frame
+        # of the page's only film was 2.66x wider than tall: the figure came out
+        # squat, the phone in her hand wider than it is high, the letterforms of
+        # her own headline stretched. Padding first makes the input exactly 16:9,
+        # so the crop is 16:9 too and the rescale is uniform.
+        #
+        # The pad colour is the page's near-black, which is the ground the beat
+        # this film sits inside already paints — so there is no visible letterbox
+        # edge, just the poster hanging in the dark world §40 asks the visual to
+        # continue.
+        f"scale=-2:{H*3},"
+        f"pad={W*3}:{H*3}:(ow-iw)/2:(oh-ih)/2:color=0x120F0E,"
+        # The move: 1 -> 2.6 linearly, which takes the poster from hanging in
+        # the frame to filling it. The centre drifts from the middle of the
+        # frame to 22% of its height, which is where her figure's head is.
+        f"zoompan=z='1+1.6*on/{n}':"
         f"x='iw/2-(iw/zoom/2)':"
-        f"y='ih*0.34-(ih/zoom/2)+ih*0.10*(1-on/{n})':"
+        f"y='ih*(0.5-0.28*on/{n})-(ih/zoom/2)':"
         f"d={n}:s={W}x{H}:fps={FPS},"
         f"format=yuv420p"
     )
@@ -705,9 +720,22 @@ def pelicula():
                         '-vf', vf, '-t', str(SEGS), '-an', *args, out], check=True)
         print(f'  campana-marquesina.{ext:4s}  {os.path.getsize(out)//1024} KB  {SEGS}s {W}x{H}')
 
-    # The poster frame, for the video's poster attribute and the reduced-motion
-    # fallback: whatever happens, a reader sees the work.
-    guardar(im, 'campana-marquesina-poster', 1280, q=58)
+    # THE POSTER FRAME IS THE FILM'S FIRST FRAME, not the source plate.
+    #
+    # It used to be `guardar(im, ...)` — the full 0.669 portrait, written at
+    # 1280x1913. The frame it lands in is `aspect-ratio: 16 / 9` with
+    # `object-fit: cover`, so only the central 37.6% of its height was ever
+    # visible: 31.2% to 68.8%, which cuts her headline off the top, the top of
+    # the figure's head with it, and the Ajuntament de València and Bienestar
+    # Digital logos off the bottom. Under reduced motion the `<video>` is
+    # `display: none` and that crop IS the media, so the reader who asked for
+    # less motion got a torso band of a poster whose caption calls it complete.
+    #
+    # Extracting frame 0 of the film instead gives a 16:9 plate that is exactly
+    # what the film opens on, undistorted, with the whole poster in it.
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', f'{base}.mp4',
+                    '-frames:v', '1', '-q:v', '2', tmp_png], check=True)
+    guardar(Image.open(tmp_png).convert('RGB'), 'campana-marquesina-poster', 1280, q=58)
     os.remove(tmp_png)
 
 print('\nLA PELICULA — the Ceguera poster at street scale')

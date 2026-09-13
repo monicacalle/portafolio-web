@@ -24,7 +24,7 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/cine/a4-pelo-plano.avif": [1500, 1500],
   "/cine/a4-pintura.avif": [1500, 1500],
   "/cine/pelo-cobre.avif": [1150, 3229],
-  "/edicion/campana-marquesina-poster.avif": [1280, 1913],
+  "/edicion/campana-marquesina-poster.avif": [1280, 720],
   "/edicion/cap-impreso.avif": [1553, 1013],
   "/edicion/cap-campana-retrato.avif": [900, 1600],
   "/edicion/cap-impreso-retrato.avif": [900, 1600],
