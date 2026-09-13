@@ -97,6 +97,22 @@ export function Modal({
 }
 
 /**
+ * §72's push out / pop in, which needs two glyphs to be either of those.
+ *
+ * The first leaves the 1em container diagonally and fades; the second arrives
+ * from the opposite corner. Both are inside one aria-hidden wrapper, so a
+ * screen reader hears the link's words and not two arrows.
+ */
+function Flecha() {
+  return (
+    <span className="edicion-flecha" aria-hidden>
+      <span>↗</span>
+      <span>↗</span>
+    </span>
+  );
+}
+
+/**
  * Where a link goes decides what renders it.
  *
  * An in-site path has to go through the locale-aware `Link`, because the plain
@@ -121,7 +137,7 @@ export function CTA({
   const contenido = (
     <>
       {children}
-      {flecha ? <span aria-hidden> ↗</span> : null}
+      {flecha ? <Flecha /> : null}
     </>
   );
   if (esInterno(href)) {
@@ -156,7 +172,7 @@ export function Enlace({
   const contenido = (
     <>
       {children}
-      {flecha ? <span aria-hidden> ↗</span> : null}
+      {flecha ? <Flecha /> : null}
     </>
   );
   if (esInterno(href)) {

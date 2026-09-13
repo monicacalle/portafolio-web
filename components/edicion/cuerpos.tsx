@@ -210,14 +210,9 @@ export function CuerpoImpreso() {
         <p>{t("capitulos.impreso.declaracion")}</p>
       </div>
       <Triptico />
-      <ListaCompacta
-        id="metodo-impreso"
-        titulo={t("capitulos.impreso.metodo.titulo")}
-        filas={(["sangre", "perfil", "tinta", "tipo", "prueba"] as const).map((k) => ({
-          q: t(`capitulos.impreso.metodo.filas.${k}.q`),
-          a: t(`capitulos.impreso.metodo.filas.${k}.a`),
-        }))}
-      />
+      {/* §50: "after the sticky sequence ends… show media cards". The compact
+          list that used to sit here is §49's now, inside the third reading,
+          where the object it describes is still on screen. */}
       <ParedDeObras anclaje="impreso" />
     </>
   );

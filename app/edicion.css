@@ -150,7 +150,7 @@ html:not([data-nav-theme]) {
    header is simply already in place. */
 @media (prefers-reduced-motion: no-preference) {
   .edicion-cabecera [style*="--i"] {
-    animation: edicion-entrada var(--t-medio) var(--ease-salida) backwards;
+    animation: edicion-entrada var(--t-entrada) var(--ease-salida) backwards;
     animation-delay: calc(500ms + (var(--i) * 40ms));
   }
 }
@@ -1223,21 +1223,64 @@ html:not([data-nav-theme]) {
 }
 .edicion-enlace:hover { border-bottom-color: currentColor; }
 
-/* §72: the CTA glyph moves on hover rather than the whole control. */
-.edicion-cta span,
-.edicion-enlace span {
-  display: inline-block;
-  transition: transform var(--t-hover) var(--ease-cine);
-}
-.edicion-cta:hover span,
-.edicion-enlace:hover span { transform: translate(2px, -2px); }
+/* §72: push out / pop in. The arrow leaves its own container diagonally and
+   fades as it goes; a second one enters from the opposite corner and fades in.
+   300ms, inside the section's 250–350 band, and snappier than the card's own
+   hover because §72 says it may be.
 
+   This was a 2px nudge of a single glyph, which is none of the four steps the
+   section lists. The container is 1em square with overflow hidden, so "out of
+   icon container" is literal rather than implied. */
+.edicion-flecha {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.4em;
+  overflow: hidden;
+  vertical-align: -0.06em;
+}
+.edicion-flecha span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  transition: transform var(--t-hover) var(--ease-cine),
+    opacity var(--t-hover) var(--ease-cine);
+}
+/* The replacement waits below-left, outside the box, at zero. */
+.edicion-flecha span + span {
+  transform: translate(-85%, 85%);
+  opacity: 0;
+}
+.edicion-cta:hover .edicion-flecha span,
+.edicion-cta:focus-visible .edicion-flecha span,
+.edicion-enlace:hover .edicion-flecha span,
+.edicion-enlace:focus-visible .edicion-flecha span {
+  transform: translate(85%, -85%);
+  opacity: 0;
+}
+.edicion-cta:hover .edicion-flecha span + span,
+.edicion-cta:focus-visible .edicion-flecha span + span,
+.edicion-enlace:hover .edicion-flecha span + span,
+.edicion-enlace:focus-visible .edicion-flecha span + span {
+  transform: none;
+  opacity: 1;
+}
+
+/* §87: reduced motion keeps a simple fade — the section's own words are "keep
+   simple 150–250ms fades" — and drops the travel. The arrow swap becomes a
+   crossfade in place. */
 @media (prefers-reduced-motion: reduce) {
-  .edicion-cta span,
-  .edicion-enlace span,
-  .edicion-documento__hoja { transition: none; }
-  .edicion-cta:hover span,
-  .edicion-enlace:hover span { transform: none; }
+  .edicion-flecha span {
+    transition: opacity var(--t-micro) linear;
+    transform: none;
+  }
+  .edicion-flecha span + span { transform: none; }
+  .edicion-cta:hover .edicion-flecha span,
+  .edicion-enlace:hover .edicion-flecha span { transform: none; }
+  .edicion-documento__hoja { transition: opacity var(--t-micro) linear; }
   .edicion-documento__hoja:hover,
   .edicion-documento__hoja:focus-visible { transform: none; }
 }
@@ -1275,7 +1318,8 @@ html:not([data-nav-theme]) {
   font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(6px);
-  transition: background-color 220ms var(--ease-salida), border-color 220ms var(--ease-salida);
+  transition: background-color var(--t-hover) var(--ease-salida),
+    border-color var(--t-hover) var(--ease-salida);
 }
 .edicion-video__play:hover { background: rgba(12, 9, 9, 0.72); border-color: #f6f3ef; }
 .edicion-video__play-icono { font-size: 0.72em; line-height: 1; }
@@ -1488,6 +1532,10 @@ html[data-lienzo="activo"] .edicion-hero { background: transparent; }
   --t-micro: 200ms;      /* input and button micro-interactions */
   --t-hover: 300ms;      /* hover and simple fades (250–350 band) */
   --t-menu: 300ms;       /* menu, dropdown, theme */
+  /* §7 asks the header's entrance to take 450–650ms and §98's nearest family
+     is 600–800. 600 is the one value inside both, so it is the one used. It
+     was --t-medio (700ms), which is outside §7's band. */
+  --t-entrada: 600ms;
   --t-medio: 700ms;      /* major media reveals and canvas fades (600–800) */
   /* 50ms (state response), 400ms (springy positional) and 500ms (elastic) are
      in section 98's families but nothing on this page needs them, and a token
@@ -1657,13 +1705,27 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    Three beats of 165svh, each holding a viewport-height block pinned at
    top: 110px, so the browser scrolls through the parent while the story stays
    put. The brief's numbers, not approximations of them. */
+/* ============================================================= §47 / §48
+   THE STICKY STORY. One artifact, three readings, never reset.
+
+   §47 gives the numbers: three sequential ~165svh beats, a viewport-height
+   block sticky inside each. §48 gives the rule that decides the structure —
+   the same composition runs through all three and "the viewer should feel they
+   are circling one artifact through three ideas."
+
+   So there is ONE image and ONE progress value across the whole 495svh, not
+   three of each. The first build had a figure and a `useProgreso` per beat,
+   which is three compositions and two resets; it was also nearly still while
+   pinned, because a beat's own `dentro` progress spends 71% of its range
+   sliding in and out of frame. `pegajoso` on the parent reads 0 at the pin and
+   1 at the release. */
 .edicion-triptico {
   grid-column: span 6;
-  /* Chapter V's own height has to cover three 165svh beats; the chapter record
-     accounts for it. */
+  position: relative;
+  /* Three beats of 165svh. Chapter V's own height accounts for it. */
+  min-height: 495svh;
 }
-.edicion-beat { min-height: 165svh; position: relative; }
-.edicion-beat__fijo {
+.edicion-triptico__fijo {
   position: sticky;
   top: 110px;
   /* 100svh minus the offset, or the pinned block runs past the viewport foot
@@ -1678,34 +1740,120 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   gap: clamp(1rem, 3vw, 2.5rem);
 }
 @media (min-width: 900px) {
-  .edicion-beat__fijo {
+  .edicion-triptico__fijo {
     flex-direction: row;
     align-items: center;
   }
-  .edicion-beat__objeto { flex: 1 1 58%; min-width: 0; }
-  .edicion-beat__texto { flex: 1 1 42%; min-width: 0; }
+  .edicion-triptico__objeto { flex: 1 1 58%; min-width: 0; }
+  .edicion-triptico__lecturas { flex: 1 1 42%; min-width: 0; }
 }
 
-.edicion-beat__objeto { margin: 0; overflow: hidden; border-radius: 6px; }
-.edicion-beat__objeto img {
+.edicion-triptico__objeto { margin: 0; overflow: hidden; border-radius: 6px; }
+.edicion-triptico__objeto img {
   width: 100%;
   height: auto;
   display: block;
-  /* Section 48: the composition is NEVER reset between beats. The same artifact
-     is reframed -- the camera pushes in and drifts across --b, the beat's own
-     scroll progress -- so the reader circles one object through three ideas
-     rather than meeting three pictures. */
-  transform: scale(calc(1.06 + var(--b, 0) * 0.10))
-             translate3d(calc(var(--b, 0) * -2.2%), calc(var(--b, 0) * -1.4%), 0);
-  transform-origin: 58% 46%;
+  transform-origin: 52% 46%;
   will-change: transform;
 }
-/* Each beat reframes onto a different part of the same object, so the three
-   readings look at three things without the object ever changing. */
-.edicion-beat[data-beat="1"] .edicion-beat__objeto img { transform-origin: 34% 62%; }
-.edicion-beat[data-beat="2"] .edicion-beat__objeto img { transform-origin: 72% 30%; }
+/* The camera, across the whole story rather than per beat.
 
-.edicion-beat__texto h3 {
+   Scale pushes in the whole way. X drifts across, so the far side of the
+   object comes into frame. Y ARCS: `min(t, 1 - t)` peaks at the middle and
+   returns, which is what stops the move reading as a straight dolly and makes
+   it read as going round something. The roll stays inside §22's 1–6° band. */
+[data-scrub] .edicion-triptico__objeto img {
+  --t-x: calc((var(--t, 0) - 0.5) * -7%);
+  --t-y: calc(min(var(--t, 0), calc(1 - var(--t, 0))) * -9%);
+  transform: scale(calc(1.05 + var(--t, 0) * 0.24))
+    translate3d(var(--t-x), var(--t-y), 0)
+    rotate(calc(var(--t, 0) * 2.4deg));
+}
+
+/* The three readings share one slot and swap. Non-overlapping windows, the
+   same shape the state sequence uses, because two paragraphs at half opacity
+   on top of one another are unreadable. */
+.edicion-triptico__lecturas { position: relative; display: grid; }
+.edicion-triptico__texto { grid-area: 1 / 1; }
+[data-scrub] .edicion-triptico__texto {
+  --tr: 0.1;
+  --llega: clamp(0, calc((var(--t, 0) - var(--d)) / var(--tr)), 1);
+  --sale: clamp(0, calc((var(--t, 0) - var(--ds)) / var(--tr)), 1);
+  opacity: calc(var(--llega) - var(--sale));
+  transform: translate3d(0, calc((1 - var(--llega)) * 14px), 0);
+}
+/* Unarmed the three stack in the flow, which is the whole story in reading
+   order rather than three paragraphs on one line. */
+.edicion-triptico:not([data-scrub]) .edicion-triptico__lecturas {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+.edicion-triptico:not([data-scrub]) .edicion-triptico__texto { grid-area: auto; }
+
+/* ===================================================================== §49
+   The technical capability items on the third reading.
+
+   §49: "reveal them progressively as the user scrolls… use minimal line/icon
+   animations… do not create floating neon labels. The visual language remains
+   industrial/editorial." So it is a hairline that draws in under each row and
+   nothing else — no icon set, no glow, no label floating off the object. */
+.edicion-triptico__especificaciones { margin-top: clamp(1rem, 2.4vw, 1.8rem); }
+.edicion-triptico__especificaciones h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.edicion-triptico__especificaciones ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.edicion-triptico__especificaciones li {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 34%) 1fr;
+  gap: 0.7rem;
+  padding: 0.42rem 0 0.46rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.edicion-triptico__especificaciones li strong { font-weight: 700; }
+.edicion-triptico__especificaciones li span { color: rgba(23, 16, 12, 0.68); }
+/* The line. It is the only thing that animates, and it draws from the left. */
+.edicion-triptico__especificaciones li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(23, 16, 12, 0.16);
+  transform-origin: left;
+}
+[data-scrub] .edicion-triptico__especificaciones li {
+  /* --e is the row's own opening point inside the last third; 0.06 of travel
+     is about a fifth of a screen, so they arrive one after another under the
+     reader's thumb rather than all at once. */
+  --ee: clamp(0, calc((var(--t, 0) - var(--e)) / 0.06), 1);
+  opacity: var(--ee);
+  transform: translate3d(calc((1 - var(--ee)) * 10px), 0, 0);
+}
+[data-scrub] .edicion-triptico__especificaciones li::after {
+  transform: scaleX(var(--ee));
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-scrub] .edicion-triptico__especificaciones li {
+    opacity: 1;
+    transform: none;
+  }
+  [data-scrub] .edicion-triptico__especificaciones li::after { transform: none; }
+}
+
+.edicion-triptico__texto h3 {
   margin: 0 0 0.6rem;
   font-family: var(--font-display, var(--font-sans));
   /* Sized to its own column, not the viewport: at 3.2vw the longest heading
@@ -1715,7 +1863,7 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
-.edicion-beat__texto p {
+.edicion-triptico__texto p {
   margin: 0;
   font-size: clamp(0.95rem, 1.3vw, 1.08rem);
   line-height: 1.5;
@@ -1723,10 +1871,13 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   color: rgba(23, 16, 12, 0.74);
 }
 
+/* §87: with motion reduced there is no pin and no camera. The story becomes
+   the object once, then its three readings in order — "stable representative
+   scene states", which is the section's own phrase. */
 @media (prefers-reduced-motion: reduce) {
-  .edicion-beat { min-height: auto; }
-  .edicion-beat__fijo { position: static; min-height: 0; padding-block: 2rem; }
-  .edicion-beat__objeto img { transform: none; }
+  .edicion-triptico { min-height: 0; }
+  .edicion-triptico__fijo { position: static; min-height: 0; padding-block: 2rem; }
+  .edicion-triptico__objeto img { transform: none; }
 }
 
 /* ===================================================================== §42
@@ -1963,9 +2114,9 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   font-size: 0.78rem;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: color var(--t-corto, 220ms) var(--ease-cine),
-    border-color var(--t-corto, 220ms) var(--ease-cine),
-    background-color var(--t-corto, 220ms) var(--ease-cine);
+  transition: color var(--t-hover) var(--ease-cine),
+    border-color var(--t-hover) var(--ease-cine),
+    background-color var(--t-hover) var(--ease-cine);
 }
 .edicion-secuencia__indice button:hover {
   color: rgba(23, 16, 12, 0.9);
@@ -2190,7 +2341,7 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
    this page are reserved for the CTAs that genuinely are buttons. */
 .edicion-capitulo__cuerpo p a,
 .edicion-lista dd a,
-.edicion-beat__texto a {
+.edicion-triptico__texto a {
   color: inherit;
   text-decoration: none;
   border-bottom: 1px solid rgba(23, 16, 12, 0.28);
@@ -2198,7 +2349,7 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
 }
 .edicion-capitulo__cuerpo p a:hover,
 .edicion-lista dd a:hover,
-.edicion-beat__texto a:hover { border-bottom-color: currentColor; }
+.edicion-triptico__texto a:hover { border-bottom-color: currentColor; }
 
 /* ===================================================================== §31
    The mobile carousel: the next card peeks so the swipe is discoverable, and

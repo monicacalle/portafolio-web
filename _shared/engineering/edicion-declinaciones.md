@@ -58,6 +58,8 @@ portfolio. These sections have no equivalent to build.
 | 33–36 | Skill tags, elastic tag motion, tag popups, emoji particles | Shopify's playful register. Applying it to a designer's own portfolio would read as borrowed, and §99 restricts the elastic curve to "playful Sidekick Skill elements" that do not exist here. |
 | 9 | Editions dropdown | The reference's menu switches between separately published editions. There is one of these. A menu that opens to reveal a single item is theatre; the six chapters are in the header, the rail and the hero index instead. |
 | 10 | Search | Six chapters and roughly forty pieces of work is not a corpus to search. **This one is a genuine gap rather than a clean adaptation** — §10 describes a find-and-jump interaction, and the build supplies the jump without the find. |
+| 68 | A second subsection of two half-width cards in the closing chapter | Chapter VI has one card pair and it is §67's, the graphic portfolio and the CV. Those are the only two documents that exist; a second pair would have to be invented. The compact-updates half of §68 is the chapter's three list columns. |
+| 101 | The twelve required DOM anchors | `#sidekick #agentic #online #retail #marketing #checkout #operations #shop-app #b2b #finance #shipping #developer` are Shopify's chapter slugs, and six of them name products this site has no relationship to. Aliasing `#b2b` onto a chapter about printed portfolios would be a lie in the URL bar. What §101 says it is protecting — "desktop sidebar, mobile navigation, deep linking, and history behavior consistent" — is met by six stable anchors that the rail, the header, the hero index and the sitemap all read from one list. |
 
 ---
 
@@ -176,6 +178,17 @@ between them is stated on the screens themselves.
 **§47 / §48 — the sticky triptych is in chapter V, not chapter IV.** §48 is
 about circling a physical artifact, and her printed portfolio is the only thing
 on the page that genuinely is one.
+
+**§49 / §50 — the technical items moved up, they were not duplicated.** §49
+wants technical capability items inside the third story, revealed progressively;
+§50 wants media cards and then compact updates after the sticky sequence ends.
+Chapter V has exactly one list of technical items — her five print specs — and
+it used to sit after the whole sequence. It is inside the third reading now,
+where the object it describes is still on screen, which is where §49 puts it.
+So §50's media cards are built and §50's "then compact product updates" is
+answered by a list that has already been read a screen earlier. Showing the
+same five rows twice to satisfy both sections would be padding, and the page
+would be the thing that paid for it.
 
 **§91 — no `next/image`.** Every plate is pre-cut by `produccion/edicion.py` at
 delivery size as AVIF and served static. `next/image` would re-encode files that
