@@ -91,7 +91,16 @@ export function CuerpoProducto() {
         href="/proyectos/voluntee"
         verLabel={t("cta.ver")}
       />
-      <ListaCompacta />
+      <ListaCompacta
+        id="metodo-producto"
+        titulo={t("capitulos.producto.metodo.titulo")}
+        filas={(["desk", "netnografia", "benchmarking", "dafo", "encuesta", "entrevistas", "personas", "journeys"] as const).map(
+          (k) => ({
+            q: t(`capitulos.producto.metodo.filas.${k}.q`),
+            a: t(`capitulos.producto.metodo.filas.${k}.a`),
+          }),
+        )}
+      />
     </>
   );
 }
@@ -139,6 +148,14 @@ export function CuerpoImpreso() {
         <p>{t("capitulos.impreso.declaracion")}</p>
       </div>
       <Triptico />
+      <ListaCompacta
+        id="metodo-impreso"
+        titulo={t("capitulos.impreso.metodo.titulo")}
+        filas={(["sangre", "perfil", "tinta", "tipo", "prueba"] as const).map((k) => ({
+          q: t(`capitulos.impreso.metodo.filas.${k}.q`),
+          a: t(`capitulos.impreso.metodo.filas.${k}.a`),
+        }))}
+      />
       <Ficha ancho="medio">
         <img src="/trabajo/t-libro.avif" alt="" loading="lazy" decoding="async" {...medidas("/trabajo/t-libro.avif")} />
       </Ficha>

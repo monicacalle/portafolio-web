@@ -54,7 +54,32 @@
     "marca": {
       "titulo": "BRAND",
       "entradilla": "Three identities, and the first one is mine.",
-      "declaracion": "A brand does not end at the logo: it ends when someone else can use it without calling me. Estudio Raíz is my own studio, so I was the client and the designer at once, and that is where you find out fast which decisions hold."
+      "declaracion": "A brand does not end at the logo: it ends when someone else can use it without calling me. Estudio Raíz is my own studio, so I was the client and the designer at once, and that is where you find out fast which decisions hold.",
+      "metodo": {
+        "titulo": "What I hand over with a brand",
+        "filas": {
+          "logotipo": {
+            "q": "Logotype",
+            "a": "Primary, secondary, and a reduced version that survives at 16px, because the favicon always turns up."
+          },
+          "color": {
+            "q": "Palette",
+            "a": "With HEX and CMYK values. Give only HEX and the first print invoice finds out."
+          },
+          "tipografia": {
+            "q": "Typefaces",
+            "a": "One for headings, one for text, with the weights that are used and the ones that are not."
+          },
+          "aplicacion": {
+            "q": "Applications",
+            "a": "Stationery, packaging or web depending on the brief. Viña Esmeralda was a label; Estudio Raíz, a Webflow site."
+          },
+          "manual": {
+            "q": "Guidelines",
+            "a": "Short. Nobody opens an eighty-page document twice."
+          }
+        }
+      }
     },
     "campana": {
       "titulo": "CAMPAIGN",
@@ -133,6 +158,31 @@
         "tinta": {
           "titulo": "Paper does not let you take it back",
           "cuerpo": "On screen I can move a line at three in the morning. In print the decision is final, and that changes how long I spend making it."
+        }
+      },
+      "metodo": {
+        "titulo": "What paper checks",
+        "filas": {
+          "sangre": {
+            "q": "Bleed",
+            "a": "Three millimetres a side. You forget it once and then you never forget it."
+          },
+          "perfil": {
+            "q": "Colour profile",
+            "a": "CMYK with the printer's profile, not my screen's."
+          },
+          "tinta": {
+            "q": "Ink coverage",
+            "a": "Rich blacks smear when nobody checks the total. The limit comes before the artwork does."
+          },
+          "tipo": {
+            "q": "Text size",
+            "a": "What reads on screen at 10px does not read on paper at 7pt."
+          },
+          "prueba": {
+            "q": "Proof",
+            "a": "One, always, before the run. A monitor lies about paper."
+          }
         }
       }
     },

@@ -13,6 +13,7 @@ import { Hero } from "./hero";
 import { Capitulo, Ficha } from "./capitulo";
 import { Oficio } from "./oficio";
 import { CuerpoIlustracion, CuerpoProducto, CuerpoCampana, CuerpoImpreso } from "./cuerpos";
+import { ListaCompacta } from "./lista-compacta";
 
 /**
  * The Edition — the whole homepage.
@@ -155,6 +156,18 @@ function CuerpoPlacas({ anclaje }: { anclaje: string }) {
         <div className="edicion-declaracion animate-show-media">
           <p>{declaracion}</p>
         </div>
+      ) : null}
+      {anclaje === "marca" ? (
+        <ListaCompacta
+          id="metodo-marca"
+          titulo={t("capitulos.marca.metodo.titulo")}
+          filas={(["logotipo", "color", "tipografia", "aplicacion", "manual"] as const).map(
+            (k) => ({
+              q: t(`capitulos.marca.metodo.filas.${k}.q`),
+              a: t(`capitulos.marca.metodo.filas.${k}.a`),
+            }),
+          )}
+        />
       ) : null}
       {obras.map((o, i) => (
         <Ficha key={o.src + i} ancho={o.ancho}>

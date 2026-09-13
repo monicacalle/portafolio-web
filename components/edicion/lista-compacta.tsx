@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 
 /**
  * The compact update list.
@@ -20,28 +19,36 @@ import { useTranslations } from "next-intl";
  * differentiator, and this is the only block on the page where the method is
  * the subject rather than the artefact.
  */
-const FILAS = [
-  "desk",
-  "netnografia",
-  "benchmarking",
-  "dafo",
-  "encuesta",
-  "entrevistas",
-  "personas",
-  "journeys",
-] as const;
+type Fila = { q: string; a: string };
 
-export function ListaCompacta() {
-  const t = useTranslations("edicion");
-
+/**
+ * `titulo` and `filas` are RESOLVED BY THE CALLER, row by row, rather than
+ * looked up from a chapter key here.
+ *
+ * Two reasons, both the same reason: next-intl types its message keys as a
+ * literal union, so a key threaded through a prop widens to `string` and loses
+ * the compile-time guarantee that the message exists, and `t.raw()` on a nested
+ * object is not in that union at all. Resolving leaf keys at the call site
+ * keeps a missing row a build error instead of a runtime crash -- which matters
+ * because global.d.ts type-checks the Spanish tree only.
+ */
+export function ListaCompacta({
+  titulo,
+  filas,
+  id,
+}: {
+  titulo: string;
+  filas: readonly Fila[];
+  id: string;
+}) {
   return (
-    <section className="edicion-lista" aria-labelledby="lista-metodo">
-      <h3 id="lista-metodo">{t("capitulos.producto.metodo.titulo")}</h3>
+    <section className="edicion-lista" aria-labelledby={id}>
+      <h3 id={id}>{titulo}</h3>
       <dl>
-        {FILAS.map((f) => (
-          <div key={f} className="edicion-lista__fila">
-            <dt>{t(`capitulos.producto.metodo.filas.${f}.q`)}</dt>
-            <dd>{t(`capitulos.producto.metodo.filas.${f}.a`)}</dd>
+        {filas.map((f) => (
+          <div key={f.q} className="edicion-lista__fila">
+            <dt>{f.q}</dt>
+            <dd>{f.a}</dd>
           </div>
         ))}
       </dl>

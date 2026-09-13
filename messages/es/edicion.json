@@ -54,7 +54,32 @@
     "marca": {
       "titulo": "MARCA",
       "entradilla": "Tres identidades, y la primera es la mía.",
-      "declaracion": "Una marca no termina en el logotipo: termina cuando otra persona puede usarla sin llamarme. Estudio Raíz es mi propio estudio, así que fui a la vez clienta y diseñadora, y ahí se nota enseguida qué decisiones aguantan."
+      "declaracion": "Una marca no termina en el logotipo: termina cuando otra persona puede usarla sin llamarme. Estudio Raíz es mi propio estudio, así que fui a la vez clienta y diseñadora, y ahí se nota enseguida qué decisiones aguantan.",
+      "metodo": {
+        "titulo": "Lo que entrego con una marca",
+        "filas": {
+          "logotipo": {
+            "q": "Logotipo",
+            "a": "Principal, secundario y una versión reducida que aguante a 16px, porque el favicon siempre llega."
+          },
+          "color": {
+            "q": "Paleta",
+            "a": "Con los valores en HEX y en CMYK. Si sólo das HEX, la primera factura de imprenta lo descubre."
+          },
+          "tipografia": {
+            "q": "Tipografías",
+            "a": "Una para titular y otra para texto, con los pesos que se usan y los que no."
+          },
+          "aplicacion": {
+            "q": "Aplicaciones",
+            "a": "Papelería, packaging o web según el encargo. Viña Esmeralda fue etiqueta; Estudio Raíz, web en Webflow."
+          },
+          "manual": {
+            "q": "Manual",
+            "a": "Corto. Un documento de ochenta páginas no lo abre nadie dos veces."
+          }
+        }
+      }
     },
     "campana": {
       "titulo": "CAMPAÑA",
@@ -133,6 +158,31 @@
         "tinta": {
           "titulo": "El papel no deja rectificar",
           "cuerpo": "En pantalla puedo mover una línea a las tres de la mañana. Impreso, la decisión es definitiva, y eso cambia cuánto tiempo dedico a tomarla."
+        }
+      },
+      "metodo": {
+        "titulo": "Lo que comprueba el papel",
+        "filas": {
+          "sangre": {
+            "q": "Sangre",
+            "a": "Tres milímetros por lado. Se olvida una vez y ya no se olvida más."
+          },
+          "perfil": {
+            "q": "Perfil de color",
+            "a": "CMYK con el perfil de la imprenta, no el de mi pantalla."
+          },
+          "tinta": {
+            "q": "Carga de tinta",
+            "a": "Los negros ricos manchan si nadie mira el total. El límite va antes del arte final."
+          },
+          "tipo": {
+            "q": "Tamaño de texto",
+            "a": "Lo que se lee en pantalla a 10px no se lee en papel a 7pt."
+          },
+          "prueba": {
+            "q": "Prueba impresa",
+            "a": "Una, siempre, antes de la tirada. El monitor miente sobre el papel."
+          }
         }
       }
     },
