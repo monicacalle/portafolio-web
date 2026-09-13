@@ -75,12 +75,24 @@ html[data-nav-theme="light"] {
   --edicion-velo: rgba(244, 242, 240, 0.72);
   --edicion-rail-suelo: #f4f2f0;
 }
-/* Before the first sentinel fires, the page is the hero, and the hero is dark.
-   §8: "header initially floats transparently over cinematic content", so the
-   veil is not merely dark here, it is absent — and `transparent` rather than
-   `none` because a colour is what interpolates when the first chapter arrives
-   and the veil fades UP from nothing, which is the other half of the sentence
-   ("as readability requires, introduce a very subtle top gradient"). */
+/* The pre-hydration state, and it lasts about one frame.
+
+   This used to claim the veil "fades UP from nothing when the first chapter
+   arrives". It does not: the hero publishes its own dark `MarcaTema` at the
+   top of the document, so the first reading of the state machine sets
+   `data-nav-theme="dark"` before any chapter is in view and the veil is the
+   dark one from hydration onward.
+
+   §8's first line is still met, in the only sense a reader can perceive it.
+   Measured at scroll 0, header band, with the veil forced transparent against
+   the shipped state: mean difference 2.52 of 255 across the band, and the
+   ground under the nav links reads (16, 12, 12) with it against (18, 15, 14)
+   without. A 0.55 black over a #120f0e ground is arithmetically present and
+   visually not there. It starts doing work further down, where her artwork is
+   bright behind the header, which is exactly the section's next clause: "as
+   readability requires, introduce a very subtle top gradient."
+
+   `transparent` rather than `none` because a colour is what interpolates. */
 html:not([data-nav-theme]) {
   --edicion-nav-fg: #f6f3ef;
   --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
@@ -2959,14 +2971,63 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   .edicion-hero__marco {
     transform-origin: left top;
     --morfo-x: calc((1.1rem - var(--edicion-rail) - clamp(1rem, 2vw, 2.2rem)) * var(--m, 0));
-    --morfo-y: calc(-50% + (var(--m, 0) * -18svh));
+    /*
+      THE ENDPOINT IS ANCHORED, not travelled to.
+
+      It was `-50% + (--m * -18svh)`: a viewport-relative journey from a
+      viewport-relative start, which lands somewhere different on every screen
+      height. Measured at m = 1, the wordmark's top against the rail's own —
+      which is fixed, at the rail's padding-top of `--edicion-cabecera-h` +
+      0.9rem ≈ 64px — came out 30px high at 900, and an svh/px mix only traded
+      that for +25 at 1050 and −25 at 800.
+
+      So `top` interpolates instead: 50% of the stage at m = 0, a fixed 3.6rem
+      at m = 1, with the −50% centring unwinding as it goes. 3.6rem puts the
+      frame's own padding above the wordmark, so the wordmark itself arrives on
+      the rail's, at every viewport height rather than at one.
+    */
+    --morfo-y: calc(-50% * (1 - var(--m, 0)));
   }
 }
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .edicion-hero__marco {
+    /* `top` is a real positional property, so it belongs in the motion-gated
+       block with the transform it partners: with motion reduced the frame must
+       stay centred and still, and this would otherwise have travelled while
+       the transform beside it did not. */
+    top: calc(50% - var(--m, 0) * (50% - 3.6rem));
     transform:
       translate(var(--morfo-x), var(--morfo-y))
-      scale(calc(1 - var(--m, 0) * 0.26));
+      scale(calc(1 - var(--m, 0) * 0.74));
+  }
+  /*
+    THE FRAME SHEDS EVERYTHING BUT THE WORDMARK ON THE WAY OVER.
+
+    §17 forbids a cut and asks the reader to understand that the opening
+    artwork BECAME the navigation. What shipped was a cross-dissolve of two
+    differently-sized objects in two different places. Measured at 1440x900,
+    scrollY 415, --hp 0.9222, with both painted (hero frame at 0.648, rail at
+    0.444): the six chapter names were drawn twice, at (20, 314, 277, 90) and
+    (20, 669, 248, 176) — 355px apart vertically and 1.95x the height — and the
+    wordmark twice in the same left column, (20, 46, 277, 165) against
+    (20, 66, 248, 52), 3.2x the size.
+
+    So the two things that exist in both places leave the hero BEFORE the rail
+    arrives at 0.86. The standfirst and the index fade over --m 0.45 to 0.72;
+    the six names are gone by the time the rail's six appear, and there is
+    never a moment where the page shows either of them twice. This is also
+    §1.1's step 2 — "text begins to leave" — happening where the grammar puts
+    it, between the scene finishing its motion and the next world arriving.
+
+    What is left travelling is the wordmark, which is the one object the reader
+    is meant to watch become the rail's. Its scale endpoint is 0.26 rather than
+    0.74 for that reason: the hero's is a three-line display wordmark and the
+    rail's is the same three lines at 0.95rem, and a handover between two sizes
+    that far apart is a cut no matter how it is faded.
+  */
+  .edicion-hero__pie,
+  .edicion-hero__indice {
+    opacity: calc(1 - clamp(0, calc((var(--m, 0) - 0.45) / 0.27), 1));
   }
 }
 
