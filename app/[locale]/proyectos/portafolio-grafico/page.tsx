@@ -12,7 +12,7 @@ import { shareImage } from "@/lib/og/card";
 import { type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
-import { GRAFICO_PDF } from "@/lib/case-studies";
+import { GRAFICO_CAPITULO, GRAFICO_PDF } from "@/lib/case-studies";
 import { GraficoViewer } from "@/components/site/grafico-viewer";
 import grafico from "@/public/images/portafolioabierto.png";
 
@@ -85,7 +85,7 @@ export default async function GraphicPortfolioPage({
       <Header />
       <main className="cs">
         <div className="cs__shell shell">
-          <Link className="cs__back" href="/#projects" data-cursor="←">
+          <Link className="cs__back" href={`/#${GRAFICO_CAPITULO}`} data-cursor="←">
             <ArrowLeft className="cs__back-icon" size={14} />
             {t("back")}
           </Link>

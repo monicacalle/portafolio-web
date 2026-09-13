@@ -4,7 +4,7 @@ import Image, { type StaticImageData } from "next/image";
 // visitor clicking through landed back in Spanish.
 import { Link } from "@/lib/i18n/navigation";
 import { notFound } from "next/navigation";
-import { CASE_STUDY_SLUGS } from "@/lib/case-studies";
+import { CAPITULO_DE, CASE_STUDY_SLUGS, type CaseStudySlug } from "@/lib/case-studies";
 import { type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
@@ -135,6 +135,9 @@ export default async function CaseStudyPage({
   const data = await loadCase(slug);
   if (!data) notFound();
   const { cs, media, ui } = data;
+  /* The chapter this case study came from, not `/#projects` — there is no
+     `#projects` on this site. See CAPITULO_DE. */
+  const volver = `/#${CAPITULO_DE[slug as CaseStudySlug] ?? "producto"}`;
 
   const overviewRows = (["product", "role", "audience", "challenge", "limitations"] as const).map(
     (key) => ({ label: ui.overview[key], value: cs.overview[key] }),
@@ -149,7 +152,7 @@ export default async function CaseStudyPage({
       <Header />
       <main className="cs">
         <div className="cs__shell shell">
-          <Link className="cs__back" href="/#projects" data-cursor="←">
+          <Link className="cs__back" href={volver} data-cursor="←">
             <ArrowLeft className="cs__back-icon" size={14} />
             {ui.back}
           </Link>
@@ -203,7 +206,7 @@ export default async function CaseStudyPage({
           </div>
 
           <div className="cs__foot">
-            <Link className="cs__back cs__back--foot" href="/#projects">
+            <Link className="cs__back cs__back--foot" href={volver}>
               <ArrowLeft className="cs__back-icon" size={14} />
               {ui.back}
             </Link>
