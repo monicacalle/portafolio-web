@@ -12,7 +12,7 @@ import { Rail } from "./rail";
 import { Hero } from "./hero";
 import { Capitulo, Ficha } from "./capitulo";
 import { Oficio } from "./oficio";
-import { CuerpoIlustracion, CuerpoProducto, CuerpoCampana } from "./cuerpos";
+import { CuerpoIlustracion, CuerpoProducto, CuerpoCampana, CuerpoImpreso } from "./cuerpos";
 
 /**
  * The Edition — the whole homepage.
@@ -109,6 +109,7 @@ function Cuerpo({ anclaje }: { anclaje: string }) {
   if (anclaje === "ilustracion") return <CuerpoIlustracion />;
   if (anclaje === "producto") return <CuerpoProducto />;
   if (anclaje === "campana") return <CuerpoCampana />;
+  if (anclaje === "impreso") return <CuerpoImpreso />;
   return <CuerpoPlacas anclaje={anclaje} />;
 }
 

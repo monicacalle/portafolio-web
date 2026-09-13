@@ -1373,3 +1373,81 @@ a.edicion-ficha {
 html[data-fase="hero"] .edicion-rail { opacity: 0; pointer-events: none; }
 html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
 .edicion-rail { transition: opacity var(--t-menu) var(--ease-cine); }
+
+/* ================================================================ §47 / §48
+   The three-part sticky story.
+
+   Three beats of 165svh, each holding a viewport-height block pinned at
+   top: 110px, so the browser scrolls through the parent while the story stays
+   put. The brief's numbers, not approximations of them. */
+.edicion-triptico {
+  grid-column: span 6;
+  /* Chapter V's own height has to cover three 165svh beats; the chapter record
+     accounts for it. */
+}
+.edicion-beat { min-height: 165svh; position: relative; }
+.edicion-beat__fijo {
+  position: sticky;
+  top: 110px;
+  /* 100svh minus the offset, or the pinned block runs past the viewport foot
+     and the reader never sees the bottom of it. */
+  min-height: calc(100svh - 110px);
+  /* Flex, not grid: a grid with min-height stretches its single row, so
+     align-content had nothing to centre and the composition sat at the top
+     with 600px of nothing under it. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+}
+@media (min-width: 900px) {
+  .edicion-beat__fijo {
+    flex-direction: row;
+    align-items: center;
+  }
+  .edicion-beat__objeto { flex: 1 1 58%; min-width: 0; }
+  .edicion-beat__texto { flex: 1 1 42%; min-width: 0; }
+}
+
+.edicion-beat__objeto { margin: 0; overflow: hidden; border-radius: 6px; }
+.edicion-beat__objeto img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Section 48: the composition is NEVER reset between beats. The same artifact
+     is reframed -- the camera pushes in and drifts across --b, the beat's own
+     scroll progress -- so the reader circles one object through three ideas
+     rather than meeting three pictures. */
+  transform: scale(calc(1.06 + var(--b, 0) * 0.10))
+             translate3d(calc(var(--b, 0) * -2.2%), calc(var(--b, 0) * -1.4%), 0);
+  transform-origin: 58% 46%;
+  will-change: transform;
+}
+/* Each beat reframes onto a different part of the same object, so the three
+   readings look at three things without the object ever changing. */
+.edicion-beat[data-beat="1"] .edicion-beat__objeto img { transform-origin: 34% 62%; }
+.edicion-beat[data-beat="2"] .edicion-beat__objeto img { transform-origin: 72% 30%; }
+
+.edicion-beat__texto h3 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display, var(--font-sans));
+  /* Sized to its own column, not the viewport: at 3.2vw the longest heading
+     ran off the right edge of a 42% column. */
+  font-size: clamp(1.4rem, 2.1vw, 2.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.edicion-beat__texto p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.5;
+  max-width: 42ch;
+  color: rgba(23, 16, 12, 0.74);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edicion-beat { min-height: auto; }
+  .edicion-beat__fijo { position: static; min-height: 0; padding-block: 2rem; }
+  .edicion-beat__objeto img { transform: none; }
+}

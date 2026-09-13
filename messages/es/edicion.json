@@ -83,7 +83,21 @@
     "impreso": {
       "titulo": "IMPRESO",
       "entradilla": "Treinta páginas A4 que se pasan con la mano.",
-      "declaracion": "El papel no deja rectificar. Una portada, un cartel y treinta páginas maquetadas obligan a decidir la jerarquía antes de imprimir, y esa disciplina es la que llevo después a una pantalla."
+      "declaracion": "El papel no deja rectificar. Una portada, un cartel y treinta páginas maquetadas obligan a decidir la jerarquía antes de imprimir, y esa disciplina es la que llevo después a una pantalla.",
+      "triptico": {
+        "objeto": {
+          "titulo": "Treinta páginas, A4",
+          "cuerpo": "No es una carpeta de imágenes sueltas: es un documento con orden, con portada y con final. Se lee de principio a fin o no se lee."
+        },
+        "reticula": {
+          "titulo": "La retícula aguanta",
+          "cuerpo": "Una sola estructura sostiene treinta páginas de contenido muy distinto. Cuando la retícula es buena, cambiar el contenido no obliga a rediseñar la página."
+        },
+        "tinta": {
+          "titulo": "El papel no deja rectificar",
+          "cuerpo": "En pantalla puedo mover una línea a las tres de la mañana. Impreso, la decisión es definitiva, y eso cambia cuánto tiempo dedico a tomarla."
+        }
+      }
     },
     "oficio": {
       "titulo": "OFICIO",

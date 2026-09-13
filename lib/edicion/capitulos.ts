@@ -85,7 +85,10 @@ export const CAPITULOS = [
   {
     anclaje: "impreso",
     numeral: "V",
-    alturaSvh: 240,
+    // The only chapter whose height is dictated rather than chosen: sections 47
+    // and 48 specify three sticky beats of 165svh, which is 495svh before the
+    // intro or the cards are counted.
+    alturaSvh: 700,
     tema: "oscuro",
     // Plakatstil burnt orange, from her Nespresso homage.
     fondo: "#6B2F14",

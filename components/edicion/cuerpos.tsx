@@ -5,6 +5,7 @@ import { medidas } from "@/lib/edicion/medidas";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
+import { Triptico } from "./triptico";
 
 /**
  * Chapter I's editorial body — the five drawings, each with what she says
@@ -119,6 +120,28 @@ export function CuerpoCampana() {
       </Ficha>
       <Ficha ancho="medio">
         <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" {...medidas("/cine/a3-ingres.avif")} />
+      </Ficha>
+    </>
+  );
+}
+
+/**
+ * Chapter V's editorial body: her statement, then the three-part sticky story
+ * of sections 47 and 48 circling the printed portfolio.
+ */
+export function CuerpoImpreso() {
+  const t = useTranslations("edicion");
+  return (
+    <>
+      <div className="edicion-declaracion animate-show-media">
+        <p>{t("capitulos.impreso.declaracion")}</p>
+      </div>
+      <Triptico />
+      <Ficha ancho="medio">
+        <img src="/trabajo/t-libro.avif" alt="" loading="lazy" decoding="async" {...medidas("/trabajo/t-libro.avif")} />
+      </Ficha>
+      <Ficha ancho="medio">
+        <img src="/trabajo/t-lobo.avif" alt="" loading="lazy" decoding="async" {...medidas("/trabajo/t-lobo.avif")} />
       </Ficha>
     </>
   );

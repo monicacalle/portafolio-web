@@ -83,7 +83,21 @@
     "impreso": {
       "titulo": "PRINT",
       "entradilla": "Thirty A4 pages you turn with your hand.",
-      "declaracion": "Paper does not let you take it back. A cover, a poster and thirty laid-out pages force you to settle the hierarchy before it prints, and that discipline is what I bring to a screen afterwards."
+      "declaracion": "Paper does not let you take it back. A cover, a poster and thirty laid-out pages force you to settle the hierarchy before it prints, and that discipline is what I bring to a screen afterwards.",
+      "triptico": {
+        "objeto": {
+          "titulo": "Thirty pages, A4",
+          "cuerpo": "Not a folder of loose images: a document with an order, a cover and an ending. You read it start to finish or you do not read it."
+        },
+        "reticula": {
+          "titulo": "The grid holds",
+          "cuerpo": "One structure carries thirty pages of very different content. When the grid is good, changing the content does not force you to redesign the page."
+        },
+        "tinta": {
+          "titulo": "Paper does not let you take it back",
+          "cuerpo": "On screen I can move a line at three in the morning. In print the decision is final, and that changes how long I spend making it."
+        }
+      }
     },
     "oficio": {
       "titulo": "PRACTICE",
