@@ -1819,3 +1819,110 @@ html[data-fase="capitulos"] .edicion-rail__frame { opacity: 0.18; }
     );
   }
 }
+
+/* ================================================================ §29 / §30
+   THE CONSTELLATION.
+
+   Five cards in a loose cloud, each expanding from its own origin at its own
+   rate. Every number here is section 29's: base scales 0.80/0.65/0.75/0.80/1.00
+   from initial scales .40/.325/.375/.40/.50, hidden until 20%, expanding
+   20–45%, opacity arriving 40–65%, at rest by 100%.
+
+   --c is the block's own scroll progress; --fase staggers each card's slice of
+   that window so the five do not start together, which is what "expanding
+   outward from their individual origins" means. */
+.edicion-constelacion {
+  grid-column: span 6;
+  position: relative;
+  /* Tall enough that the cloud has room to expand into and the scroll has
+     something to scrub across. */
+  min-height: 92svh;
+  margin-block: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.edicion-carta {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  width: 22%;
+  margin: 0;
+  /* Section 29's reveal, in three overlapping bands driven by one value. */
+  --aparecer: clamp(0, calc((var(--c, 0) - 0.20 - var(--fase, 0)) / 0.13), 1);
+  --opaco: clamp(0, calc((var(--c, 0) - 0.40 - var(--fase, 0)) / 0.13), 1);
+  /* Slightly different parallax rates, per the section's last line. */
+  --deriva: calc((var(--c, 0) - 0.5) * var(--par, 0.1) * -260px);
+  transform:
+    translateY(var(--deriva))
+    scale(calc(var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)));
+  /* Peripheral cards stay partly transparent; the primary reaches 1. */
+  opacity: calc(var(--opaco) * 0.78);
+  transition:
+    transform var(--t-hover) var(--ease-cine),
+    opacity var(--t-hover) var(--ease-cine),
+    filter var(--t-hover) var(--ease-cine);
+  will-change: transform, opacity;
+}
+.edicion-carta[data-primaria] {
+  width: 30%;
+  opacity: var(--opaco);
+  z-index: 2;
+}
+
+.edicion-carta img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+  box-shadow: 0 12px 34px -20px rgba(23, 16, 12, 0.55);
+  transition: box-shadow var(--t-hover) var(--ease-cine);
+}
+.edicion-carta figcaption {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+.edicion-carta figcaption strong { font-weight: 700; }
+.edicion-carta figcaption span { color: rgba(23, 16, 12, 0.58); font-variant-numeric: tabular-nums; }
+
+/* §30: the active card moves forward, scale rises 4–7%, opacity reaches 1, the
+   surrounding cards lose emphasis, the shadow increases, over 250–350ms.
+   Explicitly NOT a rearrangement of the cloud -- the section forbids that. */
+.edicion-constelacion:hover .edicion-carta,
+.edicion-constelacion:focus-within .edicion-carta { filter: saturate(0.88); opacity: 0.62; }
+.edicion-carta:hover,
+.edicion-carta:focus-within {
+  z-index: 3;
+  filter: none !important;
+  opacity: 1 !important;
+  transform:
+    translateY(var(--deriva))
+    scale(calc((var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)) * 1.055));
+}
+.edicion-carta:hover img,
+.edicion-carta:focus-within img { box-shadow: 0 22px 48px -18px rgba(23, 16, 12, 0.66); }
+
+/* Below the large breakpoint a five-card absolute cloud becomes a pile, so it
+   reverts to the flow. Section 31 asks for a carousel at this width and the
+   chapter body already provides one. */
+@media (max-width: 1023px) {
+  .edicion-constelacion {
+    grid-column: auto;
+    min-height: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .edicion-carta {
+    position: static;
+    width: 100%;
+    transform: none;
+    opacity: 1;
+  }
+  .edicion-carta[data-primaria] { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edicion-carta { transform: none; opacity: 1; }
+  .edicion-carta[data-primaria] { opacity: 1; }
+}

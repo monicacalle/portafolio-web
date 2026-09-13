@@ -6,6 +6,7 @@ import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
 import { VideoFeature } from "./video";
 import { Triptico } from "./triptico";
+import { Constelacion } from "./constelacion";
 import { ListaCompacta } from "./lista-compacta";
 
 /**
@@ -22,14 +23,6 @@ import { ListaCompacta } from "./lista-compacta";
  * shelter, no slogan. It is the hinge that hands the argument to chapter III,
  * where that work actually lives.
  */
-const PIEZAS = [
-  { slug: "pelo-cobre", src: "/edicion/panel-3.avif", ancho: "medio" },
-  { slug: "panuelo", src: "/edicion/panel-7.avif", ancho: "medio" },
-  { slug: "modigliani", src: "/edicion/panel-6.avif", ancho: "tercio" },
-  { slug: "nube", src: "/edicion/panel-9.avif", ancho: "tercio" },
-  { slug: "ceguera", src: "/cine/a4-ceguera.avif", ancho: "tercio" },
-] as const;
-
 export function CuerpoIlustracion() {
   const t = useTranslations("edicion");
 
@@ -47,33 +40,17 @@ export function CuerpoIlustracion() {
         </p>
       </div>
 
-      {PIEZAS.map((p) => (
-        <Ficha key={p.slug} ancho={p.ancho}>
-          {/* These carry real alt text, unlike the decorative plates elsewhere:
-              the drawing IS the content of this chapter, and the caption beside
-              it describes the painting rather than naming the subject. */}
-          <img
-            src={p.src}
-            alt={t(`capitulos.ilustracion.piezas.${p.slug}.titulo`)}
-            loading="lazy"
-            decoding="async"
-            {...medidas(p.src)}
-          />
-          <h3>{t(`capitulos.ilustracion.piezas.${p.slug}.titulo`)}</h3>
-          <p>{t(`capitulos.ilustracion.piezas.${p.slug}.linea`)}</p>
-          <p className="edicion-ficha__meta">
-            {t(`capitulos.ilustracion.piezas.${p.slug}.meta`)}
-          </p>
-        </Ficha>
-      ))}
+      {/*
+        Section 29's constellation, not a grid. The section specifies five
+        cards in a loose cloud and she has exactly five drawings, so the
+        structure and the content want the same number without either being
+        bent to fit the other. Each card's title and dimensions ride with it.
+      */}
+      <Constelacion />
     </>
   );
 }
 
-/**
- * Chapter IV's editorial body — the two apps, demonstrated by her own screens
- * rather than by a rebuilt mock. See plancha.tsx for why this is not Rive.
- */
 export function CuerpoProducto() {
   const t = useTranslations("edicion");
   return (
