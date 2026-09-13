@@ -79,19 +79,30 @@ function PlanoObra({ plano, vis }: { plano: Plano; vis: number }) {
   const ref = useRef<THREE.Mesh>(null);
   const mat = useRef<THREE.MeshBasicMaterial>(null);
 
+  /*
+    useLoader caches by URL, so the texture it returns is SHARED by every plane
+    using that file. Configuring it in place both trips the immutability rule
+    and means two planes would fight over its settings -- and this scene reuses
+    the Ceguera figure and the retablo panels across chapters. Clone, configure
+    the clone, dispose it on unmount.
+  */
+  const mapa = useMemo(() => {
+    const t = tex.clone();
+    t.colorSpace = THREE.SRGBColorSpace;
+    // Her work is the subject; a badly filtered edge on an alpha cut is the one
+    // artefact that would read as a mistake rather than a choice.
+    t.anisotropy = 8;
+    t.needsUpdate = true;
+    return t;
+  }, [tex]);
+
+  useEffect(() => () => mapa.dispose(), [mapa]);
+
   const alto = useMemo(() => {
-    const img = tex.image as { width: number; height: number } | undefined;
+    const img = mapa.image as { width: number; height: number } | undefined;
     const aspecto = img && img.width ? img.height / img.width : 1;
     return plano.ancho * aspecto;
-  }, [tex, plano.ancho]);
-
-  useEffect(() => {
-    tex.colorSpace = THREE.SRGBColorSpace;
-    // Her work is the subject; a wrongly-filtered edge on an alpha cut is the
-    // one artefact that would read as a mistake rather than a choice.
-    tex.anisotropy = 8;
-    tex.needsUpdate = true;
-  }, [tex]);
+  }, [mapa, plano.ancho]);
 
   useFrame((state) => {
     if (!ref.current || !mat.current) return;
@@ -109,7 +120,7 @@ function PlanoObra({ plano, vis }: { plano: Plano; vis: number }) {
       <planeGeometry args={[plano.ancho, alto]} />
       <meshBasicMaterial
         ref={mat}
-        map={tex}
+        map={mapa}
         transparent
         opacity={0}
         depthWrite={false}
@@ -234,21 +245,26 @@ function AvisoPrimerCuadro({ onListo }: { onListo: () => void }) {
 export function Lienzo() {
   const progresos = useProgresos();
   const [listo, setListo] = useState(false);
-  const [soportado, setSoportado] = useState<boolean | null>(null);
+  /*
+    Section 81: if WebGL is unavailable the page must still feel designed, so
+    ask BEFORE mounting rather than letting R3F throw into an error boundary and
+    leave a hole where the scene was.
 
-  useEffect(() => {
-    // Section 81: if WebGL is unavailable the page must still feel designed,
-    // so ask before mounting rather than letting R3F throw into an error
-    // boundary and leave a hole where the scene was.
+    A lazy state initialiser, not an effect: the question is synchronous and
+    answered once, and asking it in an effect means a second render pass on
+    every load for a value that never changes. Returns false during SSR, so the
+    server renders the static page and the canvas only ever appears on the
+    client -- which is what we want anyway.
+  */
+  const [soportado] = useState(() => {
+    if (typeof document === "undefined") return false;
     try {
       const c = document.createElement("canvas");
-      setSoportado(
-        !!(c.getContext("webgl2") || c.getContext("webgl")),
-      );
+      return !!(c.getContext("webgl2") || c.getContext("webgl"));
     } catch {
-      setSoportado(false);
+      return false;
     }
-  }, []);
+  });
 
   useEffect(() => {
     // Section 82: once the canvas has a stable frame, the static fallback is
