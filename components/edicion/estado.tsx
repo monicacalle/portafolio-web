@@ -70,10 +70,19 @@ const HISTERESIS = 56;
  */
 export function EstadoEdicion({ children }: { children: ReactNode }) {
   const [activo, setActivo] = useState<string | null>(null);
-  // The hysteresis test needs the current value inside a listener that is
-  // registered once; state would be captured stale.
+  /*
+    The hysteresis test needs the CURRENT active chapter inside a scroll
+    listener that is registered once, and state would be captured stale there.
+
+    Synced in an effect rather than assigned during render: writing a ref while
+    rendering is a lint error and a real hazard, because a render can be thrown
+    away and re-run under concurrent React, leaving the ref describing a render
+    that never committed.
+  */
   const activoRef = useRef<string | null>(null);
-  activoRef.current = activo;
+  useEffect(() => {
+    activoRef.current = activo;
+  }, [activo]);
 
   useEffect(() => {
     const raiz = document.documentElement;

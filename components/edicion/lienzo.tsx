@@ -244,6 +244,7 @@ function AvisoPrimerCuadro({ onListo }: { onListo: () => void }) {
 
 export function Lienzo() {
   const progresos = useProgresos();
+  usePrecarga(progresos);
   const [listo, setListo] = useState(false);
   /*
     Section 81: if WebGL is unavailable the page must still feel designed, so
@@ -297,6 +298,15 @@ export function Lienzo() {
         <Suspense fallback={null}>
           <DprAdaptativo />
           <AvisoPrimerCuadro onListo={() => setListo(true)} />
+          {/*
+            Section 90: only the current scene renders, and only while it is on
+            screen. The brief's rule is "continue one chapter ahead" and "do not
+            download all 150+ product assets at initial render" -- a scene whose
+            progress is 0 or 1 is off screen, so its textures are never
+            requested until the reader is within a viewport of it.
+
+            The next scene warms below, one ahead, exactly as the section asks.
+          */}
           {ESCENAS.map((e) => {
             const p = progresos[e.clave] ?? 0;
             if (p <= 0 || p >= 1) return null;
@@ -306,4 +316,32 @@ export function Lienzo() {
       </Canvas>
     </div>
   );
+}
+
+
+/**
+ * Section 90's preloading strategy, in the shape the brief asks for: one chapter
+ * ahead, never the whole page.
+ *
+ * When a scene passes halfway, the NEXT scene's textures are fetched into the
+ * browser cache with a plain Image(), so R3F's loader finds them warm when the
+ * reader arrives. Nothing is downloaded at initial render beyond the hero.
+ */
+function usePrecarga(progresos: Record<string, number>) {
+  const hecho = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    ESCENAS.forEach((e, i) => {
+      const p = progresos[e.clave] ?? 0;
+      if (p < 0.5) return;
+      const siguiente = ESCENAS[i + 1];
+      if (!siguiente || hecho.current.has(siguiente.clave)) return;
+      hecho.current.add(siguiente.clave);
+      siguiente.planos.forEach((pl) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.src = pl.src;
+      });
+    });
+  }, [progresos]);
 }

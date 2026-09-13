@@ -1591,3 +1591,60 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
 @media (max-width: 767px) {
   .edicion-capitulo__intro { align-items: flex-end; padding-bottom: 8svh; }
 }
+
+/* ===================================================================== §88
+   The z-index system, as named tokens on the scale the brief specifies.
+
+   Section 88's closing line is "Never randomly increase z-index to fix bugs",
+   which is only possible if the layers have names. Every z-index on this page
+   now comes from here. */
+:root {
+  --z-escena: 0;       /* the cinematic canvas and chapter grounds */
+  --z-media: 10;       /* editorial media */
+  --z-media-alta: 20;  /* media that must sit over its neighbours */
+  --z-rail: 50;        /* the sidebar and local navigation */
+  --z-cabecera: 9999;  /* the global header */
+  --z-modal: 10004;    /* the video modal */
+}
+.edicion-lienzo { z-index: var(--z-escena); }
+.edicion-rail { z-index: var(--z-rail); }
+.edicion-cabecera { z-index: var(--z-cabecera); }
+.edicion-modal { z-index: var(--z-modal); }
+.edicion-volver { z-index: var(--z-media-alta); }
+
+/* ===================================================================== §89
+   Pointer-event architecture. Decorative wrappers never take a click; their
+   interactive children opt back in. This is what stops the fixed cinematic
+   layer and the geometry from stealing input. */
+.edicion-lienzo,
+.edicion-geometria,
+.edicion-hero__escena,
+.edicion-hero__panel,
+.edicion-hero__anacronismo,
+.edicion-capitulo__escena { pointer-events: none; }
+.edicion-hero__marco { pointer-events: none; }
+.edicion-hero__marco a { pointer-events: auto; }
+
+/* ===================================================================== §73
+   Inline links: understated. Underline on hover, and explicitly NOT a pill --
+   section 73 says "Do not convert every link into a pill", and the pills on
+   this page are reserved for the CTAs that genuinely are buttons. */
+.edicion-capitulo__cuerpo p a,
+.edicion-lista dd a,
+.edicion-beat__texto a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
+  transition: border-color var(--t-hover) var(--ease-salida);
+}
+.edicion-capitulo__cuerpo p a:hover,
+.edicion-lista dd a:hover,
+.edicion-beat__texto a:hover { border-bottom-color: currentColor; }
+
+/* ===================================================================== §31
+   The mobile carousel: the next card peeks so the swipe is discoverable, and
+   inactive cards sit back slightly so the current one reads as current. */
+@media (max-width: 767px) {
+  .edicion-capitulo__cuerpo { padding-inline: 1.2rem; }
+  .edicion-ficha { transition: opacity var(--t-hover) var(--ease-salida); }
+}
