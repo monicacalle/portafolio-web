@@ -4,7 +4,8 @@
     "linea2": "Calle",
     "linea3": "Edition",
     "etiqueta": "2026 Edition",
-    "indice": "Chapter index"
+    "indice": "Chapter index",
+    "indiceRail": "Chapters (sidebar)"
   },
   "hero": {
     "entradilla": "Graphic and UX/UI designer in Valencia. Six chapters: what I draw, and what I'm asked for."
@@ -12,7 +13,9 @@
   "cta": {
     "escribir": "Write to me",
     "ver": "See the project",
-    "cv": "Open my CV"
+    "cv": "Open my CV",
+    "verVideo": "Play video",
+    "cerrar": "Close"
   },
   "capitulos": {
     "ilustracion": {
@@ -55,7 +58,11 @@
     "campana": {
       "titulo": "CAMPAIGN",
       "entradilla": "A drawing of mine ended up at bus-shelter scale.",
-      "declaracion": "Ceguera Digital is a public-service campaign about looking at your phone and missing your stop. The illustration that opens this portfolio belongs to it, and here you see it where it was meant to be: in the street, at a person's height."
+      "declaracion": "Ceguera Digital is a public-service campaign about looking at your phone and missing your stop. The illustration that opens this portfolio belongs to it, and here you see it where it was meant to be: in the street, at a person's height.",
+      "video": {
+        "titulo": "Ceguera Digital, in the street",
+        "nota": "The full poster in an Ajuntament de València bus shelter. The illustration that opens this edition is the same one you see here at real size."
+      }
     },
     "producto": {
       "titulo": "PRODUCT",

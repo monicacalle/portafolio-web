@@ -4,7 +4,8 @@
     "linea2": "Calle",
     "linea3": "Edición",
     "etiqueta": "Edición 2026",
-    "indice": "Índice de capítulos"
+    "indice": "Índice de capítulos",
+    "indiceRail": "Capítulos (barra lateral)"
   },
   "hero": {
     "entradilla": "Diseñadora gráfica y UX/UI en Valencia. Seis capítulos: lo que dibujo y lo que me encargan."
@@ -12,7 +13,9 @@
   "cta": {
     "escribir": "Escríbeme",
     "ver": "Ver el proyecto",
-    "cv": "Abrir mi CV"
+    "cv": "Abrir mi CV",
+    "verVideo": "Ver el vídeo",
+    "cerrar": "Cerrar"
   },
   "capitulos": {
     "ilustracion": {
@@ -55,7 +58,11 @@
     "campana": {
       "titulo": "CAMPAÑA",
       "entradilla": "Un dibujo mío acabó a tamaño de marquesina.",
-      "declaracion": "Ceguera Digital es una campaña de servicio público sobre mirar el móvil y perder la parada. La ilustración que abre este portafolio es suya, y aquí la ves donde tenía que estar: en la calle, a la altura de una persona."
+      "declaracion": "Ceguera Digital es una campaña de servicio público sobre mirar el móvil y perder la parada. La ilustración que abre este portafolio es suya, y aquí la ves donde tenía que estar: en la calle, a la altura de una persona.",
+      "video": {
+        "titulo": "Ceguera Digital, en la calle",
+        "nota": "El cartel completo en una marquesina del Ajuntament de València. La ilustración que abre esta edición es la misma que ves aquí a tamaño real."
+      }
     },
     "producto": {
       "titulo": "PRODUCTO",

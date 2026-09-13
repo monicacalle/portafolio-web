@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Ficha } from "./capitulo";
 import { Plancha } from "./plancha";
+import { VideoFeature } from "./video";
 
 /**
  * Chapter I's editorial body — the five drawings, each with what she says
@@ -74,6 +75,8 @@ export function CuerpoProducto() {
         alto={3012}
         titulo={t("capitulos.producto.planchas.vibe.titulo")}
         nota={t("capitulos.producto.planchas.vibe.nota")}
+        href="/proyectos/vibe"
+        verLabel={t("cta.ver")}
       />
       <Plancha
         src="/edicion/plancha-voluntee.avif"
@@ -81,7 +84,40 @@ export function CuerpoProducto() {
         alto={1471}
         titulo={t("capitulos.producto.planchas.voluntee.titulo")}
         nota={t("capitulos.producto.planchas.voluntee.nota")}
+        href="/proyectos/voluntee"
+        verLabel={t("cta.ver")}
       />
+    </>
+  );
+}
+
+/**
+ * Chapter III's editorial body. The film leads, because the chapter's claim is
+ * about SCALE -- a drawing that ended up at bus-shelter size -- and scale is the
+ * one thing a moving camera shows that a fixed crop cannot.
+ */
+export function CuerpoCampana() {
+  const t = useTranslations("edicion");
+  return (
+    <>
+      <div className="edicion-declaracion">
+        <p>{t("capitulos.campana.declaracion")}</p>
+      </div>
+      <VideoFeature
+        src="/edicion/campana-marquesina.mp4"
+        webm="/edicion/campana-marquesina.webm"
+        poster="/edicion/campana-marquesina-poster.avif"
+        titulo={t("capitulos.campana.video.titulo")}
+        nota={t("capitulos.campana.video.nota")}
+        etiquetaVer={t("cta.verVideo")}
+        etiquetaCerrar={t("cta.cerrar")}
+      />
+      <Ficha ancho="medio">
+        <img src="/cine/a3-loreal.avif" alt="" loading="lazy" decoding="async" />
+      </Ficha>
+      <Ficha ancho="medio">
+        <img src="/cine/a3-ingres.avif" alt="" loading="lazy" decoding="async" />
+      </Ficha>
     </>
   );
 }

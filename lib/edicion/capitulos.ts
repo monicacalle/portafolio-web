@@ -13,6 +13,13 @@
  * chapters of equal length would read as a template no matter how good the
  * motion is. The spread here is 3.9x.
  *
+ * These were CUT after the gate measured 12,739px of empty near-black across
+ * the page -- 11.7 viewport-heights of nothing, 5,455px of it inside chapter IV
+ * alone, which holds her two finished case studies. The extra length was
+ * reserved for the R3F scenes that were then deleted on the free-to-use
+ * constraint, so it was reserving room for something that is not coming.
+ * Reserved emptiness is not a placeholder a reader can recognise as one.
+ *
  * The allocation is by CONTENT READINESS, not by importance. An earlier draft
  * gave the illustration chapter 720svh when it had four images and not one
  * written word, while PRODUCTO had 780svh behind two finished bilingual case
@@ -38,7 +45,7 @@ export const CAPITULOS = [
   {
     anclaje: "ilustracion",
     numeral: "I",
-    alturaSvh: 460,
+    alturaSvh: 300,
     tema: "oscuro",
     // The sage-olive of Untitled_Artwork 3, corner-sampled. It is the ground of
     // the retablo's centre panel, so the page opens without a colour change.
@@ -48,7 +55,7 @@ export const CAPITULOS = [
   {
     anclaje: "marca",
     numeral: "II",
-    alturaSvh: 480,
+    alturaSvh: 260,
     tema: "oscuro",
     // Estudio Raíz oxblood. Also the page's one structural accent.
     fondo: "#4E0909",
@@ -57,7 +64,7 @@ export const CAPITULOS = [
   {
     anclaje: "campana",
     numeral: "III",
-    alturaSvh: 540,
+    alturaSvh: 280,
     tema: "oscuro",
     // The cobalt of the Ceguera sweater, measured #3060A0 and darkened for a
     // ground. The figure itself never sits on it — at 1.06:1 the sweater would
@@ -68,7 +75,7 @@ export const CAPITULOS = [
   {
     anclaje: "producto",
     numeral: "IV",
-    alturaSvh: 780,
+    alturaSvh: 340,
     tema: "oscuro",
     obras: ["vibe", "voluntee"],
     // Vibe's own dark. This is the longest chapter because it is the only one
@@ -78,7 +85,7 @@ export const CAPITULOS = [
   {
     anclaje: "impreso",
     numeral: "V",
-    alturaSvh: 380,
+    alturaSvh: 240,
     tema: "oscuro",
     // Plakatstil burnt orange, from her Nespresso homage.
     fondo: "#6B2F14",
@@ -87,7 +94,7 @@ export const CAPITULOS = [
   {
     anclaje: "oficio",
     numeral: "VI",
-    alturaSvh: 200,
+    alturaSvh: 190,
     tema: "claro",
     // The chapter that closes is the only one that never goes dark: it is the
     // practical one — where she has worked, what she uses, how to write to her.

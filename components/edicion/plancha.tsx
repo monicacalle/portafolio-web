@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useProgreso } from "@/lib/edicion/use-progreso";
+import { Link } from "@/lib/i18n/navigation";
 
 /**
  * A plancha: one of her delivered app screens, scrubbed through a phone-sized
@@ -38,6 +39,8 @@ export function Plancha({
   ancho,
   titulo,
   nota,
+  href,
+  verLabel,
 }: {
   src: string;
   /** The capture's real pixel height. Drives the travel, so it is not guessed. */
@@ -49,6 +52,9 @@ export function Plancha({
      site keeps it. */
   titulo: string;
   nota: string;
+  /** The written case study this screen came out of. */
+  href: string;
+  verLabel: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useProgreso(ref, "--s");
@@ -71,6 +77,15 @@ export function Plancha({
       <div className="edicion-plancha__pie">
         <h3>{titulo}</h3>
         <p>{nota}</p>
+        {/* The case studies were completely orphaned: the homepage linked to
+            neither /proyectos/vibe nor /proyectos/voluntee, so the two pieces
+            of deep written work on the whole site -- the ones the market
+            research calls the highest-leverage thing she has -- were reachable
+            only by typing the URL. */}
+        <Link className="edicion-plancha__ver" href={href}>
+          {verLabel}
+          <span aria-hidden> ↗</span>
+        </Link>
       </div>
     </div>
   );

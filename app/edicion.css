@@ -922,3 +922,169 @@ html:not([data-nav-theme]) {
 @media (prefers-reduced-motion: reduce) {
   .edicion-plancha__pantalla { transform: none; }
 }
+
+/* ------------------------------------------ chapter VI is not a carousel
+   The snap carousel below 768px turned the closing chapter into a horizontal
+   swipe, which put the only contact affordance on a phone off-screen: the
+   mailto was clipped at x=308 in a 390px viewport and LinkedIn and the CV were
+   entirely past the right edge. The header CTA is hidden at this width and
+   there is no footer on the homepage, so that swipe WAS the contact path.
+   A closing chapter is a reading column. */
+@media (max-width: 767px) {
+  #oficio .edicion-capitulo__cuerpo {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(6, 1fr);
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  .edicion-oficio__acciones { flex-direction: column; align-items: stretch; }
+  .edicion-oficio__acciones a { text-align: center; }
+}
+
+/* The horizontal scrollers are keyboard-reachable. Chrome does not make an
+   overflow container focusable on its own, and four of the five contain no
+   focusable children at all, so 60% of the work on the page was unreachable
+   without a pointer. WCAG 2.1.1. */
+.edicion-capitulo__cuerpo:focus-visible,
+.edicion-plancha__marco:focus-visible {
+  outline: 2px solid var(--edicion-acento);
+  outline-offset: 3px;
+}
+
+/* There was no :focus-visible rule anywhere in the Edition. */
+.edicion a:focus-visible,
+.edicion button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* The meta line lost its size and most of its contrast to a specificity
+   collision: `.edicion-ficha p` (0,1,1) beat `.edicion-ficha__meta` (0,1,0), so
+   it computed 16.2px and inherited a 0.72 colour that its own opacity: 0.5 then
+   multiplied to ~0.36 -- 2.3:1 on cream, on the line carrying every drawing's
+   dimensions and date. */
+.edicion-ficha p.edicion-ficha__meta {
+  font-size: 0.74rem;
+  color: rgba(23, 16, 12, 0.66);
+  opacity: 1;
+}
+
+/* Chapter VI's column headings and dates were 3.4:1 at opacity 0.5. */
+.edicion-oficio h3 { opacity: 1; color: rgba(23, 16, 12, 0.62); }
+.edicion-oficio__cuando { opacity: 1; color: rgba(23, 16, 12, 0.62); }
+
+.edicion-plancha__ver {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.7rem;
+  padding: 0.36rem 0.9rem;
+  border: 1px solid rgba(23, 16, 12, 0.28);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 200ms var(--ease-salida), color 200ms var(--ease-salida);
+}
+.edicion-plancha__ver:hover {
+  background: var(--edicion-acento);
+  border-color: var(--edicion-acento);
+  color: var(--edicion-crema);
+}
+
+/* ------------------------------------------------------------- el vídeo
+   Brief sections 25, 26 and 40. A large media block with a restrained centred
+   play affordance, opening a full-screen overlay. No library: a <video> and a
+   <dialog>. */
+.edicion-video { grid-column: span 6; display: grid; gap: 0.9rem; }
+.edicion-video__marco {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--edicion-negro);
+  aspect-ratio: 16 / 9;
+}
+.edicion-video__medio { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.edicion-video__play {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.3rem;
+  border: 1px solid rgba(246, 243, 239, 0.7);
+  border-radius: 999px;
+  background: rgba(12, 9, 9, 0.42);
+  color: #f6f3ef;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background-color 220ms var(--ease-salida), border-color 220ms var(--ease-salida);
+}
+.edicion-video__play:hover { background: rgba(12, 9, 9, 0.72); border-color: #f6f3ef; }
+.edicion-video__play-icono { font-size: 0.72em; line-height: 1; }
+
+.edicion-video__pie h3 { margin: 0 0 0.25rem; font-size: 1rem; font-weight: 700; }
+.edicion-video__pie p {
+  margin: 0; font-size: 0.88rem; line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72); max-width: 52ch;
+}
+
+/* Section 26: the panel scales 0.97 -> 1 and fades in. */
+.edicion-modal {
+  border: 0;
+  padding: 0;
+  max-width: 100vw;
+  max-height: 100dvh;
+  width: 100vw;
+  height: 100dvh;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+.edicion-modal::backdrop { background: rgba(8, 6, 6, 0.88); }
+.edicion-modal__panel {
+  width: min(92vw, 1400px);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.edicion-modal__medio { width: 100%; height: 100%; display: block; }
+.motion .edicion-modal[open] .edicion-modal__panel {
+  animation: edicion-modal-entra 320ms var(--ease-salida) both;
+}
+@keyframes edicion-modal-entra {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.edicion-modal__cerrar {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid rgba(246, 243, 239, 0.6);
+  border-radius: 999px;
+  background: transparent;
+  color: #f6f3ef;
+  font: inherit; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer;
+}
+.edicion-modal__cerrar:hover { background: rgba(246, 243, 239, 0.14); }
+
+@media (max-width: 767px) { .edicion-video { grid-column: auto; } }
+
+/* Motion off: no autoplay loop, no entrance. The poster frame is the work. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-video__medio { display: none; }
+  .edicion-video__marco {
+    background-image: var(--poster);
+    background-size: cover;
+    background-position: center;
+  }
+}

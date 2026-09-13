@@ -36,7 +36,7 @@ export function Rail() {
         <span className="edicion-rail__marca-3">{t("marca.linea3")}</span>
       </div>
 
-      <nav className="edicion-rail__indice" aria-label={t("marca.indice")}>
+      <nav className="edicion-rail__indice" aria-label={t("marca.indiceRail")}>
         <ol>
           {CAPITULOS.map((c) => {
             const activa = activo === c.anclaje;

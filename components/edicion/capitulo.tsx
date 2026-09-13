@@ -60,7 +60,16 @@ export function Capitulo({
       </div>
 
       {children ? (
-        <div className="edicion-capitulo__cuerpo">
+        <div
+          className="edicion-capitulo__cuerpo"
+          // Focusable because below 768px this becomes a horizontal snap
+          // scroller, and Chrome does not make overflow containers focusable on
+          // their own -- so a keyboard-only reader could not reach the work
+          // inside it at all. tabIndex 0 plus a name is the standard remedy.
+          tabIndex={0}
+          role="group"
+          aria-label={t(`capitulos.${a}.titulo`)}
+        >
           {/* The body always turns light. That alternation is the page's pulse
               (brief 77), and it is what makes a 780svh chapter readable. */}
           <MarcaTema tema="claro" capitulo={capitulo.anclaje} />

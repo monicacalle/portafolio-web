@@ -9,7 +9,7 @@ import { Rail } from "./rail";
 import { Hero } from "./hero";
 import { Capitulo, Ficha } from "./capitulo";
 import { Oficio } from "./oficio";
-import { CuerpoIlustracion, CuerpoProducto } from "./cuerpos";
+import { CuerpoIlustracion, CuerpoProducto, CuerpoCampana } from "./cuerpos";
 
 /**
  * The Edition — the whole homepage.
@@ -38,7 +38,7 @@ export function Edicion() {
               key={c.anclaje}
               capitulo={c}
               indice={i}
-              escena={<Escena anclaje={c.anclaje} />}
+              escena={placaDe(c.anclaje)}
             >
               <Cuerpo anclaje={c.anclaje} />
             </Capitulo>
@@ -58,24 +58,43 @@ export function Edicion() {
  * already there, not a thing that appears when something fails. Building it
  * first is also what makes the mobile path (section 86) free.
  */
-function Escena({ anclaje }: { anclaje: string }) {
-  /*
-    No chapter plate may be LETTERING. The chapter title is set at ~150px in
-    white Bodoni across this image, and two of these were her own wordmarks:
-    MARCA landed on top of the Viña Esmeralda lockup and PRODUCTO on a page of
-    Vibe body copy. Type on type, both illegible, and it disrespected the work
-    it was sitting on. Plates are objects and photographs now; her lettering
-    appears in the light editorial bodies below, at a size where it can be read.
-  */
-  const PLACAS: Record<string, string> = {
-    ilustracion: "/cine/pelo-cobre.avif",
-    marca: "/images/mockupraiz.png",
-    campana: "/cine/a3-loreal.avif",
-    producto: "/images/iphone.webp",
-    impreso: "/images/portafolioabierto.png",
-  };
+/*
+  No chapter plate may be LETTERING. The chapter title is set at ~150px in white
+  Bodoni across this image, and two of these were her own wordmarks: MARCA
+  landed on the Viña Esmeralda lockup and PRODUCTO on a page of Vibe body copy.
+  Type on type, both illegible, and it disrespected the work it sat on. Plates
+  are objects and photographs; her lettering appears in the light editorial
+  bodies below, at a size where it can be read.
+
+  All cut by produccion/edicion.py. Two of these were previously raw PNGs from
+  the old site served straight to the browser -- mockupraiz at 19.1 MB and
+  portafolioabierto at 2.2 MB, against ~450 KB for the rest of the page
+  combined. main rendered them through next/image; the Edition used a plain
+  <img> and bypassed the optimiser.
+*/
+const PLACAS: Record<string, string> = {
+  ilustracion: "/cine/pelo-cobre.avif",
+  marca: "/edicion/cap-marca.avif",
+  campana: "/cine/a3-loreal.avif",
+  producto: "/edicion/cap-producto.avif",
+  impreso: "/edicion/cap-impreso.avif",
+};
+
+/**
+ * Returns undefined rather than a component when a chapter has no plate.
+ *
+ * `escena={<Escena .../>}` was always truthy even when Escena returned null,
+ * because a JSX element is an object. So chapter VI, which has no plate, still
+ * rendered the scene wrapper and its ::after scrim painted a grey wash over the
+ * cream ground -- with the cream title on top of it at 1.00:1 before the
+ * gradient. The truthiness has to be decided here, not inside the component.
+ */
+function placaDe(anclaje: string) {
   const src = PLACAS[anclaje];
-  if (!src) return null;
+  return src ? <Escena src={src} /> : undefined;
+}
+
+function Escena({ src }: { src: string }) {
   return <img src={src} alt="" decoding="async" loading="lazy" />;
 }
 
@@ -84,6 +103,7 @@ function Cuerpo({ anclaje }: { anclaje: string }) {
   if (anclaje === "oficio") return <Oficio />;
   if (anclaje === "ilustracion") return <CuerpoIlustracion />;
   if (anclaje === "producto") return <CuerpoProducto />;
+  if (anclaje === "campana") return <CuerpoCampana />;
   return <CuerpoPlacas anclaje={anclaje} />;
 }
 
@@ -104,9 +124,9 @@ function CuerpoPlacas({ anclaje }: { anclaje: string }) {
   const OBRAS: Record<string, { src: string; ancho: "completo" | "medio" | "tercio" | "dos-tercios" }[]> = {
     marca: [
       { src: "/trabajo/t-esmeralda.avif", ancho: "medio" },
-      { src: "/images/mockupraiz.png", ancho: "medio" },
+      { src: "/edicion/cap-marca.avif", ancho: "medio" },
       { src: "/trabajo/t-isabella.avif", ancho: "tercio" },
-      { src: "/images/portafolioabierto.png", ancho: "dos-tercios" },
+      { src: "/edicion/cap-impreso.avif", ancho: "dos-tercios" },
     ],
     campana: [
       { src: "/cine/a3-loreal.avif", ancho: "dos-tercios" },
@@ -117,7 +137,7 @@ function CuerpoPlacas({ anclaje }: { anclaje: string }) {
     impreso: [
       { src: "/trabajo/t-libro.avif", ancho: "medio" },
       { src: "/trabajo/t-lobo.avif", ancho: "medio" },
-      { src: "/images/portafolioabierto.png", ancho: "completo" },
+      { src: "/edicion/cap-impreso.avif", ancho: "completo" },
     ],
   };
 
