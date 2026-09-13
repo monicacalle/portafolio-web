@@ -84,8 +84,53 @@ function ScrollToTop() {
         // A fragment that is not a valid selector is not ours to honour.
         return;
       }
-      if (destino) lenis.scrollTo(destino as HTMLElement, { immediate: true });
-      return;
+      if (!destino) return;
+
+      /*
+        Three times, not once, and the repeats are the point.
+
+        The first lands where the chapter is AT MOUNT. The page is 28,000px of
+        scroll-driven layout and some of it settles after that: the sticky
+        triptych's three readings overlap only once its component has armed
+        itself, which changes chapter V's height and moves everything below it.
+        Measured before this: /es#oficio landed 161px to 320px past its
+        chapter, varying by load, and stable afterwards — the signature of a
+        scroll computed against a layout that was still moving.
+
+        Any real input cancels the repeats. A reader who has started scrolling
+        has said where they want to be, and yanking them back to the anchor a
+        second later is worse than landing 200px off.
+      */
+      const ir = () => lenis.scrollTo(destino as HTMLElement, { immediate: true });
+      ir();
+
+      let cancelado = false;
+      const cancelar = () => {
+        cancelado = true;
+      };
+      const reintentar = () => {
+        if (!cancelado) ir();
+      };
+      window.addEventListener("wheel", cancelar, { once: true, passive: true });
+      window.addEventListener("touchstart", cancelar, { once: true, passive: true });
+      window.addEventListener("keydown", cancelar, { once: true });
+
+      void document.fonts?.ready.then(() => requestAnimationFrame(reintentar));
+      if (document.readyState === "complete") {
+        const t = window.setTimeout(reintentar, 400);
+        return () => {
+          cancelar();
+          window.clearTimeout(t);
+        };
+      }
+      window.addEventListener("load", reintentar, { once: true });
+      return () => {
+        cancelar();
+        window.removeEventListener("load", reintentar);
+        window.removeEventListener("wheel", cancelar);
+        window.removeEventListener("touchstart", cancelar);
+        window.removeEventListener("keydown", cancelar);
+      };
     }
 
     if (volviendo.current) {
