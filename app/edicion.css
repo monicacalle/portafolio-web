@@ -675,6 +675,10 @@ html:not([data-nav-theme]) {
    the rail carries its own ground rather than depending on what is behind it.
    A gradient, not a panel: it has to read as part of the art direction, which
    is what brief section 18 asks for. */
+/* Opaque during editorial passages: the fixed canvas is full-viewport, so a
+   translucent rail let a cinematic scene ghost through its 336px gutter while
+   the reader was in a light reading section. */
+html[data-subfase="editorial"] .edicion-rail::before { opacity: 1; }
 .edicion-rail::before {
   content: "";
   position: absolute;
@@ -800,9 +804,16 @@ html:not([data-nav-theme]) {
   .edicion-capitulo__cuerpo::-webkit-scrollbar { display: none; }
   .edicion-ficha { scroll-snap-align: start; grid-column: auto; }
 
-  /* Chapter VI is a reading column, not a gallery, so it opts out. */
+  /* These are reading structures, not galleries, so they opt out of the
+     carousel. The triptych especially: it measured 1634px inside a 375px
+     overflow-x scroller, which put the whole sticky story off-screen sideways
+     on every phone -- and overflow-x: auto computes overflow-y: auto, so the
+     pin stopped referencing the viewport too. */
   .edicion-oficio,
-  .edicion-oficio__cierre { grid-column: auto; }
+  .edicion-oficio__cierre,
+  .edicion-triptico,
+  .edicion-lista,
+  .edicion-declaracion { grid-column: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -957,7 +968,13 @@ html:not([data-nav-theme]) {
    there is no footer on the homepage, so that swipe WAS the contact path.
    A closing chapter is a reading column. */
 @media (max-width: 767px) {
-  #oficio .edicion-capitulo__cuerpo {
+  /* Chapters whose body is a READING STRUCTURE opt out of the carousel
+     wholesale. grid-column: auto is not enough: under grid-auto-flow: column
+     every child becomes its own auto-sized column, so the triptych still
+     measured 1634px inside a 375px scroller and the whole sticky story sat
+     off-screen sideways. The flow itself has to change. */
+  #oficio .edicion-capitulo__cuerpo,
+  #impreso .edicion-capitulo__cuerpo {
     grid-auto-flow: row;
     grid-auto-columns: auto;
     grid-template-columns: repeat(6, 1fr);
@@ -1223,7 +1240,11 @@ html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0.18; }
    It does NOT simply become transparent -- a trace stays, so the chapter colour
    still reads during the 700ms crossfade and at the seams where the scene's
    background plane does not reach the viewport edge. */
-html[data-lienzo="activo"] .edicion-capitulo__intro {
+/* Only chapters that HAVE a scene step their ground aside. Chapter VI has none
+   -- section 23 sends the closing chapter into the light world -- and the
+   override was dropping its cream to 22% alpha, turning the one light chapter
+   on the page into a dark wash with a cream title over it. */
+html[data-lienzo="activo"] .edicion-capitulo:not([data-sin-escena]) .edicion-capitulo__intro {
   background: color-mix(in srgb, var(--cap-fondo) 22%, transparent);
 }
 .edicion-capitulo__intro { transition: background-color 700ms ease-in-out; }
@@ -1333,7 +1354,7 @@ a.edicion-ficha {
    at a razor edge. The scrim is a child of the block it leads into, so it can
    never be mistaken for part of the artwork above it. */
 .edicion-capitulo__cuerpo::before,
-.edicion-capitulo__intro::before {
+.edicion-capitulo__cuerpo::after {
   content: "";
   position: absolute;
   left: 0;
@@ -1348,11 +1369,16 @@ a.edicion-ficha {
   transform: translateY(-100%);
   background: linear-gradient(to bottom, transparent, var(--edicion-crema));
 }
-/* C: the dark ground takes over gradually before the next scene dominates. */
-.edicion-capitulo__intro::before {
-  top: 0;
-  transform: translateY(-100%);
-  background: linear-gradient(to bottom, transparent, var(--cap-fondo));
+/* C: light editorial -> dark cinematic. It hangs off the BOTTOM of the light
+   body rather than the top of the next intro: the intro computes overflow:
+   clip, so a scrim translated outside its own box was clipped away entirely and
+   every light-to-dark seam was a one-pixel hard cut, which section 77-C
+   explicitly forbids. Cut B already worked for exactly this reason. */
+.edicion-capitulo__cuerpo::after {
+  top: auto;
+  bottom: 0;
+  transform: translateY(100%);
+  background: linear-gradient(to bottom, var(--edicion-crema), transparent);
 }
 .edicion-capitulo__cuerpo,
 .edicion-capitulo__intro { position: relative; }
@@ -1592,9 +1618,13 @@ html:not([data-nav-theme]) .edicion-cabecera::after { opacity: 0; }
    --edicion-lienzo was defined and referenced nowhere, so at 2400px wide the
    rail measured 14% instead of 20% and the composition had no maximum. */
 @media (min-width: 1681px) {
-  .edicion-capitulo > *,
-  .edicion-capitulo__cuerpo {
+  /* The content is pushed to the RIGHT of the centred rail, not pulled to the
+     viewport's left edge. margin-inline-end: auto in an align-items: flex-end
+     column did the latter, so above 1680px the rail printed on top of the
+     chapter title and the whole chapter index. */
+  .edicion-capitulo > * {
     max-width: calc(var(--edicion-lienzo) - var(--edicion-rail));
+    margin-inline-start: calc((100vw - var(--edicion-lienzo)) / 2 + var(--edicion-rail));
     margin-inline-end: auto;
   }
   .edicion-rail { left: max(0px, calc((100vw - var(--edicion-lienzo)) / 2)); }

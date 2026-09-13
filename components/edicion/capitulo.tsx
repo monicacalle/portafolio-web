@@ -40,6 +40,7 @@ export function Capitulo({
       className="edicion-capitulo"
       data-section-id={capitulo.anclaje}
       data-section-index={indice}
+      {...(escena ? {} : { "data-sin-escena": "" })}
       style={
         {
           "--cap-altura": `${capitulo.alturaSvh}svh`,
