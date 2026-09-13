@@ -375,5 +375,31 @@ behaved on a phone, and it is the largest of the set:
     width. §45's dark beat got to be a full-bleed band on a phone for the first
     time as a side effect, and 967px of reserved empty page went with it.
 
+### The fourth audit
+
+Seven readers took fifteen sections each and every finding went to two
+independent refuters instructed to default to refuted. Twenty findings were
+raised and thirteen survived; the seven that did not were either already fixed
+while the audit was running (§70, §71, §90) or wrong about the brief (§25, §39,
+§50, §91). The thirteen, all fixed:
+
+| § | What it was |
+|---|---|
+| 17 | The morph was a cross-dissolve of the same six chapter names in two places 355px apart at 1.95x the height, and the wordmark twice at 3.2x. |
+| 3 | The mobile poster kept the desktop fold and shrank 28% toward a sidebar that does not exist below 1024px, exposing 120px of empty column. |
+| 31 | (see the twelfth finding above) the carousel was the whole chapter body, not the card group. |
+| 15 | `slice` cropped the frame rectangle and the corner circles off screen at every viewport. |
+| 45, 77 | The dark beat handed over to the next dark chapter through a 72px cream seam plus a cut-C scrim with nothing light to soften. |
+| 44 | Chapter II met the method table before anything it was a method for. |
+| 47 | The triptych reserved 495svh and pinned unconditionally, so with JS off it was four screens of frozen scroll. |
+| 94 | One Suspense boundary for every scene, so each handover blanked the whole canvas for a texture load. |
+| 92 | END overwrote `data-fase`, withdrawing the rail's frame for the whole closing chapter. |
+| 8 | The 300ms veil transition was decorative — `background-image` does not animate — and the comment described a transparent state the hero's own marker makes unreachable. |
+| 101, 102, 103 | Three claims in the records that the code does not keep: a sitemap that reads the chapter list, fifteen primitives where the brief lists fourteen, and two exports nothing imports. |
+
+Two more came out of measuring rather than from the audit: the header wore the
+wrong theme for 3,200px of the page because §5 and §93 were sharing a line, and
+its nav links measured 4.07:1 over her artwork against AA's 4.5.
+
 It is not at 105 of 105 and this document is the list of why. A section that
 was not built is recorded here as not built; it is never reported as clean.
