@@ -89,7 +89,27 @@ function placaDe(capitulo: Capitulo) {
   const src = capitulo.placa;
   if (!src) return undefined;
   const retrato = capitulo.placaRetrato;
-  const img = <img src={src} alt="" decoding="async" loading="lazy" {...medidas(src)} />;
+  /*
+    §91's `sizes`, and the default was wrong for this slot by 1.6x.
+    `medidas()` defaults to "(max-width: 767px) 100vw, 50vw", which is the
+    editorial column's shape, not the chapter intro's. The intro scene is the
+    full width below 1024 and the content column above it — `calc(100% -
+    var(--edicion-rail))`, measured at 79vw on 1440 and 1680, 75vw at 1024 and
+    85vw at 2400. Promising 50vw made the browser pick a candidate for a slot
+    two thirds the real size: at 1440 it served `cap-marca-w1024` into a 1137px
+    box, a 1.11x upscale, and at 1680 into 1329px, 1.30x — with the 1680px
+    original sitting unused. `sizes` that understates degrades the picture as
+    surely as one that overstates wastes bytes.
+  */
+  const img = (
+    <img
+      src={src}
+      alt=""
+      decoding="async"
+      loading="lazy"
+      {...medidas(src, "(max-width: 1023px) 100vw, 80vw")}
+    />
+  );
   if (!retrato) return img;
   /*
     §81's two fallbacks, chosen by the browser rather than by JavaScript.

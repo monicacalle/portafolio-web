@@ -328,4 +328,8 @@ export function MarcaTema({
   );
 }
 
-export { CAPITULOS };
+/* `export { CAPITULOS }` used to sit here, re-exporting the chapter list from
+   the state module. Nothing imported it from here — the five modules that use
+   it take it from `lib/edicion/capitulos.ts` directly — so it was a second
+   public name for one list, which is the drift §103's note in that file says
+   the single record exists to prevent. */

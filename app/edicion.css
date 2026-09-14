@@ -1758,7 +1758,25 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: var(--edicion-negro);
+  /*
+    THE POSTER IS THE FRAME'S GROUND, UNCONDITIONALLY — and it used to be
+    painted only under reduced motion.
+    §90 asks the film not to load at first paint, so `video.tsx` keeps the
+    sources and the `poster` attribute in `data-*` and attaches them from an
+    IntersectionObserver. With JavaScript off that observer never runs: the
+    server HTML carries a `<video>` with no src, no `<source>` and no poster,
+    over a `--edicion-negro` ground. The page's only film was an empty black
+    rectangle with a play button on it, which is §100's "content becomes
+    inaccessible without JavaScript".
+    The variable is already on this element from the server (`style="--poster:
+    url(…)"`), so painting it here costs nothing — the video covers it the
+    moment it arrives — and it is the same plate the reduced-motion branch
+    shows.
+  */
+  background-color: var(--edicion-negro);
+  background-image: var(--poster);
+  background-size: cover;
+  background-position: center;
   aspect-ratio: 16 / 9;
 }
 .edicion-video__medio { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -1899,14 +1917,11 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
 
 @media (max-width: 767px) { .edicion-video { grid-column: auto; } }
 
-/* Motion off: no autoplay loop, no entrance. The poster frame is the work. */
+/* Motion off: no autoplay loop, no entrance. The poster frame is the work — and
+   it is the frame's ground at every setting now, so this only has to hide the
+   film. */
 @media (prefers-reduced-motion: reduce) {
   .edicion-video__medio { display: none; }
-  .edicion-video__marco {
-    background-image: var(--poster);
-    background-size: cover;
-    background-position: center;
-  }
 }
 
 /* -------------------------------------------------- la geometría (§15)
@@ -2512,7 +2527,11 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  opacity: 0.5;
+  /* 0.62, not 0.5: at 0.7rem this is normal text under WCAG and 0.5 composited
+     to 3.45:1 on the cream ground against AA's 4.5. It is §49's own heading
+     over the five print specs. At 0.62 it is 5.08. An eyebrow is meant to be
+     quiet, not unreadable. */
+  opacity: 0.62;
 }
 .edicion-triptico__especificaciones ul {
   list-style: none;
@@ -3088,13 +3107,14 @@ html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
    THEY ARE THE PAGE'S LAYERS, NOT ITS EVERY z-index. Twelve raw values
    survive: eleven in this file and one inline in `secuencia.tsx`, where the
    number is the state's own index. This paragraph used to say fourteen, and
-   used to say all of them were local stacking inside a component. Eleven of
-   the twelve are — a panel over its own scrim, a caption over its own image, a
-   card lifted over its own siblings — where the number means "above the thing
-   next to me" and a global token would say less than the digit does.
+   used to say all of them were local stacking inside a component.
 
-   Two of the twelve are cross-component, and an earlier version of this
-   paragraph named one and got its neighbour's value wrong:
+   TEN of the twelve are local stacking inside a component — a panel over its
+   own scrim, a caption over its own image, a card lifted over its own siblings
+   — where the number means "above the thing next to me" and a global token
+   would say less than the digit does. Two are cross-component. An earlier
+   version of this paragraph said eleven and two, which is thirteen, and named
+   only one of the two:
 
    `.edicion-capitulo__intro { z-index: 1 }` holds the static plate above the
    canvas, which is `--z-escena: 0`. `.edicion-capitulo__cuerpo::before` and
