@@ -62,9 +62,6 @@ _shared/product/
 # local asset-prep scratch (not part of the site)
 /tmp/
 
-# local asset-prep scratch (not part of the site)
-/tmp/
-
 # Raw source material: 129MB of Drive exports, client files and her CV.
 # This repository is PUBLIC. These are the originals the plates are cut from,
 # they are not served, and several are client work that is not ours to publish.
