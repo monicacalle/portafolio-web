@@ -1734,9 +1734,19 @@ html[data-final] .edicion-rail__pie { opacity: 0.85; }
   .edicion-cta:focus-visible .edicion-flecha span,
   .edicion-enlace:hover .edicion-flecha span,
   .edicion-enlace:focus-visible .edicion-flecha span { transform: none; }
-  .edicion-documento__hoja { transition: opacity var(--t-micro) linear; }
-  .edicion-documento__hoja:hover,
-  .edicion-documento__hoja:focus-visible { transform: none; }
+  /*
+    THE IMG, NOT THE SHEET. §71's scale is declared on the image —
+    `.edicion-documento__hoja img { transition: transform 300ms }` and
+    `:hover img { transform: scale(1.015) }` — and these two rules used to
+    target the sheet, which is never given a transform or a transition by any
+    rule in the file. Both were no-ops, so a reader who asked for less movement
+    still got a 300ms scale on both document cards, on hover and on keyboard
+    focus, under a heading that says this block "drops the travel". Neither
+    property inherits, so the parent could never have reached the child.
+  */
+  .edicion-documento__hoja img { transition: opacity var(--t-micro) linear; }
+  .edicion-documento__hoja:hover img,
+  .edicion-documento__hoja:focus-visible img { transform: none; }
 }
 
 /* ------------------------------------------------------------- el vídeo
