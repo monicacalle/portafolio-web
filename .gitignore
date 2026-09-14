@@ -58,3 +58,23 @@ setup/
 .ghost/
 ghost-drafts/
 _shared/product/
+
+# local asset-prep scratch (not part of the site)
+/tmp/
+
+# Raw source material: 129MB of Drive exports, client files and her CV.
+# This repository is PUBLIC. These are the originals the plates are cut from,
+# they are not served, and several are client work that is not ours to publish.
+# The rule exists on the cinematic-universe branch; main never had it, so any
+# branch cut from main is one `git add .` away from committing all of it.
+/produccion/
+
+# ...but the scripts that cut the plates ARE tracked. They are code, they carry
+# the provenance for every crop, and a pipeline nobody can read is a pipeline
+# nobody can check. Only their 129MB of inputs stay out.
+!/produccion/
+/produccion/*
+!/produccion/*.py
+!/produccion/blender/
+/produccion/blender/*
+!/produccion/blender/*.py

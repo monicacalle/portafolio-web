@@ -7,7 +7,17 @@ Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 + next-intl (es de
 The working notes and planning for this site live in the private mirror, not here. See below.
 
 ## Commands
-`pnpm dev` | `pnpm lint` | `pnpm build` | `pnpm start`
+From a fresh clone: `make install`, then `make`.
+
+`make` starts the dev server and asks which port; if 3000 is taken it offers to
+stop what holds it or to use the next free one. `make help` lists them all —
+`install`, `dev`, `serve`, `build`, `start`, `prod`, `lint`, `typecheck`,
+`check`, `ports`, `free`, `clean`, `reset`.
+
+The underlying scripts still work directly, and are what Windows users without
+Make should reach for: `pnpm serve` | `pnpm build` | `pnpm lint` |
+`pnpm typecheck` | `pnpm ports` | `pnpm free`. Plain `pnpm dev` and `pnpm start`
+are untouched and skip the port question entirely.
 
 There is no test suite. `pnpm lint` and `pnpm build` are the only automated checks -- do not report a change as verified without also checking it in the browser.
 

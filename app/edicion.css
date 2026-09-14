@@ -1,0 +1,3672 @@
+/*
+  The Edition.
+
+  Geometry, colour and motion for the scroll-driven homepage. Numbers here come
+  from two places and nowhere else: the brief (shopify-script.md, cited by
+  section) and measurements taken off the live reference at 1680x1050
+  (_shared/engineering/referencia-shopify.md). Where the two disagreed the
+  measurement won.
+*/
+
+:root {
+  /* Section 2. The rail is 20% of a 1680px canvas = 336px exactly, which is why
+     the brief's "336-340px" range exists. Clamped so it stops being a rail
+     rather than shrinking into a strip on a small laptop. */
+  --edicion-lienzo: 1680px;
+  --edicion-rail: clamp(240px, 20vw, 336px);
+  --edicion-cabecera-h: 50px;
+
+  /* The dark world is WARM near-black, never blue-black. Her work is warm --
+     sage-olive, dusty rose, oxblood, burnt orange -- and a cool ground makes
+     every one of those grounds look dirty. */
+  --edicion-negro: #120f0e;
+  --edicion-negro-2: #1c1817;
+  --edicion-crema: #f4f2f0;
+  --edicion-tinta: #17100c;
+
+  /* The one structural accent: the oxblood of the Estudio Raiz mark, which is
+     also the ground of page 2 of her printed portfolio. It marks state -- the
+     active chapter, its leader, its numeral -- and never appears inside an
+     artwork's area. */
+  --edicion-acento: #4e0909;
+
+  /* Section 99. Ease-out cubic for interface, expo for anything cinematic. */
+  --ease-salida: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* ---------------------------------------------------------------- theming
+   Section 5. The header and rail take their foreground from the block under
+   them, set on <html> by the IntersectionObserver in estado.tsx. CSS reads it,
+   so a theme change re-paints without re-rendering a single component.
+
+   THE TWO GROUNDS ARE REGISTERED COLOURS, and that is what makes §8 work.
+
+   §8 asks the header's gradient to transition "over approximately 300ms" and
+   the declaration said `transition: background-image 300ms`, which does
+   nothing: `background-image` is not an animatable property, so the veil
+   swapped in a single frame at every one of the eleven theme boundaries. The
+   rail's ground did the same, straight from #120f0e to #f4f2f0, while its type
+   faded across on its own timing — the ground arriving a quarter of a second
+   before the words it is there to carry.
+
+   A gradient does not interpolate; a COLOUR inside one does, once it is
+   registered with a syntax the engine can parse. So the token is the veil's
+   top colour rather than the whole gradient, the gradient is built where it is
+   used. THE HEADER'S VEIL CROSSES OVER; the rail's ground does not, and that
+   is deliberate — see the note on `.edicion-rail`, which measured 1.24:1
+   halfway through a cross-fade between light type on a dark ground and dark
+   type on a light one. The registration still earns its place there: it is
+   what makes the value a colour `color-mix()` can parse. This sentence used to
+   say "both", which the rail's own comment contradicts outright. */
+@property --edicion-velo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --edicion-rail-suelo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #120f0e;
+}
+html[data-nav-theme="dark"] {
+  --edicion-nav-fg: #f6f3ef;
+  /* The world the header is standing in, for anything that has to INVERT
+     against the foreground rather than sit on it. See the CTA's hover. */
+  --edicion-nav-bg: #120f0e;
+  --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
+  --edicion-velo: rgba(8, 6, 6, 0.55);
+  --edicion-rail-suelo: #120f0e;
+}
+html[data-nav-theme="light"] {
+  --edicion-nav-fg: #17100c;
+  --edicion-nav-bg: #f4f2f0;
+  --edicion-nav-fg-suave: rgba(23, 16, 12, 0.6);
+  --edicion-velo: rgba(244, 242, 240, 0.72);
+  --edicion-rail-suelo: #f4f2f0;
+}
+/* The pre-hydration state, and it lasts about one frame.
+
+   This used to claim the veil "fades UP from nothing when the first chapter
+   arrives". It does not: the hero publishes its own dark `MarcaTema` at the
+   top of the document, so the first reading of the state machine sets
+   `data-nav-theme="dark"` before any chapter is in view and the veil is the
+   dark one from hydration onward.
+
+   §8's first line is still met, in the only sense a reader can perceive it.
+   Measured at scroll 0, header band, with the veil forced transparent against
+   the shipped state: mean difference 2.52 of 255 across the band, and the
+   ground under the nav links reads (16, 12, 12) with it against (18, 15, 14)
+   without. A 0.55 black over a #120f0e ground is arithmetically present and
+   visually not there. It starts doing work further down, where her artwork is
+   bright behind the header, which is exactly the section's next clause: "as
+   readability requires, introduce a very subtle top gradient."
+
+   `transparent` rather than `none` because a colour is what interpolates. */
+html:not([data-nav-theme]) {
+  --edicion-nav-fg: #f6f3ef;
+  --edicion-nav-bg: #120f0e;
+  --edicion-nav-fg-suave: rgba(246, 243, 239, 0.62);
+  --edicion-velo: transparent;
+  --edicion-rail-suelo: #120f0e;
+}
+
+.edicion {
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  /*
+    NO overflow HERE. It used to carry overflow-x: hidden, and that silently
+    broke the entire hero.
+
+    overflow-x: hidden makes an element a SCROLL CONTAINER, and position: sticky
+    resolves against its nearest scrolling ancestor. So .edicion-hero__pegajoso
+    was sticking to .edicion -- which never scrolls vertically -- instead of to
+    the page, and the hero simply scrolled away. Measured: its top read 0, -200,
+    -400, -525 at those scroll positions, when a pinned element reads 0 at all
+    of them. Section 13's 150svh stage, section 17's morph and section 15's
+    geometry all depend on that pin, so all three were dead.
+
+    The elements that genuinely overflow already clip themselves:
+    .edicion-hero__pegajoso and .edicion-capitulo__intro both carry
+    overflow: clip, which does NOT create a scroll container.
+  */
+}
+
+/* ---------------------------------------------------------------- header */
+.edicion-cabecera {
+  position: fixed;
+  inset: 0 0 auto 0;
+  /* The §88 token, not a second number. This was a literal 60 that only lost
+     to the token's 9999 on source order, which is exactly the "randomly
+     increase z-index" the section is about. */
+  z-index: var(--z-cabecera);
+  height: var(--edicion-cabecera-h);
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding-inline: clamp(0.9rem, 2vw, 1.5rem);
+  color: var(--edicion-nav-fg);
+  /* Section 8: never an obvious solid navbar. A very subtle gradient only,
+     transitioning over ~300ms as the theme underneath changes.
+
+     The transition is on the COLOUR inside the gradient, not on the gradient:
+     `background-image` is not animatable and the 300ms was decorative. The
+     property is inherited from <html>, so what changes here is this element's
+     own computed value, which is what a transition can act on — and what the
+     ::after below inherits, frame by frame, from this element. */
+  transition: color 300ms var(--ease-salida), --edicion-velo 300ms var(--ease-salida);
+}
+
+.edicion-cabecera a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.edicion-cabecera__izq { flex: 0 0 auto; }
+.edicion-cabecera__centro {
+  flex: 1 1 auto;
+  display: flex;
+  gap: clamp(0.6rem, 1.6vw, 1.4rem);
+  justify-content: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+.edicion-cabecera__der {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.edicion-cabecera__marca { display: flex; align-items: baseline; gap: 0.5rem; }
+.edicion-cabecera__nombre { font-weight: 700; font-size: 0.9rem; letter-spacing: -0.01em; }
+.edicion-cabecera__edicion { font-size: 0.72rem; color: var(--edicion-nav-fg-suave); }
+
+.edicion-cabecera__salto {
+  /*
+    0.82, not 0.72, and the number is a contrast floor rather than a taste.
+
+    The header floats over her artwork and §8 gives it only "a very subtle top
+    gradient" to stand on, so the resting opacity of these six links is the
+    last variable between them and the plate behind. Measured at thirteen
+    scroll positions on a 1440x900 screen, taking the composited background
+    under each link's own box and the link's effective colour after its own
+    alpha: at 0.72 the worst link was 4.07:1, over chapter II's editorial foot,
+    against WCAG AA's 4.5:1 for 14px text. At 0.80 it is 4.75 and at 0.82 it
+    clears with margin; every other position measured 4.76 to 9.31 either way.
+    Hover still goes to 1, so the resting state is still visibly the quieter
+    one.
+  */
+  opacity: 0.82;
+  transition: opacity 200ms var(--ease-salida);
+}
+.edicion-cabecera__salto:hover { opacity: 1; }
+
+.edicion-cabecera__cta {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.34rem 0.9rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  transition: background-color var(--t-micro) var(--ease-salida), color var(--t-micro) var(--ease-salida);
+}
+/*
+  THE INVERSION NEEDS BOTH HALVES THEMED, and only one of them was.
+
+  The pill inverts on hover: the foreground becomes the fill and the ground
+  becomes the label. `--edicion-nav-fg` follows §5's theme switch;
+  `--edicion-negro` is a fixed #120f0e. In the dark world that is cream on
+  near-black, 17.25:1. In the LIGHT world the fill becomes #17100c and the
+  label stays #120f0e — two near-blacks, computed contrast 1.014:1 — so
+  "Escríbeme" vanished into its own pill on hover over every chapter's
+  editorial body, which is most of the page's scroll. The border goes with it,
+  because it is `currentColor`.
+
+  `--edicion-nav-bg` is the other half of the pair, switched by the same three
+  blocks that switch the foreground: 17.25:1 in the dark world and 16.85:1 in
+  the light one.
+*/
+.edicion-cabecera__cta:hover {
+  background: var(--edicion-nav-fg);
+  color: var(--edicion-nav-bg);
+}
+
+/*
+  §5 REACHES THE LANGUAGE SWITCHER TOO, and it did not.
+
+  "The global header and desktop sidebar must automatically switch foreground
+  colour according to the underlying content… Do not fake this with a fixed
+  white navigation." Every other element in this header reads
+  `--edicion-nav-fg`; `<LanguageSwitcher />` is the site's shared control and
+  was dropped in bare, so it kept `app/site.css`'s fixed palette — a 55% white
+  pill with rgba(36, 14, 6, 0.62) type, keyed to nothing. Over the dark world
+  that composites to roughly #4d3e36 on #918f8f, about 3.2:1 at 0.68rem, which
+  is both below AA and the literal "fixed white navigation" the section names.
+
+  It follows the theme here. The active chip keeps the oxblood accent, which is
+  the one structural colour that belongs to both worlds, and takes its label
+  from the ground rather than from a fixed paper token.
+*/
+.edicion-cabecera .lang {
+  border-color: color-mix(in srgb, var(--edicion-nav-fg) 22%, transparent);
+  background: color-mix(in srgb, var(--edicion-nav-fg) 8%, transparent);
+  transition: border-color 300ms var(--ease-salida), background-color 300ms var(--ease-salida);
+}
+.edicion-cabecera .lang__btn {
+  /* 70% of the foreground rather than `--edicion-nav-fg-suave`, which is 0.62
+     dark and 0.60 light: composited on the pill those measured 6.38:1 and
+     4.49:1, and 0.68rem is normal text, so the light world sat a hundredth
+     under AA. At 0.70 it is 7.73 and 6.19. */
+  color: color-mix(in srgb, var(--edicion-nav-fg) 70%, transparent);
+  transition: color 300ms var(--ease-salida), background-color var(--t-micro) var(--ease-salida);
+}
+.edicion-cabecera .lang__btn:hover { color: var(--edicion-nav-fg); }
+.edicion-cabecera .lang__btn.is-active {
+  background: var(--edicion-acento);
+  color: #f6f3ef;
+}
+
+/* Section 7. Each item begins translated up by its own height at opacity 0 and
+   drops into place. The stagger is the reference's, measured: 500ms for the
+   brand then 40ms per item. --i carries the index from the component.
+
+   Gated on `@media (prefers-reduced-motion: no-preference)` and nothing else.
+   This used to say ".motion, which the layout's inline script adds before
+   paint", and there is no such script and no such class: the flag was removed
+   because React owns <html> and hydration strips it about 10ms into every
+   load, which `app/[locale]/layout.tsx` records in as many words. The
+   CONCLUSION was right and is still right — the animation is opt-in over a
+   finished header rather than a hidden header waiting for JS — because the
+   start state is `animation-...: backwards` inside a media query, so with the
+   query unmatched the header is simply already in place. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-cabecera [style*="--i"] {
+    animation: edicion-entrada var(--t-entrada) var(--ease-salida) backwards;
+    animation-delay: calc(500ms + (var(--i) * 40ms));
+  }
+}
+
+@keyframes edicion-entrada {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------------ rail */
+.edicion-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--edicion-rail);
+  height: 100svh;
+  display: none;
+  flex-direction: column;
+  /* Not space-between: that floats the chapter index in the vertical middle of
+     the rail, where it sits across whatever artwork is behind. The index is
+     pushed down to just above the legal line instead, matching the reference
+     and leaving the upper rail open. */
+  justify-content: flex-start;
+  padding: calc(var(--edicion-cabecera-h) + 0.9rem) 1.1rem 1.1rem;
+  /* §5: "the global header AND DESKTOP SIDEBAR must automatically switch
+     foreground colour", and §19 asks for the same in its own words. This was a
+     hard-coded `var(--edicion-crema)`, so the rail alone never switched: on
+     chapter VI's light intro it painted a near-black slab with cream type
+     against a cream page. It reads the same token the header does now. */
+  color: var(--edicion-nav-fg);
+  /*
+    THE RAIL'S THEME SWAP IS INSTANT, AND IT HAS TO BE.
+
+    There were two `transition` declarations for `.edicion-rail`, nine hundred
+    lines apart and at the same specificity: this one, for `color`, and one for
+    `opacity` below. The later replaced rather than extended it, so the colour
+    fade this comment used to claim had never run. Making it run — and adding
+    the ground to it, so the two would move together — produced a worse page
+    than either. Measured over a dark→light flip at 1440x900, sampling every
+    frame: the type and the ground cross through the same luminance on the way
+    past each other, and the contrast between them bottoms out at 1.24:1 at
+    68ms. The rail's six chapter names and its legal line disappear for about
+    ninety milliseconds, eleven times down the page.
+
+    There is no timing that fixes that. Going from light type on a dark ground
+    to dark type on a light ground passes through equal luminance whenever both
+    move continuously, and staggering them only moves the window. Swapping both
+    in one frame is the one arrangement with no window in it, so that is what
+    this does: `opacity` is the only thing here that animates, for §17's
+    handover. §5 asks the rail to switch its foreground with the block under it
+    and does not ask for a duration; §8's 300ms is about the header's gradient,
+    and the header keeps it.
+  */
+  transition: opacity var(--t-menu) var(--ease-cine);
+  pointer-events: none;
+}
+/* Section 3: the rail is a desktop device. Below the large breakpoint the main
+   column takes the full width and navigation moves into the header. */
+@media (min-width: 1024px) {
+  .edicion-rail { display: flex; }
+}
+.edicion-rail a { pointer-events: auto; }
+
+/*
+  THE SAME TYPEFACE AS THE HERO'S WORDMARK, which it was not.
+
+  §17: "the user should subconsciously understand that the opening artwork has
+  transformed into the navigation system", and the morph now lands the hero's
+  wordmark exactly on this one — dx 0, dy −1 across four viewport heights. It
+  was still a cut, because the two were set in different faces: the hero's in
+  `--font-display` (Bodoni Moda) and this one in the inherited `--font-sans`
+  (Geist), with only the italic middle line shared. A crossfade between two
+  typefaces reading the same three words is a substitution, not a
+  transformation.
+
+  800 rather than 700 for the same reason: it is the hero's weight, and the
+  handover is between two sizes of one wordmark or it is nothing.
+*/
+.edicion-rail__marca {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+/* The accent syllable, the way the reference italicises the "ai" of
+   RenAIssance. Which word it falls on differs by language, so the split lives
+   in the message file and this only styles the middle line. */
+.edicion-rail__marca-2 { font-style: italic; font-family: var(--font-serif); }
+
+.edicion-rail__indice { margin-top: auto; }
+.edicion-rail__indice ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+.edicion-rail__indice a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.055rem 0;
+  opacity: 0.58;
+  transition: opacity var(--t-hover) var(--ease-salida);
+}
+.edicion-rail__indice a:hover { opacity: 0.9; }
+.edicion-rail__indice li[data-activo] a { opacity: 1; }
+
+/* The dotted leader: a table-of-contents device off a printed book. Only the
+   active chapter draws one, so the rail has exactly one moving part. */
+.edicion-rail__guia {
+  border-bottom: 1px dotted currentColor;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: opacity 260ms var(--ease-salida), transform 320ms var(--ease-salida);
+}
+.edicion-rail__indice li[data-activo] .edicion-rail__guia {
+  opacity: 0.5;
+  transform: scaleX(1);
+}
+.edicion-rail__numeral {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+/* The active numeral takes the nav foreground, not the accent.
+
+   `--edicion-acento` is #4e0909 and the rail's dark ground is #120f0e: 1.24:1,
+   which is not a colour, it is an absence. It read as "the numeral disappears
+   when its chapter is active" in five of the six chapters. Now it is simply
+   the brightest thing in the column, which is what active means everywhere
+   else in this index. */
+.edicion-rail__indice li[data-activo] .edicion-rail__numeral {
+  color: var(--edicion-nav-fg);
+  opacity: 1;
+}
+
+.edicion-rail__pie {
+  margin-top: 1.1rem;
+  font-size: 0.62rem;
+  opacity: 0.45;
+  line-height: 1.4;
+  transition: opacity var(--t-menu) var(--ease-cine);
+}
+/* §92's END, arrived at. The legal line is furniture for 28,000px and then it
+   is the thing a reader at the foot of the page might actually want to read.
+   This is the state's consumer: without one it would be an attribute computed
+   every frame for nobody, which is the reason three of §92's other states are
+   declined rather than written. */
+html[data-final] .edicion-rail__pie { opacity: 0.85; }
+
+/* --------------------------------------------------------------- chapters
+   Section 2: content is pushed into the right-hand 80%. The reference does this
+   with flex justify-end on the section root; same mechanism here so the rail
+   never overlaps a title. */
+.edicion-capitulo {
+  position: relative;
+  min-height: var(--cap-altura);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.edicion-capitulo > * {
+  width: 100%;
+}
+/* The floor is a DESKTOP reserve and only a desktop reserve.
+
+   `alturaSvh` holds scroll length for the cinematic choreography — the camera
+   moves through a chapter's scene — and below 1024px there is no canvas to
+   choreograph, so the floor was buying empty page. Measured at 390x844 once
+   the bodies stopped being stretched to their tallest carousel item: 417px of
+   nothing between chapter III's dark beat and chapter IV, 495px at the foot of
+   chapter V, 967px across the page. The intro keeps its own 70svh from §85, so
+   a chapter is still a screen of title before a screen of reading; what goes
+   is the reserve for something that does not run at this width. */
+@media (max-width: 1023px) {
+  .edicion-capitulo { min-height: 0; }
+}
+/*
+  AND CHAPTER V'S FLOOR COMES OFF WITH THE TRIPTYCH'S RESERVE.
+
+  `alturaSvh: 700` exists because §47's three beats are 495svh — the chapter
+  record says so in its own comment. The reserve is behind `[data-scrub]` now,
+  which only exists after hydration, and the floor was not: with JavaScript off
+  at 1024px and up the triptych collapsed to its flow height, one photograph
+  beside three stacked readings, while the chapter still reserved seven
+  viewports. Four of them empty.
+
+  `:has()` asks the only question that decides it — is the thing the floor was
+  sized for actually running — rather than duplicating the condition.
+*/
+.edicion-capitulo:has(.edicion-triptico:not([data-scrub])) { min-height: 0; }
+@media (min-width: 1024px) {
+  .edicion-capitulo > * {
+    width: calc(100% - var(--edicion-rail));
+  }
+}
+
+.edicion-capitulo__intro {
+  position: relative;
+  /* Section 85: ~140svh desktop, ~70svh mobile. Not a scaled-down desktop. */
+  min-height: 70svh;
+  /* §85's range is "70–90svh DEPENDING ON CONTENT", and the content that
+     varies here is the imagery, not the words: the six standfirsts are 41 to
+     58 characters. Five chapters carry a plate and one does not, and §85's own
+     reason for the range is "this gives more space to imagery above" — so the
+     five with something above get 84svh and the closing chapter, which is a
+     title and a line on cream, keeps the 70 floor. */
+  display: flex;
+  /* Centred, matching the reference: its chapter titles sit at roughly 45% of
+     the intro with the serif standfirst under them. flex-end pushed the title
+     to the bottom of a 140svh block, i.e. a full viewport below where the
+     chapter starts, so arriving at #ilustracion showed only the plate. */
+  align-items: center;
+  overflow: clip;
+  background: var(--cap-fondo);
+}
+@media (max-width: 767px) {
+  .edicion-capitulo:not([data-sin-escena]) .edicion-capitulo__intro {
+    min-height: 84svh;
+  }
+}
+@media (min-width: 1024px) {
+  .edicion-capitulo__intro { min-height: 140svh; }
+}
+
+.edicion-capitulo__escena { position: absolute; inset: 0; }
+/* <picture> is a wrapper with no box of its own until it is told to have one,
+   and the plate rules below select the <img>. */
+.edicion-capitulo__escena picture { display: contents; }
+.edicion-capitulo__escena::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 8, 8, 0.82) 0%,
+    rgba(10, 8, 8, 0.55) 34%,
+    rgba(10, 8, 8, 0.1) 62%,
+    transparent 100%
+  );
+}
+/* scale-down, NOT cover.
+   cover was silently undoing the pipeline. Measured in the browser: chapter II
+   was her 1200x262 Viña Esmeralda lockup blown up 5.6x and sliced to a 20%
+   fragment, with MARCA set in white on top of her own giant letterforms; chapter
+   IV was body copy from the Vibe deck at 3.5x, soft enough to read as a
+   rendering error. produccion/edicion.py refuses to upscale and its panel()
+   refuses to crop, and one CSS line was overriding both.
+   scale-down behaves as contain but never exceeds the file's intrinsic size, so
+   a small plate stays small and the chapter's ground grows around it -- which is
+   the plan's own small-art law, applied where it was being broken. */
+.edicion-capitulo__escena img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  /* Held right of centre so the title, which is set bottom-left, never lands on
+     her artwork. */
+  object-position: 78% 50%;
+}
+@media (max-width: 1023px) {
+  .edicion-capitulo__escena img { object-position: 50% 42%; }
+}
+
+.edicion-capitulo__portada {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1.2rem, 4vw, 3.5rem);
+  width: 100%;
+}
+
+/* Section 4: oversized and architectural. Little text occupying a very large
+   physical area. The six titles are 6-11 characters in both locales, so the
+   measure barely shifts between ES and EN at this size. */
+/* THE LIGHT CHAPTER'S INTRO NEEDS DARK INK.
+
+   Chapter VI is the only chapter §23 sends into the light world, and its intro
+   paints `--cap-fondo: #F4F2F0` while the title and standfirst inherited
+   `--edicion-crema: #f4f2f0` from `.edicion`. Measured 1.00:1: OFICIO is set
+   at up to 8.5rem and the whole closing chapter opened on a blank cream
+   screen. The only `--edicion-tinta` rule was on the editorial BODY, which
+   this intro is not. */
+.edicion-capitulo[data-tema="claro"] .edicion-capitulo__intro {
+  color: var(--edicion-tinta);
+}
+
+/* §23: "the H2 itself uses an opacity transition around 300ms when
+   hiding/showing during state changes", and §1 step 6 is the state change this
+   page has: "the next chapter title enters".
+
+   It rides the shared §28 observer so there is one reveal system, but with
+   §23's own duration and WITHOUT the translate and the clip-path — the section
+   asks for an opacity transition and a 141px title sliding 24px is a different
+   thing. */
+.edicion-capitulo__portada.animate-show-media[data-armado]:not([data-visible]) {
+  transform: none;
+  clip-path: none;
+}
+.edicion-capitulo__portada.animate-show-media,
+.edicion-capitulo__portada.animate-show-media[data-armado]:not([data-visible]) {
+  transition-duration: var(--t-menu);
+}
+
+.edicion-capitulo__titulo {
+  margin: 0;
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 800;
+  font-size: clamp(2.4rem, 8.4vw, 8.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.edicion-capitulo__entradilla {
+  margin: clamp(0.8rem, 2vw, 1.6rem) 0 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.1rem, 2.4vw, 2rem);
+  line-height: 1.24;
+  max-width: 22ch;
+  opacity: 0.92;
+}
+
+/* ------------------------------------------------------- editorial bodies
+   Section 78: do NOT over-animate the white content. These are reading areas.
+   The uneven grid is the whole trick -- a row mixes widths so it never reads as
+   a CMS listing. */
+.edicion-capitulo__cuerpo {
+  position: relative;
+  background: var(--edicion-crema);
+  color: var(--edicion-tinta);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(0.9rem, 2vw, 2rem);
+  padding: clamp(1.4rem, 5vw, 5rem) clamp(1.2rem, 4vw, 3.5rem);
+  align-content: start;
+}
+
+.edicion-ficha { grid-column: span 6; min-width: 0; }
+/* §44's uneven row, and it belongs to the GRID, not to the carousel.
+   This used to start at 768px, and when §31's carousel was widened from 767 to
+   1023 the two overlapped: between 768 and 1023 a card claimed `span 3` of
+   grid tracks that were 50vw each, so a "half" card measured 1,260px inside an
+   805px scroller. Measured on a real 820px viewport: the compact list came out
+   at 2,542px and the body's scrollWidth at 10,612. It starts where the
+   carousel stops. */
+@media (min-width: 1024px) {
+  .edicion-ficha[data-ancho="completo"]   { grid-column: span 6; }
+  .edicion-ficha[data-ancho="dos-tercios"]{ grid-column: span 4; }
+  .edicion-ficha[data-ancho="medio"]      { grid-column: span 3; }
+  .edicion-ficha[data-ancho="tercio"]     { grid-column: span 2; }
+}
+
+.edicion-ficha img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.edicion-ficha h3 {
+  margin: 0.8rem 0 0.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.edicion-ficha p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72);
+  max-width: 46ch;
+}
+
+/* ------------------------------------------------------------------ hero */
+.edicion-hero {
+  position: relative;
+  /* Section 13: 150svh, so the retablo can hold, fold, and hand over. The
+     number itself is `HERO_SVH` in lib/edicion/capitulos.ts, published here as
+     `--hero-svh` by hero.tsx — it used to be a literal in both places with
+     nothing reading the one in the data module, which is §103's own failure
+     case. The fallback is the same number, for the frame before hydration. */
+  min-height: var(--hero-svh, 150svh);
+  background: var(--edicion-negro);
+}
+.edicion-hero__pegajoso {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+}
+.edicion-hero__retablo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------- reduced motion
+   Section 87. Nothing here is decorative-only: with motion off the page must
+   still be the whole page, just still. So transitions collapse rather than
+   elements disappearing. */
+/* §87: "keep simple 150–250ms fades". These were 1ms, which is not a reduced
+   fade, it is no fade — and the section asks for the opposite of that. What
+   reduced motion removes here is travel, not colour: every one of these is a
+   colour or an opacity change, so it keeps its transition at the short end of
+   the section's own band. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-cabecera,
+  .edicion-rail__guia,
+  .edicion-rail__indice a,
+  .edicion-cabecera__salto,
+  .edicion-cabecera__cta {
+    transition-duration: var(--t-micro);
+  }
+  .edicion-rail__indice li[data-activo] .edicion-rail__guia { opacity: 0.5; transform: none; }
+}
+
+/* ------------------------------------------------------------ the retablo
+   Panels close on one scroll value, --p, written by hero.tsx. The fold runs
+   0.35 -> 0.90 of the hero's own length (brief section 17), so there is a beat
+   of stillness at the top to read the title and a beat at the end before the
+   rail takes over.
+
+   --f is the fold's own 0->1, clamped out of --p. Every panel reads the same
+   --f, which is what keeps the wings synchronised without a timeline. */
+.edicion-hero__escena {
+  position: absolute;
+  inset: 0;
+  /* The hinge only reads as a hinge in perspective. Without this the panels
+     scale horizontally instead of rotating, which is the flat-slat failure. */
+  perspective: 2400px;
+  perspective-origin: 38% 50%;
+  --f: clamp(0, calc((var(--p, 0) - 0.35) / 0.55), 1);
+}
+
+.edicion-hero__panel {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  object-fit: cover;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  /* Wings hinge on their outer edge, the centre stays put — the geometry of a
+     real polyptych closing. */
+  transform-origin: var(--eje, center) center;
+  will-change: transform;
+}
+.edicion-hero__panel[data-eje="left"]  { --eje: left;  --dir: 1; }
+.edicion-hero__panel[data-eje="right"] { --eje: right; --dir: -1; }
+.edicion-hero__panel[data-eje="center"]{ --eje: center; --dir: 0; }
+
+/* The whole composition also compresses leftward as it closes, ending where
+   the rail begins. Two transforms, one value. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__panel {
+    transform:
+      translateX(calc(var(--f) * -18%))
+      rotateY(calc(var(--f) * var(--dir, 0) * 82deg))
+      scale(calc(1 - var(--f) * 0.28));
+  }
+}
+
+.edicion-hero__anacronismo {
+  position: absolute;
+  left: 59.8%;
+  /* Dropped so her head clears the Modigliani's face. Two faces at the same
+     height and the same scale muddle each other, and she is meant to read as
+     standing in front of the retablo, not hung inside it. */
+  bottom: -15%;
+  width: 27%;
+  height: auto;
+  z-index: 3;
+  will-change: transform;
+}
+/* She walks on while the panels close, and fades only at the very end. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__anacronismo {
+    transform: translateX(calc(var(--f) * 9%)) translateY(calc(var(--f) * 6%));
+    opacity: calc(1 - clamp(0, calc((var(--f) - 0.72) / 0.28), 1));
+  }
+}
+
+/* ------------------------------------------------------------- hero frame */
+.edicion-hero__marco {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(30rem, 74vw);
+  padding: clamp(1rem, 2.2vw, 1.9rem);
+  /* A hairline, not a card. It sits ACROSS the panel joins, which is what makes
+     the retablo read as one object rather than four pictures. */
+  border: 1px solid rgba(246, 243, 239, 0.42);
+  color: #f6f3ef;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /*
+    The label stays VISIBLE through the whole morph and only hands over at the
+    very end, as the rail arrives underneath it showing the same words.
+
+    It used to fade out between 28% and 52% -- before the morph even starts at
+    35% -- so the title vanished and the rail appeared separately, which is the
+    cut section 17 forbids. The whole point is that the reader sees the opening
+    artwork BECOME the navigation, and they cannot see that if the artwork is
+    gone before it moves.
+  */
+  .edicion-hero__marco {
+    opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.88) / 0.12), 1));
+  }
+}
+
+.edicion-hero__titulo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 800;
+  /* The size, line-height and tracking used to be declared here as well, at
+     clamp(1.9rem, 3.4vw, 3rem) / 0.98 / -0.03em, and then again two thousand
+     lines below at (0,1,0) — so the later block won all three and these were
+     dead. They are in one place now, down there with §16's own note about
+     them, because that is the block a reader arrives at from the section. */
+}
+.edicion-hero__acento { font-family: var(--font-serif, serif); font-style: italic; font-weight: 400; }
+
+.edicion-hero__pie {
+  margin: clamp(0.9rem, 2vw, 1.6rem) 0 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  line-height: 1.3;
+  /* No max-width: the frame is the measure. A ch-based cap wider than the
+     frame lets the text spill past the column that was cleared for it. */
+}
+
+.edicion-hero__indice {
+  list-style: none;
+  margin: clamp(0.9rem, 2vw, 1.5rem) 0 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.1vw, 0.98rem);
+  line-height: 1.28;
+}
+.edicion-hero__indice li { display: grid; grid-template-columns: 1fr auto; align-items: baseline; }
+.edicion-hero__indice a { color: inherit; text-decoration: none; opacity: 0.92; }
+.edicion-hero__indice a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.edicion-hero__indice span { font-size: 0.68em; opacity: 0.6; font-variant-numeric: tabular-nums; }
+
+/* With motion off, the retablo is simply the retablo: open, still, complete.
+   Nothing is hidden and nothing waits for a scroll value that never arrives. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-hero { min-height: 100svh; }
+  .edicion-hero__panel,
+  .edicion-hero__anacronismo,
+  .edicion-hero__marco { transform: none; opacity: 1; }
+  .edicion-hero__marco { transform: translate(-50%, -50%); }
+}
+
+/* ------------------------------------------------------------- chapter VI */
+/* ===================================================================== §67
+   Chapter VI's story and its two documents.
+
+   §67 wants the closing chapter to open with "a full-width major story" that
+   "should feel like the chapter hero after the chapter intro", and then "two
+   major media cards". The chapter was three lists and a mailto. */
+.edicion-historia {
+  grid-column: span 6;
+  display: grid;
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: center;
+  margin-bottom: clamp(2rem, 5vw, 4.5rem);
+}
+@media (min-width: 900px) {
+  .edicion-historia {
+    /* The portrait takes a third and the story takes the rest: a full-width
+       block, not a full-width photograph. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+}
+.edicion-historia__retrato {
+  margin: 0;
+  min-width: 0;
+  /* Not cropped. The page's rule about her illustrations holds for a
+     photograph of her too. */
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px -30px rgba(23, 16, 12, 0.6);
+}
+.edicion-historia__retrato img { width: 100%; height: auto; display: block; }
+.edicion-historia__texto { min-width: 0; }
+.edicion-historia__texto h3 {
+  margin: 0 0 clamp(0.8rem, 2vw, 1.4rem);
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(1.7rem, 3.6vw, 3.1rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  max-width: min(20ch, 100%);
+  text-wrap: balance;
+}
+.edicion-historia__texto p {
+  margin: 0 0 0.9rem;
+  font-size: clamp(0.95rem, 1.3vw, 1.06rem);
+  line-height: 1.6;
+  max-width: min(56ch, 100%);
+  color: rgba(23, 16, 12, 0.76);
+}
+.edicion-historia__texto p:last-child { margin-bottom: 0; }
+
+.edicion-documentos {
+  grid-column: span 6;
+  display: grid;
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  margin-bottom: clamp(2rem, 6vw, 5rem);
+}
+@media (min-width: 900px) {
+  .edicion-documentos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+.edicion-documentos__titulo {
+  margin: 0;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: min(22ch, 100%);
+}
+@media (min-width: 900px) {
+  /* The heading spans both cards rather than sitting over the first one. */
+  .edicion-documentos__titulo { grid-column: 1 / -1; }
+}
+
+.edicion-documento { display: grid; gap: 0.9rem; align-content: start; min-width: 0; }
+/* A sheet of paper, not a screenshot: these two are documents, and the shadow
+   and the hairline are what say so. */
+.edicion-documento__hoja {
+  display: block;
+  border: 1px solid rgba(23, 16, 12, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 14px 40px -26px rgba(23, 16, 12, 0.55);
+}
+.edicion-documento__hoja img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* §71's duration, and it was 260ms. */
+  transition: transform 300ms var(--ease-cine);
+}
+/*
+  §71, and this used to break two of its four hover rules.
+
+  It was `transform: translateY(-3px)` on the card with the shadow growing from
+  -26px to -24px spread — which is the "dramatic card lift" §71 forbids by name,
+  plus a heavier shadow. What the section actually allows on hover is "tiny
+  image scale only if needed: 1 → 1.015" and "CTA underline or icon motion", so
+  the sheet holds still, the scan inside it scales by exactly that, and the
+  action underneath is an `Enlace` with §72's arrow.
+*/
+.edicion-documento__hoja:hover img,
+.edicion-documento__hoja:focus-visible img {
+  transform: scale(1.015);
+}
+.edicion-documento__pie h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.edicion-documento__pie p {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: min(40ch, 100%);
+  color: rgba(23, 16, 12, 0.72);
+}
+.edicion-documento__meta {
+  display: block;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(23, 16, 12, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.edicion-oficio {
+  grid-column: span 6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: clamp(1.2rem, 3vw, 3rem);
+}
+.edicion-oficio h3 {
+  margin: 0 0 0.9rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.edicion-oficio ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.1rem; }
+.edicion-oficio li { display: grid; gap: 0.12rem; }
+.edicion-oficio__cuando {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+}
+.edicion-oficio__que { font-weight: 700; font-size: 0.94rem; line-height: 1.25; }
+.edicion-oficio__donde { font-size: 0.8rem; opacity: 0.66; line-height: 1.35; }
+
+.edicion-oficio__etiquetas {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+}
+.edicion-oficio__etiquetas li {
+  border: 1px solid rgba(23, 16, 12, 0.2);
+  border-radius: 999px;
+  padding: 0.2rem 0.66rem;
+  font-size: 0.76rem;
+}
+
+.edicion-oficio__cierre {
+  grid-column: span 6;
+  margin-top: clamp(2rem, 6vw, 5rem);
+  display: grid;
+  gap: 1.2rem;
+}
+.edicion-oficio__lead {
+  margin: 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.3rem, 3.4vw, 2.6rem);
+  line-height: 1.18;
+  max-width: 24ch;
+}
+.edicion-oficio__acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+/* ---------------------------------------------- hero composition, desktop
+   The first render put the title frame dead centre, the way the reference
+   does. That works for Shopify because their hero is two figures REACHING and
+   the gap between their hands is the composition's centre. Ours is a retablo,
+   and a retablo's centre is its most important panel — here, her strongest
+   portrait. Centring the frame put the title across that face.
+
+   So the frame is not a centrepiece competing with the art; it is a wall label
+   beside it. The retablo moves into the right-hand column and the label sits in
+   the dark ground between the rail and the art, which is also the only region
+   of the hero guaranteed to stay quiet at every scroll position. */
+@media (min-width: 1024px) {
+  .edicion-hero__escena {
+    /* A SCALED COPY of the 1680x1050 composition, not a reflow of it.
+
+       Constraining left/right instead re-proportions every panel box while the
+       images inside still object-fit: cover, so the wings got silently cropped
+       — which breaks this project's one rule about her illustrations. Fixing
+       the stage's aspect ratio keeps each panel box exactly proportional to its
+       source file, so cover crops nothing and the geometry in produccion/
+       edicion.py stays the single source of truth for the layout.
+
+       62% leaves the label's column (rail + gutter + 19rem ≈ 664px) clear. */
+    /* bottom: auto matters. The base rule uses `inset: 0`, so bottom: 0 was
+       still in force here and fought the aspect-ratio -- the stage came out
+       1066px wide when this says 54% of 1680, which is 907. Every attempt to
+       balance the label column against the art was working from a width the
+       CSS was not actually producing. */
+    left: auto;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    width: 52%;
+    aspect-ratio: 1680 / 1050;
+    height: auto;
+  }
+  .edicion-hero__marco {
+    left: calc(var(--edicion-rail) + clamp(1rem, 2vw, 2.2rem));
+    top: 50%;
+    transform: translateY(-50%);
+    /* Width lives in the §16 block below, which is the one that survives the
+       cascade. Both rules sat in the same 1024px band at the same specificity
+       and the later one won silently; the number is in one place now. */
+    /* No border on desktop: against flat near-black a hairline box reads as a
+       dialog. The rule under the wordmark does the framing instead. */
+    border: none;
+    padding: 0;
+  }
+  .edicion-hero__marco { transform: translateY(-50%); }
+}
+
+/* The rail sits over her artwork, and four of the five plates are light. Type
+   on a ground of unknown value is not a contrast bug to tune, it is a coin
+   toss — so the rail carries its own ground rather than depending on what is
+   behind it. A gradient, not a panel: it has to read as part of the art
+   direction, which is what brief section 18 asks for.
+
+   The ground TAKES THE THEME TOO. It was a fixed near-black, which is why the
+   foreground could not switch: cream type over near-black was the only
+   readable pair available. Both move together now, so the rail is dark over
+   the cinematic world and cream over the editorial one, which is what §5 and
+   §19 ask for and what the page looks like anyway. */
+.edicion-rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* The ground is a registered `<color>` so it COULD be transitioned; it
+     deliberately is not. See the note on `.edicion-rail` and the 1.24:1 it
+     measured. The registration still earns its place: it is what makes the
+     value a colour the engine parses rather than an opaque token, which is
+     what `color-mix()` two lines down needs. */
+  background: linear-gradient(
+    to right,
+    var(--edicion-rail-suelo) 0%,
+    var(--edicion-rail-suelo) 62%,
+    color-mix(in srgb, var(--edicion-rail-suelo) 72%, transparent) 86%,
+    transparent 100%
+  );
+}
+
+/* The numerals were drifting away from their titles because the dotted leader
+   is the flexible column and it collapses to nothing until a chapter is active.
+   Giving the leader a minimum keeps the three columns in a stable rhythm. */
+.edicion-rail__indice a { grid-template-columns: auto minmax(1.2rem, 1fr) 1.4rem; }
+.edicion-rail__numeral { text-align: right; }
+
+/* ----------------------------------------------------------------- mobile
+   Section 3: not a scaled-down desktop. The rail is gone, the header grows to
+   60px, and the chapter index moves into a disclosure under the header. */
+@media (max-width: 1023px) {
+  :root { --edicion-cabecera-h: 60px; }
+
+  /* The header's inline jump list cannot hold six Spanish chapter names on a
+     390px screen; it becomes the mobile menu instead. */
+  .edicion-cabecera__centro { display: none; }
+}
+
+.edicion-movil { display: none; position: relative; }
+@media (max-width: 1023px) { .edicion-movil { display: block; } }
+
+.edicion-movil__boton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 0;
+  padding: 0.4rem 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  /* 44px minimum touch target, measured including the padding above. */
+  min-height: 44px;
+}
+.edicion-movil__etiqueta {
+  /* Visible on nothing but a screen reader: the bars carry the meaning
+     visually, and the words carry it to everyone else. */
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.edicion-movil__barras { display: grid; gap: 5px; width: 22px; }
+.edicion-movil__barras i {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 260ms var(--ease-salida);
+}
+.edicion-movil__barras[data-abierto] i:first-child { transform: translateY(3.25px) rotate(45deg); }
+.edicion-movil__barras[data-abierto] i:last-child  { transform: translateY(-3.25px) rotate(-45deg); }
+
+.edicion-movil__panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--edicion-cabecera-h);
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  /* 0fr -> 1fr animates to the content's real height with no measurement, so
+     it is right in both languages and cannot overshoot the way a guessed
+     max-height does. */
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms var(--ease-salida);
+}
+.edicion-movil__panel[data-abierto] { grid-template-rows: 1fr; }
+/* §11: "content opacity transitions simultaneously". The rows animate the
+   height; without this the links are at full strength inside a box that is
+   still one pixel tall, which reads as a clip rather than an opening. */
+.edicion-movil__panel > * {
+  opacity: 0;
+  transition: opacity var(--t-menu) var(--ease-salida);
+}
+.edicion-movil__panel[data-abierto] > * { opacity: 1; }
+/* Section 11: the menu fills the available viewport below the 60px header
+   rather than sitting at its content height. */
+.edicion-movil__panel[data-abierto] .edicion-movil__interior {
+  min-height: calc(100svh - var(--edicion-cabecera-h));
+}
+.edicion-movil__interior { overflow: hidden; }
+
+.edicion-movil__panel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 1.1rem 1.4rem;
+}
+.edicion-movil__panel a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid rgba(246, 243, 239, 0.12);
+}
+.edicion-movil__panel a span:last-child {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===================================================================== §3 / §31
+   THE CAROUSEL IS THE CARD GROUP, NOT THE CHAPTER.
+
+   §31 replaces one thing below the large breakpoint: "the desktop floating
+   constellation" of app cards. This file made the whole editorial BODY the
+   scroller instead, and three chapters paid for it.
+
+   Measured at 390x844 before this rewrite:
+
+     - Chapter I was a 375px-wide horizontal scroller holding three items —
+       a paragraph, the five drawings and the compact list — each 250px wide
+       and 2,040px tall, because a column-flow grid is one row and every item
+       stretches to the tallest. Reading the chapter meant scrolling 2,000px
+       down an almost-empty column and then sideways.
+     - `.edicion-lista` had `scroll-snap-align: none` inside
+       `scroll-snap-type: x mandatory`, so it was UNREACHABLE: setting
+       scrollLeft to 270 to centre it snapped back to 0 and left 45px of a
+       254px block on screen. The compact register of chapters I and II —
+       §37's whole point, ten rows of her own writing — could not be read on
+       any phone or tablet.
+     - Chapters IV, V and VI had already opted out of the flow but kept the
+       carousel's centring padding, so 121px of a 390px phone was empty margin
+       either side of the contact chapter. §3 says "main content becomes full
+       width" in as many words.
+
+   So the body is a reading column at every width, in the same six tracks as
+   the desktop, and §31's numbers move onto `[data-carril]` — the plate wall
+   and the constellation, which are the card groups the section is about. */
+@media (max-width: 1023px) {
+  .edicion-capitulo__cuerpo { grid-auto-flow: row; }
+  /* The class twice, deliberately: `.edicion-capitulo__cuerpo > *` is (0,1,0)
+     and so is `.edicion-lista { grid-column: span 6 }` four hundred lines
+     later, which then wins on source order. Repeating the class makes it
+     (0,2,0) and ends the argument for every child, including ones added by a
+     later block. A reading column is one column. */
+  .edicion-capitulo__cuerpo.edicion-capitulo__cuerpo > * { grid-column: span 6; }
+}
+
+/* The plate wall's rail. At 1024px and up it is not an element at all:
+   `display: contents` hands its cards straight to the body's grid, so §44's
+   uneven row is untouched and the wrapper costs nothing.
+
+   `.edicion-carril` and not `[data-carril]`, which is the difference between a
+   wrapper and a composition. The other rail is the constellation, and it is a
+   real box on desktop: §29's five cards are `position: absolute` against it
+   and it reserves 92svh for them to expand into. `display: contents` generates
+   no box, so the attribute selector took the containing block away and the
+   whole cloud reflowed against the chapter body with no height reserved. The
+   rail RULES below are shared; this one declaration is not. */
+.edicion-carril { display: contents; }
+
+@media (max-width: 1023px) {
+  [data-carril] {
+    display: grid;
+    grid-column: span 6;
+    /* §31: "card width ~65vw on phones", "~50% on larger tablet widths". */
+    --carrusel: 65vw;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--carrusel);
+    gap: clamp(0.9rem, 2vw, 2rem);
+    /* Cards differ in height and a column-flow grid is one row, so without
+       this the shortest card is stretched to the tallest and its caption ends
+       up floating in the middle of a column of nothing. */
+    align-items: start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    /* §31: "first and last items receive generous outer margins so they can
+       center". Half the difference between the scrollport and one card, on
+       each side — which also puts the snap point on the viewport's centre
+       rather than the rail's, because the rail's own padding is symmetric. */
+    padding-inline: calc((100% - var(--carrusel)) / 2);
+    scroll-padding-inline: calc((100% - var(--carrusel)) / 2);
+    /* The scrollbar is a horizontal band across an editorial page; the snap
+       points and the partially-visible next card are the affordance. */
+    scrollbar-width: none;
+  }
+  @media (min-width: 768px) {
+    [data-carril] { --carrusel: 50vw; }
+  }
+  [data-carril]::-webkit-scrollbar { display: none; }
+  [data-carril] > * { scroll-snap-align: center; grid-column: auto; }
+
+  /* §31's active state. The centred card is at 1 and the rest at 0.7, and the
+     `data-activo` that decides which is written by the observer in
+     capitulo.tsx as the snap changes — CSS has no way to ask which item a
+     scroll container is snapped to.
+
+     THROUGH A CUSTOM PROPERTY, because one of the two rails holds cards that
+     compute their own opacity. `.edicion-carta` multiplies three values for
+     §29's reveal and §30's dim, and its declaration is nine hundred lines
+     below this one at the same specificity, so a plain `opacity: 0.7` here
+     would simply lose and the constellation would have no active state at all.
+     The property is the one thing both can agree on — and the filter below is
+     what keeps it out of `opacity`'s way entirely. */
+  /*
+    THE SNAP DIM IS A FILTER, NOT AN OPACITY, and the reason is that the cards
+    already have an opacity transition belonging to something else.
+
+    Every plate-wall card carries `.animate-show-media`, whose §28 reveal
+    transitions `opacity` over `var(--t-medio)` — 700ms — with
+    `.edicion-ficha.animate-show-media { transition-delay: 110ms }` on top.
+    Both rules are (0,1,0) and (0,2,0) and both sit seven hundred lines below
+    this block, so §31's 300ms snap fade lost the property outright: the
+    active-card change took 700ms after a 110ms wait, which is §98's "major
+    media reveal" band applied to what §98 classes as a simple fade.
+
+    Raising specificity here would have won the property and taken §28's
+    stagger with it, because one element cannot transition one property at two
+    durations for two reasons. `filter: opacity()` is a different property, so
+    the two coexist: the reveal keeps `opacity` and its 700ms, the snap keeps
+    `filter` and §31's 300ms, and neither has to know about the other.
+  */
+  [data-carril] > * {
+    --carril-opacidad: 0.7;
+    filter: opacity(var(--carril-opacidad));
+  }
+  [data-carril] > *[data-activo] { --carril-opacidad: 1; }
+  /* Until the observer has run, nothing is dimmed: a carousel that arrives at
+     0.7 with JS off would be §100's "inaccessible without JavaScript" again. */
+  [data-carril]:not([data-carrusel]) > * { --carril-opacidad: 1; }
+}
+
+/* §87 again: the panel's height still opens instantly, because that is the
+   large translate the section asks to drop, but the content fades over 200ms
+   so the menu does not appear as a hard cut. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-movil__panel,
+  .edicion-movil__barras i { transition-duration: 1ms; }
+  .edicion-movil__panel > * { transition-duration: var(--t-micro); }
+}
+
+/* §14 at time 0: "main composition already exists but feels partially
+   obscured". The scrim that did this was inside the mobile block, so at
+   1024px and up the retablo painted at full strength from the first frame and
+   the hero had no first-paint state at all — it was simply finished.
+
+   It lifts on the hero's own progress rather than on a timer, so the
+   composition clears as the reader starts rather than after a wait they did
+   not ask for, and it is gone by 18% of the hero, well before the fold begins
+   at 35%. Under it the panels are already there, which is the difference
+   between obscured and loading. */
+@media (min-width: 1024px) {
+  .edicion-hero__escena::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 46%,
+      rgba(10, 8, 8, 0.28) 0%,
+      rgba(10, 8, 8, 0.52) 62%,
+      rgba(10, 8, 8, 0.74) 100%
+    );
+    /* The fallback is 1, not 0. `--p` only exists once the hero's own hook is
+       running, and a 0 fallback left the scrim at full strength forever with
+       JS off — a permanently dimmed hero instead of a first-paint state. */
+    opacity: clamp(0, calc(1 - var(--p, 1) / 0.18), 1);
+  }
+}
+
+/* ------------------------------------------------- the hero, recomposed
+   Four panels squeezed into a 390x844 portrait viewport is not a retablo, it
+   is four slivers, and object-fit: cover crops each of her portraits to do it.
+   Section 3 asks for a deliberate recomposition rather than a scaled-down
+   desktop, so on a phone the hero becomes a POSTER: the dominant panel alone,
+   full bleed and uncropped, with the anachronism still walking in front of it.
+
+   The three wings are not lost -- they open chapter I's carousel two screens
+   later, at a size where they can actually be read. */
+@media (max-width: 1023px) {
+  .edicion-hero__panel { display: none; }
+  .edicion-hero__panel[data-eje="center"] {
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* Her figure sits left of centre in this plate, so the crop is biased that
+       way; centring it would cut her face at the frame edge. */
+    object-position: 38% 42%;
+  }
+  /*
+    A POSTER DOES NOT CLOSE LIKE AN ALTARPIECE, and it was trying to.
+
+    The fold is `translateX(calc(var(--f) * -18%)) rotateY(...) scale(calc(1 -
+    var(--f) * 0.28))`, declared with no width limit. The centre panel carries
+    `--dir: 0` so the hinge sits out on a phone — but the shift and the scale
+    did not. Measured at 390x844 with the hero at 150svh: by --p = 0.90 the
+    poster is drawn at 0.72 and moved 67.5px left, which is exactly 18% of the
+    375px stage, leaving 120px of empty column on the right (32% of the width)
+    and 118px bands above and below, all of them the page's own #120f0e.
+
+    The shift's stated reason is in the comment beside it — "ending where the
+    rail begins" — and below 1024px there is no rail: `.edicion-rail` is
+    `display: none` and only `display: flex` inside `(min-width: 1024px)`. §17's
+    frame morph and §15's geometry mask, the other two effects aimed at the
+    rail, are both already gated to 1024; this one was the only one that was
+    not.
+
+    What replaces it is a scrubbed move that cannot expose the ground: a slow
+    6% push-in across the same range. §1.2 still gets its scroll-tied
+    cinematic moment, the anachronism still walks, and the poster still covers
+    the frame at every value of --f.
+  */
+  .edicion-hero__panel[data-eje="center"] {
+    transform: scale(calc(1 + var(--f) * 0.06));
+  }
+  .edicion-hero__escena::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 8, 8, 0.92) 0%,
+      rgba(10, 8, 8, 0.7) 34%,
+      rgba(10, 8, 8, 0.15) 66%,
+      transparent 100%
+    );
+  }
+
+  .edicion-hero__anacronismo { left: auto; right: -6%; width: 46%; bottom: -3%; }
+
+  /* The label moves to the foot of the poster, where the scrim is densest. */
+  .edicion-hero__marco {
+    top: auto;
+    bottom: clamp(1.2rem, 5vw, 2.4rem);
+    left: clamp(1rem, 4vw, 1.6rem);
+    right: clamp(1rem, 4vw, 1.6rem);
+    transform: none;
+    width: auto;
+    border: none;
+    padding: 0;
+  }
+  .edicion-hero__marco { transform: none; }
+  /* Six chapters listed under the label duplicate the menu two taps away and
+     push the standfirst off a 844px screen. */
+  .edicion-hero__indice { display: none; }
+
+  /* The anachronism walks through the lower right at 46% width, so the
+     standfirst has to stop before her or the last words sit behind a cobalt
+     sweater. The wordmark above it is short enough to run full width. */
+  .edicion-hero__pie { max-width: 60%; }
+
+  /* Section 6 asks for brand + CTA + hamburger on mobile. The CTA was hidden
+     because at full size it pushed the menu button off a 390px header -- it is
+     compact here instead, which keeps all three. */
+  .edicion-cabecera__cta {
+    padding: 0.3rem 0.66rem;
+    font-size: 0.72rem;
+  }
+  .edicion-cabecera { gap: 0.5rem; }
+  .edicion-cabecera__izq { min-width: 0; }
+  .edicion-cabecera__nombre { font-size: 0.82rem; }
+  /* §6 lists "brand/edition label" for the mobile header as well as the
+     desktop one, and it was hidden outright. It is STACKED here rather than
+     shrunk: side by side it pushed the hamburger to x=396 on a 390px viewport,
+     off the header entirely, which is what hiding it was avoiding. Two lines
+     of 15px and 11px sit inside a 60px header with room to spare. */
+  .edicion-cabecera__marca {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1.12;
+  }
+  .edicion-cabecera__edicion {
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
+/* Chapter I's statement: it opens the editorial body, at reading size, before
+   any picture. The chapter's whole problem was that it had no words. */
+.edicion-declaracion {
+  grid-column: span 6;
+  max-width: 52ch;
+  margin-bottom: clamp(0.8rem, 2.5vw, 2rem);
+}
+.edicion-declaracion p {
+  margin: 0;
+  font-family: var(--font-serif, serif);
+  font-size: clamp(1.15rem, 2.2vw, 1.75rem);
+  line-height: 1.36;
+}
+.edicion-ficha__meta {
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+}
+
+/* ------------------------------------------------------------ las planchas
+   Chapter IV's product demonstrations: her delivered screen travelling through
+   a phone-sized frame, driven by one scroll value. See plancha.tsx for why this
+   is not Rive. */
+.edicion-plancha {
+  grid-column: span 3;
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+@media (max-width: 767px) { .edicion-plancha { grid-column: auto; } }
+
+.edicion-plancha__marco {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 22rem;
+  border-radius: 14px;
+  /* A frame, not a device mockup. A drawn iPhone bezel round someone else's
+     screenshot is the oldest tell in a junior portfolio, and her screens are
+     real, so they do not need a prop to look real. */
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 18px 40px -24px rgba(23, 16, 12, 0.45);
+}
+
+.edicion-plancha__pantalla {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  /* --s is 0 -> 1 across the plancha's travel through the viewport; --recorrido
+     is how much of the capture sits below the frame, computed from its real
+     pixel height in the component so no number is guessed here. */
+  transform: translateY(calc(var(--s, 0) * var(--recorrido) * -1));
+  will-change: transform;
+}
+
+.edicion-plancha__pie h3 { margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 700; }
+.edicion-plancha__pie .edicion-cta { margin-top: 0.7rem; }
+.edicion-plancha__pie p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72);
+  max-width: 38ch;
+}
+
+/* Motion off: the screen rests at its top. A still of a real interface is a
+   fair fallback; a blank frame waiting for a scroll value is not. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-plancha__pantalla { transform: none; }
+}
+
+/* §70's footer information, where the rail cannot carry it.
+
+   The legal line lives in the rail and the rail is a desktop device, so below
+   1024px the page ended on two buttons and nothing else — no footer
+   information of any kind, which is half of what §70 says the ending is made
+   of. It sits at the foot of the closing chapter instead, and is hidden from
+   1024 up rather than duplicated, because the rail already has it there. */
+.edicion-oficio__legal {
+  margin: clamp(2rem, 6vh, 3.5rem) 0 0;
+  font-size: 0.74rem;
+  color: rgba(23, 16, 12, 0.62);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1024px) {
+  .edicion-oficio__legal { display: none; }
+}
+
+/* Chapter VI's actions stack on a phone. Everything the block around this used
+   to do — taking chapters IV, V and VI out of the snap carousel one id at a
+   time — is the default now that the carousel belongs to the card group; see
+   the §3 / §31 block above for what that cost while it was per-chapter. */
+@media (max-width: 1023px) {
+  .edicion-oficio__acciones { flex-direction: column; align-items: stretch; }
+  .edicion-oficio__acciones .edicion-cta { justify-content: center; }
+}
+
+/* The horizontal scrollers are keyboard-reachable. Chrome does not make an
+   overflow container focusable on its own, and the plate walls contain no
+   focusable children at all, so the work inside them was unreachable without a
+   pointer. WCAG 2.1.1.
+
+   `.edicion-plancha__marco:focus-visible` used to be grouped here and could
+   never match: the frame has no `tabIndex` and has never had one, and it is
+   `overflow: hidden`, so it is not a scroll container either. It read as a
+   focus affordance §43's demonstration does not have. The plancha IS
+   keyboard-reachable, through its own CTA, which is where the focus ring
+   belongs. */
+[data-carril]:focus-visible {
+  outline: 2px solid var(--edicion-acento);
+  outline-offset: 3px;
+}
+
+/* There was no :focus-visible rule anywhere in the Edition. */
+.edicion a:focus-visible,
+.edicion button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* The meta line lost its size and most of its contrast to a specificity
+   collision: `.edicion-ficha p` (0,1,1) beat `.edicion-ficha__meta` (0,1,0), so
+   it computed 16.2px and inherited a 0.72 colour that its own opacity: 0.5 then
+   multiplied to ~0.36 -- 2.3:1 on cream, on the line carrying every drawing's
+   dimensions and date. */
+.edicion-ficha p.edicion-ficha__meta {
+  font-size: 0.74rem;
+  color: rgba(23, 16, 12, 0.66);
+  opacity: 1;
+}
+
+/* Chapter VI's column headings and dates were 3.4:1 at opacity 0.5. */
+.edicion-oficio h3 { opacity: 1; color: rgba(23, 16, 12, 0.62); }
+.edicion-oficio__cuando { opacity: 1; color: rgba(23, 16, 12, 0.62); }
+
+
+/* ==================================================================== §102
+   The shared primitives: the pill and the underlined action.
+
+   These were three near-identical rules at three slightly different sizes --
+   the plancha's 0.36/0.9rem, the closing chapter's 0.44/1.1rem, and the
+   header's own -- plus the §72 arrow declared twice. One pill on the page now,
+   at the largest of the three, because it is also the biggest tap target.
+
+   The header's CTA keeps its own rule on purpose: it sits on the dark nav and
+   draws from `currentColor` against a background that inverts with the theme,
+   and it has responsive rules at two breakpoints. Folding it in would change
+   measured header metrics to satisfy a list. */
+.edicion-cta {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(23, 16, 12, 0.28);
+  border-radius: 999px;
+  padding: 0.44rem 1.1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--t-hover) var(--ease-cine),
+    color var(--t-hover) var(--ease-cine), border-color var(--t-hover) var(--ease-cine);
+}
+.edicion-cta:hover {
+  background: var(--edicion-acento);
+  border-color: var(--edicion-acento);
+  color: var(--edicion-crema);
+}
+
+.edicion-enlace {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
+  padding-bottom: 1px;
+}
+.edicion-enlace:hover { border-bottom-color: currentColor; }
+
+/* §72: push out / pop in. The arrow leaves its own container diagonally and
+   fades as it goes; a second one enters from the opposite corner and fades in.
+   300ms, inside the section's 250–350 band. §72 says the icon "can be snappier
+   than the card" and here it is not: the two cards this arrow lives on run the
+   same 300ms — the document sheet's image scale, and the plancha's frame and
+   title. The permission is not an obligation, and one duration across a
+   component is the calmer reading; what was wrong was the comment claiming a
+   contrast the file does not have.
+
+   This was a 2px nudge of a single glyph, which is none of the four steps the
+   section lists. The container is 1em square with overflow hidden, so "out of
+   icon container" is literal rather than implied. */
+.edicion-flecha {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.4em;
+  overflow: hidden;
+  vertical-align: -0.06em;
+}
+.edicion-flecha span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  transition: transform var(--t-hover) var(--ease-cine),
+    opacity var(--t-hover) var(--ease-cine);
+}
+/* The replacement waits below-left, outside the box, at zero. */
+.edicion-flecha span + span {
+  transform: translate(-85%, 85%);
+  opacity: 0;
+}
+.edicion-cta:hover .edicion-flecha span,
+.edicion-cta:focus-visible .edicion-flecha span,
+.edicion-enlace:hover .edicion-flecha span,
+.edicion-enlace:focus-visible .edicion-flecha span {
+  transform: translate(85%, -85%);
+  opacity: 0;
+}
+.edicion-cta:hover .edicion-flecha span + span,
+.edicion-cta:focus-visible .edicion-flecha span + span,
+.edicion-enlace:hover .edicion-flecha span + span,
+.edicion-enlace:focus-visible .edicion-flecha span + span {
+  transform: none;
+  opacity: 1;
+}
+
+/* §87: reduced motion keeps a simple fade — the section's own words are "keep
+   simple 150–250ms fades" — and drops the travel. The arrow swap becomes a
+   crossfade in place. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-flecha span {
+    transition: opacity var(--t-micro) linear;
+    transform: none;
+  }
+  .edicion-flecha span + span { transform: none; }
+  .edicion-cta:hover .edicion-flecha span,
+  .edicion-cta:focus-visible .edicion-flecha span,
+  .edicion-enlace:hover .edicion-flecha span,
+  .edicion-enlace:focus-visible .edicion-flecha span { transform: none; }
+  /*
+    THE IMG, NOT THE SHEET. §71's scale is declared on the image —
+    `.edicion-documento__hoja img { transition: transform 300ms }` and
+    `:hover img { transform: scale(1.015) }` — and these two rules used to
+    target the sheet, which is never given a transform or a transition by any
+    rule in the file. Both were no-ops, so a reader who asked for less movement
+    still got a 300ms scale on both document cards, on hover and on keyboard
+    focus, under a heading that says this block "drops the travel". Neither
+    property inherits, so the parent could never have reached the child.
+  */
+  .edicion-documento__hoja img { transition: opacity var(--t-micro) linear; }
+  .edicion-documento__hoja:hover img,
+  .edicion-documento__hoja:focus-visible img { transform: none; }
+}
+
+/* ------------------------------------------------------------- el vídeo
+   Brief sections 25, 26 and 40. A large media block with a restrained centred
+   play affordance, opening a full-screen overlay. No library: a <video> and a
+   <dialog>. */
+.edicion-video { grid-column: span 6; display: grid; gap: 0.9rem; }
+.edicion-video__marco {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  /*
+    THE POSTER IS THE FRAME'S GROUND, UNCONDITIONALLY — and it used to be
+    painted only under reduced motion.
+    §90 asks the film not to load at first paint, so `video.tsx` keeps the
+    sources and the `poster` attribute in `data-*` and attaches them from an
+    IntersectionObserver. With JavaScript off that observer never runs: the
+    server HTML carries a `<video>` with no src, no `<source>` and no poster,
+    over a `--edicion-negro` ground. The page's only film was an empty black
+    rectangle with a play button on it, which is §100's "content becomes
+    inaccessible without JavaScript".
+    The variable is already on this element from the server (`style="--poster:
+    url(…)"`), so painting it here costs nothing — the video covers it the
+    moment it arrives — and it is the same plate the reduced-motion branch
+    shows.
+  */
+  background-color: var(--edicion-negro);
+  background-image: var(--poster);
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 16 / 9;
+}
+.edicion-video__medio { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.edicion-video__marco { cursor: pointer; }
+.edicion-video__marco:focus-visible { outline: 2px solid var(--edicion-acento); outline-offset: 3px; }
+.edicion-video__play {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.3rem;
+  border: 1px solid rgba(246, 243, 239, 0.7);
+  border-radius: 999px;
+  background: rgba(12, 9, 9, 0.42);
+  color: #f6f3ef;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background-color var(--t-hover) var(--ease-salida),
+    border-color var(--t-hover) var(--ease-salida);
+}
+/* §25: "the entire media area is clickable… on hover: play affordance gains
+   emphasis". The frame carries the role and the click, so the frame is what
+   has to be hovered — bound to the pill alone, moving the pointer anywhere
+   over the film did nothing, and the pill is 130px of a full-bleed block. */
+.edicion-video__marco:hover .edicion-video__play,
+.edicion-video__marco:focus-visible .edicion-video__play {
+  background: rgba(12, 9, 9, 0.72);
+  border-color: #f6f3ef;
+}
+.edicion-video__play-icono { font-size: 0.72em; line-height: 1; }
+
+.edicion-video__pie h3 { margin: 0 0 0.25rem; font-size: 1rem; font-weight: 700; }
+.edicion-video__pie p {
+  margin: 0; font-size: 0.88rem; line-height: 1.45;
+  color: rgba(23, 16, 12, 0.72); max-width: 52ch;
+}
+
+/* Section 26: the panel scales 0.97 -> 1 and fades in. */
+.edicion-modal {
+  border: 0;
+  padding: 0;
+  max-width: 100vw;
+  max-height: 100dvh;
+  width: 100vw;
+  height: 100dvh;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+/* Section 26: the overlay fades in. A backdrop that simply appears is the hard
+   cut the section's entrance spec exists to avoid. */
+.edicion-modal::backdrop {
+  background: rgba(8, 6, 6, 0.88);
+  animation: edicion-fondo-entra var(--t-hover) var(--ease-cine) both;
+}
+@keyframes edicion-fondo-entra { from { opacity: 0; } to { opacity: 1; } }
+.edicion-modal__panel {
+  width: min(92vw, 1400px);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.edicion-modal__medio { width: 100%; height: 100%; display: block; }
+/* §32's destination for the five constellation cards: her own painting, at
+   2000px, which is not a video and must not be treated as one.
+
+   The panel above is a 16/9 black letterbox because everything that opened in
+   it until now was footage. A 2000x2000 painting inside that box is matted on
+   black with 44% of the panel unused, and a 2048x2732 one is scaled down to
+   fit a landscape frame it does not share. So for this one child the panel
+   stops having a shape of its own and takes the image's: `width: auto` lets
+   the grid centre shrink-to-fit, and the two maxima below are what actually
+   bound it. */
+.edicion-modal__panel:has(.edicion-modal__lamina) {
+  width: auto;
+  aspect-ratio: auto;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+/* Bounded on BOTH axes, because a square is the common case here: capped only
+   by width, the 1324px a 1440-wide viewport allows would render 1324px tall
+   inside 900px of screen and the bottom third of every square painting would
+   be off-screen with no way to reach it. Whichever limit binds first wins and
+   the intrinsic ratio does the rest. */
+.edicion-modal__lamina {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(92vw, 1400px);
+  /* Not 100dvh: the close button sits at top: 1rem and the image would run
+     under it. */
+  max-height: 86dvh;
+  border-radius: 4px;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-modal[open] .edicion-modal__panel {
+    animation: edicion-modal-entra 320ms var(--ease-salida) both;
+  }
+}
+@keyframes edicion-modal-entra {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+/* §26: "close: reverse." The dialog stays in the top layer for one more
+   transition while the panel scales back down and the backdrop fades out; the
+   component holds the unmount for the same 320ms. Without it the overlay
+   vanished in a frame, which is the hard cut the entrance spec exists to
+   avoid, applied to the other end. */
+.edicion-modal[data-cerrando]::backdrop {
+  animation: edicion-fondo-entra var(--t-hover) var(--ease-cine) reverse both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-modal[open][data-cerrando] .edicion-modal__panel {
+    animation: edicion-modal-entra 320ms var(--ease-salida) reverse both;
+  }
+}
+.edicion-modal__cerrar {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid rgba(246, 243, 239, 0.6);
+  border-radius: 999px;
+  background: transparent;
+  color: #f6f3ef;
+  font: inherit; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer;
+}
+.edicion-modal__cerrar:hover { background: rgba(246, 243, 239, 0.14); }
+
+@media (max-width: 767px) { .edicion-video { grid-column: auto; } }
+
+/* Motion off: no autoplay loop, no entrance. The poster frame is the work — and
+   it is the frame's ground at every setting now, so this only has to hide the
+   film. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-video__medio { display: none; }
+}
+
+/* -------------------------------------------------- la geometría (§15)
+   A full-viewport hairline construction that draws itself as the hero scrolls.
+   Drafting ink, not a HUD: one warm off-white, 1px, very low opacity, no glow,
+   no blur, no colour.
+
+   pathLength="1" on every element means stroke-dasharray: 1 is the whole path
+   whatever its real length, so a single dashoffset expression draws a line, a
+   circle and an arc identically. */
+.edicion-geometria {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+.edicion-geometria * {
+  fill: none;
+  stroke: #f6f3ef;
+  /* vector-effect keeps it a true hairline whatever the viewBox scale works
+     out to. The comment here used to say `preserveAspectRatio="none"`, which
+     the SVG has never carried — it was `slice` and is `meet` now, for the
+     reason written beside it. */
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+}
+
+/* Opacity goes on the ROOT, once. Putting it on `.edicion-geometria *` applied
+   it to the <g> AND to the shape inside it, so it multiplied: 0.22 x 0.22 was
+   an effective 0.048 and the construction was invisible. Section 15 asks for
+   "very low" and forbids a glowing HUD; 0.3 of a warm off-white at 1px is a
+   pencil line on a dark board, which is the register it wants. */
+.edicion-geometria { opacity: 0.3; }
+
+/* Section 15's sequence, each group reading its own window of the hero's --p:
+   frame 0-15%, divisions 10-30%, diagonals 20-45%, circles and spiral 30-60%.
+   Staggered so it feels constructed by hand rather than switched on. */
+.edicion-geometria__g { stroke-dasharray: 1; }
+/* THE RESTING STATE IS DRAWN. `--g` falls back to 1 — dashoffset 0 — so with
+   JavaScript off the construction is simply finished, the way it is under
+   reduced motion. The four windows below are the scrub, and they are added
+   only once the hero is writing `--p`: they read `var(--p, 0)`, so declared
+   unconditionally they resolved to 0 and left every group at dashoffset 1,
+   which is an SVG present in the DOM and never inked. */
+[data-scrub] .edicion-geometria__g[data-fase="marco"]       { --g: clamp(0, calc(var(--p, 0) / 0.15), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="divisiones"]  { --g: clamp(0, calc((var(--p, 0) - 0.10) / 0.20), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="diagonales"]  { --g: clamp(0, calc((var(--p, 0) - 0.20) / 0.25), 1); }
+[data-scrub] .edicion-geometria__g[data-fase="circulos"]    { --g: clamp(0, calc((var(--p, 0) - 0.30) / 0.30), 1); }
+.edicion-geometria__g * { stroke-dashoffset: calc(1 - var(--g, 1)); }
+
+/* The construction fades as the retablo folds away, so it never competes with
+   the chapter that follows. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-geometria {
+    opacity: calc(0.3 * (1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.28), 1)));
+  }
+}
+
+/* Motion off: the construction is simply finished and still, at a lower
+   opacity so a static page does not read as a wireframe. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-geometria__g * { stroke-dashoffset: 0; }
+  .edicion-geometria { opacity: 0.18; }
+}
+
+/* ------------------------------------------------- el lienzo persistente
+   Brief section 20: ONE fixed WebGL canvas, created once and never destroyed.
+   It sits BEHIND the static plates, not instead of them -- section 81 requires
+   every cinematic chapter to keep a static fallback that "is not a broken
+   state", so the plates are the floor and the canvas is the ceiling.
+
+   Section 82: starts at opacity 0, crossfades to 1 over ~700ms once the first
+   stable frame is ready, and never shows a black flash. Because it fades in
+   OVER a complete page rather than over black, there is nothing to flash. */
+.edicion-lienzo {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease-in-out;
+}
+.edicion-lienzo[data-listo] { opacity: 1; }
+
+/* The chapter intros sit above the canvas; their plates are the fallback and
+   they HIDE once the live scene has taken over — §82's own words are "then
+   remove or hide fallback".
+
+   It used to leave them at 0.18, and the plate is ABOVE the canvas (the intro
+   carries z-index 1 and the canvas 0), so what shipped on a WebGL desktop was
+   her own artwork double-imaged: a full-width ghost of the plate washing over
+   the sharper planes of the same work, with the plate's own rectangle edges
+   visible across the composition. Measured side by side at 1440x900 on chapter
+   II with a real WebGL2 context.
+
+   Hidden, not removed: the canvas can lose its context at any moment, and the
+   plate has to be there to come back. The 700ms is §82's crossfade, run in
+   both directions. */
+.edicion-capitulo__intro { z-index: 1; }
+html[data-lienzo="activo"] .edicion-capitulo__escena img { opacity: 0; }
+.edicion-capitulo__escena img { transition: opacity 700ms ease-in-out; }
+
+/* Section 86: mobile switches scenes entirely to optimized static images.
+   The brief permits this explicitly -- "switch some scenes entirely to
+   optimized static images" -- and it is also the honest call on a phone GPU. */
+@media (max-width: 1023px) {
+  .edicion-lienzo { display: none; }
+}
+
+/* Section 87: with reduced motion there is no canvas at all. The static
+   fallback is the page.
+
+   And no reserved scroll either. `--cap-altura` is a floor sized for the
+   choreography — chapter V's 700svh exists because the triptych is 495 — and
+   the triptych collapses to its content height under reduced motion while the
+   floor did not, leaving about three and a half viewports of dead space at the
+   end of the chapter. Which is the same "reserved emptiness" the chapter
+   record says was cut once already. With no pinning and no scrub, a chapter's
+   height is its content. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-lienzo { display: none; }
+  .edicion-capitulo { min-height: 0; }
+}
+
+/* The chapter intro paints an opaque ground (--cap-fondo) at z-index 1, which
+   sat directly on top of the persistent canvas and hid every scene behind a
+   flat colour. Once the canvas has a stable frame the ground steps aside: the
+   scene's own background plane carries the chapter colour instead, which is
+   what section 20 means by the scene owning the environment.
+
+   That plane is `FondoEscena` in lienzo.tsx. It did not exist when this rule
+   was written — `escena.fondo` was declared on all five scenes and read by
+   nothing — so for as long as both were true, a WebGL desktop lost 78% of
+   every chapter's sampled ground to the page's near-black.
+
+   It does NOT simply become transparent -- a trace stays, so the chapter colour
+   still reads during the 700ms crossfade and at the seams where the scene's
+   background plane does not reach the viewport edge. */
+/* Only chapters that HAVE a scene step their ground aside. Chapter VI has none
+   -- section 23 sends the closing chapter into the light world -- and the
+   override was dropping its cream to 22% alpha, turning the one light chapter
+   on the page into a dark wash with a cream title over it. */
+html[data-lienzo="activo"] .edicion-capitulo:not([data-sin-escena]) .edicion-capitulo__intro {
+  background: color-mix(in srgb, var(--cap-fondo) 22%, transparent);
+}
+.edicion-capitulo__intro { transition: background-color 700ms ease-in-out; }
+
+/* Same for the hero: its own near-black would otherwise sit over the canvas. */
+html[data-lienzo="activo"] .edicion-hero { background: transparent; }
+
+/* ================================================================ §98 / §99
+   The micro-timing and easing systems, as named tokens.
+
+   Section 98 is explicit: "Do not randomly choose animation durations." Every
+   easing on this page comes from section 99 and every duration from one of
+   section 98's families — which is not the same as saying every duration is a
+   token. About twenty literals remain, at the point of use, and each one is
+   inside a family: 260 and 320 in the 250–350 band, 620 and 700 in 600–800.
+   The tokens are here for the values used in more than one place; a one-off
+   that is already in a family does not become more checkable by being given a
+   name. The one value outside every family is the 1ms on the mobile panel's
+   height, which §87 sanctions. */
+:root {
+  --t-micro: 200ms;      /* input and button micro-interactions */
+  --t-hover: 300ms;      /* hover and simple fades (250–350 band) */
+  --t-menu: 300ms;       /* menu, dropdown, theme */
+  /* §7 asks the header's entrance to take 450–650ms and §98's nearest family
+     is 600–800. 600 is the one value inside both, so it is the one used. It
+     was --t-medio (700ms), which is outside §7's band. */
+  --t-entrada: 600ms;
+  --t-medio: 700ms;      /* major media reveals and canvas fades (600–800) */
+  /* 50ms (state response), 400ms (springy positional) and 500ms (elastic) are
+     in section 98's families but nothing on this page needs them, and a token
+     with no consumer is a claim the stylesheet does not keep. They go in when
+     something uses them. */
+
+  /* §99 core: cinematic UI reveals. */
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Section 99's elastic curve is deliberately NOT defined here. The section
+     restricts it to "playful Sidekick Skill elements" and forbids bounce for
+     general page content -- and those elements are declined (see
+     edicion-declinaciones.md), so there is nothing on this page entitled to
+     use it. */
+}
+
+/* ===================================================================== §28
+   The shared media reveal. Section 28 names the class and gives every value. */
+.animate-show-media[data-armado]:not([data-visible]) {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  clip-path: inset(3% 0 3% 0);
+  transition:
+    opacity var(--t-medio) var(--ease-cine),
+    transform var(--t-medio) var(--ease-cine),
+    clip-path var(--t-medio) var(--ease-cine);
+}
+.animate-show-media {
+  /*
+    FOUR PROPERTIES, TWO DURATIONS, ONE LIST — and `filter` is here rather than
+    in §31's own block because a shorthand replaces the whole list.
+
+    §31 dims the inactive cards of a snap carousel, and every one of those
+    cards also carries this class. Doing it with `opacity` put the two in
+    direct conflict: this rule is (0,1,0) and sits seven hundred lines below
+    §31's, so it won the property and the snap fade inherited §28's 700ms and
+    110ms delay — §98's "major media reveal" band applied to what §98 classes
+    as a simple fade. Raising specificity over there would have won the
+    property back and taken §28's reveal with it.
+
+    So the snap dim is `filter: opacity()`, a different property, and its
+    duration rides in this list at §31's own 300ms. Elements that never carry a
+    carousel state never change their filter, so it costs them nothing.
+  */
+  transition:
+    opacity var(--t-medio) var(--ease-cine),
+    transform var(--t-medio) var(--ease-cine),
+    clip-path var(--t-medio) var(--ease-cine),
+    filter var(--t-menu) var(--ease-cine);
+}
+/* Copy leads media by 80–140ms, per §28. The fourth delay is 0: §28's stagger
+   belongs to the reveal, and a snap carousel that waits 110ms before
+   acknowledging the card you just swiped to is not staggered, it is slow. */
+.edicion-declaracion.animate-show-media { transition-delay: 0ms; }
+.edicion-ficha.animate-show-media,
+.edicion-video.animate-show-media,
+.edicion-plancha.animate-show-media,
+/* Chapter VI's document pair is a copy→media block like the rest and was
+   missing from this list: `.edicion-documentos__titulo` is the copy and the two
+   `.edicion-documento` cards are the media, and all three arrived in the same
+   frame. §42's sequence was already handled; this one was not. */
+.edicion-documento.animate-show-media { transition-delay: 110ms, 110ms, 110ms, 0s; }
+
+/* THE UNCONDITIONAL COPY OF THIS RULE KILLED THE WHOLE REVEAL.
+
+   There used to be two of these, one inside the media query and one outside
+   it. The one outside sat after the rule above at equal specificity, so it won
+   on source order — and a CSS transition reads its duration from the AFTER
+   change style. The moment the observer added `data-visible`, the armed
+   (0,3,0) selector stopped matching and the style that took over carried
+   `transition: none`. Every card, film, plancha and statement on the page
+   snapped from opacity 0 to 1: §28's 700ms, §25's media reveal, §27's
+   copy-before-media stagger, §40's and §42's reveals, all inert, while every
+   number the brief names sat correct in the file above.
+
+   It was there for the no-JS case, which does not need it: nothing is ever
+   hidden without `data-armado`, and `Revelar` is the only thing that writes
+   it. Reduced motion does need it, because an armed element must still not
+   animate, and that copy is the one that stays.
+
+   §78 also warns against over-animating the white content, which is why this
+   is the only reveal on the editorial side. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-show-media {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+}
+
+/* ===================================================================== §71 / §30
+   Card interaction. §71 asks for a clear pressable affordance and §30 for a
+   hover state on the media itself.
+
+   NOT EVERY CARD IS A LINK, which this comment used to claim and the very next
+   rule contradicts: the ten plate-wall cards in chapters II, III and V are
+   decorative repeats of work the surrounding copy already names, and they stay
+   inert on purpose. Everything here is scoped to cards that contain one. */
+.edicion-ficha a,
+a.edicion-ficha {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+/*
+  THE PRESSABLE CARDS ARE NAMED, because `.edicion-ficha:has(a)` named none.
+
+  This block used to be scoped to "cards that contain a link", which was the
+  right instinct and matched nothing: `Ficha` is rendered in exactly one place,
+  `ParedDeObras`, and those ten plates are deliberately inert — decorative
+  repeats of work the surrounding copy already names. So the whole §71 hover
+  treatment was dead CSS with a comment explaining why it was correct.
+
+  Three things on this page are pressable cards, and each gets §71's rules
+  where its own section does not already say otherwise:
+
+    .edicion-plancha      the two case studies      frame depth + CTA arrow
+    .edicion-documento    the portfolio and the CV  see its own block above
+    .edicion-carta        the five drawings         §30's 4-7%, not §71's 1.5%
+
+  The constellation is the exception on purpose: §30 is the more specific
+  section and asks for a 4–7% scale on the active card, so §71's "tiny image
+  scale only if needed" does not overrule it.
+*/
+.edicion-plancha__marco { transition: box-shadow 300ms var(--ease-cine); }
+.edicion-plancha:hover .edicion-plancha__marco,
+.edicion-plancha:focus-within .edicion-plancha__marco {
+  /* Not a lift: §71 forbids one. The frame gains a little depth and that is
+     all; the CTA below it carries the actual affordance. */
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 22px 48px -24px rgba(23, 16, 12, 0.5);
+}
+.edicion-plancha h3 { transition: color 300ms var(--ease-cine); }
+.edicion-plancha:hover h3,
+.edicion-plancha:focus-within h3 { color: var(--edicion-acento); }
+
+/* ===================================================================== §77
+   Section cut language. Three cuts, and none of them is an instantaneous
+   background swap.
+
+   B (cinematic → editorial light) and C (light → cinematic) both get a scrubbed
+   scrim at the seam, so the ground changes over 400–800ms of scroll rather than
+   at a razor edge. The scrim is a child of the block it leads into, so it can
+   never be mistaken for part of the artwork above it. */
+.edicion-capitulo__cuerpo::before,
+.edicion-capitulo__cuerpo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(90px, 12vh, 190px);
+  pointer-events: none;
+  z-index: 3;
+}
+/* B: the light surface rises out of the cinematic block above it. */
+.edicion-capitulo__cuerpo::before {
+  top: 0;
+  transform: translateY(-100%);
+  background: linear-gradient(to bottom, transparent, var(--edicion-crema));
+}
+/* C: light editorial -> dark cinematic. It hangs off the BOTTOM of the light
+   body rather than the top of the next intro: the intro computes overflow:
+   clip, so a scrim translated outside its own box was clipped away entirely and
+   every light-to-dark seam was a one-pixel hard cut, which section 77-C
+   explicitly forbids. Cut B already worked for exactly this reason. */
+.edicion-capitulo__cuerpo::after {
+  top: auto;
+  bottom: 0;
+  transform: translateY(100%);
+  background: linear-gradient(to bottom, var(--edicion-crema), transparent);
+}
+.edicion-capitulo__cuerpo,
+.edicion-capitulo__intro { position: relative; }
+
+/* THE SAME TWO CUTS, ATTACHED TO THE INTRO, BELOW THE LARGE BREAKPOINT.
+
+   Both scrims above hang OUTSIDE the editorial body's box. That used to be
+   fatal below 1024px, where the body took `overflow-x: auto` for §31's
+   carousel — which computes `overflow-y: auto` and clipped them away, so
+   chapters I, II and III got the instantaneous background swap §77-C forbids
+   by name while IV, V and VI kept their bands. The body is a reading column at
+   every width now and clips nothing, so that reason has expired.
+
+   The cuts stay on the intro anyway, and the reason is smaller than the one
+   that used to be written here. That version argued the two placements are not
+   equivalent — that a scrim hung outside the body's top edge lands on the
+   standfirst where one attached to the intro's foot does not. They cover the
+   identical region: `.edicion-capitulo` is a flex column with no gap and the
+   body is the intro's immediate sibling, so `intro.bottom` IS `body.top`, and
+   both bands are the same `clamp(90px, 12vh, 190px)` ending at that line. Same
+   pixels, same words underneath.
+
+   What is left is placement hygiene, and it is enough. The body is the element
+   whose overflow behaviour has changed twice in this file's history; the intro
+   is `overflow: clip` and stable. Hanging the mobile cuts off the stable box
+   means the next time something needs to clip the body they do not silently
+   disappear, which is exactly how they disappeared the first time.
+
+   So: cut B at the intro's foot, rising into the light body that follows, and
+   cut C at its head, arriving out of the light body above. Chapter I is exempt
+   from C because what precedes it is the hero, which is already dark. */
+@media (max-width: 1023px) {
+  .edicion-capitulo__cuerpo::before,
+  .edicion-capitulo__cuerpo::after { display: none; }
+
+  .edicion-capitulo__intro::after,
+  .edicion-capitulo:not(#ilustracion) .edicion-capitulo__intro::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: clamp(90px, 12vh, 190px);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .edicion-capitulo__intro::after {
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent, var(--edicion-crema));
+  }
+  .edicion-capitulo:not(#ilustracion) .edicion-capitulo__intro::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--edicion-crema), transparent);
+  }
+  /* Chapter VI's intro is already the light world; a cream band into cream is
+     nothing, and a cream band out of it would be a seam where there is none. */
+  #oficio .edicion-capitulo__intro::after,
+  #oficio .edicion-capitulo__intro::before { display: none; }
+}
+
+/* ===================================================================== §76
+   The keyboard escape control. Hidden by TRANSFORM, never by display or
+   visibility: both would drop it out of the tab order, which is the one thing
+   this control exists to be in. */
+.edicion-volver {
+  position: absolute;
+  left: clamp(1rem, 4vw, 3.5rem);
+  bottom: 0;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(calc(100% + 2px));
+  transition: transform var(--t-micro) var(--ease-salida);
+}
+.edicion-volver:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--edicion-crema);
+  outline-offset: 2px;
+}
+/* The skip link travels on a transform, which is the thing §87 drops — but it
+   is also the only cue that it has appeared, so it keeps a 200ms fade. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-volver {
+    transition-property: opacity;
+    transition-duration: var(--t-micro);
+    transform: none;
+  }
+  /* Invisible AND untouchable. Without the translate it is an opacity-0 pill
+     sitting at the foot of every chapter intro, and it is not in §89's
+     pointer-events list, so a reduced-motion reader had six invisible click
+     targets on the page. */
+  .edicion-volver:not(:focus-visible) { opacity: 0; pointer-events: none; }
+  .edicion-volver:focus-visible { opacity: 1; pointer-events: auto; }
+}
+
+/* ===================================================================== §92
+   The page state machine, expressed as data attributes on <html> so CSS can
+   respond to a phase without a component re-rendering. */
+/* During the hero the rail's opacity belongs to the section 17 morph below,
+   not to a flat zero -- this rule used to hard-zero it at a specificity the
+   morph could not beat, so the rail never arrived at all. */
+html[data-fase="hero"] .edicion-rail { pointer-events: none; }
+html[data-fase="capitulos"] .edicion-rail { opacity: 1; }
+/* The opacity transition this used to re-declare is folded into the rail's one
+   transition list at the top of the file. It was a second `transition` on the
+   same selector at the same specificity, so it did not add a transition — it
+   replaced the colour fade next to it. */
+
+/* ============================================================= §47 / §48
+   THE STICKY STORY. One artifact, three readings, never reset.
+
+   §47 gives the numbers: three sequential ~165svh beats, a viewport-height
+   block sticky inside each. §48 gives the rule that decides the structure —
+   the same composition runs through all three and "the viewer should feel they
+   are circling one artifact through three ideas."
+
+   So there is ONE image and ONE progress value across the whole 495svh, not
+   three of each. The first build had a figure and a `useProgreso` per beat,
+   which is three compositions and two resets; it was also nearly still while
+   pinned, because a beat's own `dentro` progress spends 71% of its range
+   sliding in and out of frame. `pegajoso` on the parent reads 0 at the pin and
+   1 at the release. */
+.edicion-triptico {
+  grid-column: span 6;
+  position: relative;
+}
+/*
+  THE RESERVE AND THE PIN ARE ARMED, which they were not.
+
+  Both were on the base selector, so with JavaScript off the block still
+  reserved 495svh and still pinned: 495 minus the roughly one viewport the
+  pinned child occupies is about four screens of scrolling during which nothing
+  on the page changes, because every scrubbed behaviour underneath IS gated —
+  the camera, the three readings, §49's progressive specs — and correctly falls
+  back to static. The component's own comment claimed "all three readings stack
+  in the flow", and they stacked inside a block that was still pinned.
+
+  §42's sequence, built later, already does this correctly and says so in as
+  many words ("everything above renders a plain vertical strip … the scrub is
+  added here and nowhere else"). Same shape here: the strip is three readings
+  and one photograph, in the flow, at its own height.
+*/
+[data-scrub].edicion-triptico {
+  /* Three beats of 165svh. Chapter V's own height accounts for it. */
+  min-height: 495svh;
+}
+[data-scrub] .edicion-triptico__fijo {
+  position: sticky;
+  top: 110px;
+  /* 100svh minus the offset, or the pinned block runs past the viewport foot
+     and the reader never sees the bottom of it. */
+  min-height: calc(100svh - 110px);
+}
+.edicion-triptico__fijo {
+  /* Flex, not grid: a grid with min-height stretches its single row, so
+     align-content had nothing to centre and the composition sat at the top
+     with 600px of nothing under it. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+}
+@media (min-width: 900px) {
+  .edicion-triptico__fijo {
+    flex-direction: row;
+    align-items: center;
+  }
+  .edicion-triptico__objeto { flex: 1 1 58%; min-width: 0; }
+  .edicion-triptico__lecturas { flex: 1 1 42%; min-width: 0; }
+}
+/*
+  THE PINNED BLOCK HAS TO FIT THE VIEWPORT, and between 1024 and ~1150px wide
+  it did not. `min-height: calc(100svh - 110px)` is a floor, not a ceiling, and
+  the readings column is the tallest thing in the row: it is 42% of the flex
+  row, and at a 1024px viewport that row is the chapter body less the rail and
+  its padding — about 702px, so the column is roughly 295px and the third
+  reading, the one carrying §49's five spec rows, wraps to 695px against a
+  590px stage. (An earlier version of this note put the row at 1008px and the
+  column at 423px, which is the viewport's content width rather than the
+  body's; the overflow it measured is the same, but the number someone would
+  re-derive the 46/54 split from was 44% too wide.) Measured at 1024x700 the pinned child
+  spanned y = 110 to 805, 105px below the fold for the whole pin; 18px at
+  1100x700; clean from 1152 up. §49's last row reveals inside that overhang, so
+  its entire 0→1 ramp played off screen.
+
+  The readings take the wider share in that band, which is what actually
+  shrinks them — the type is already at its floor. §42's sequence solves the
+  same problem by clamping its frame against `100svh`; the triptych's tall
+  element is text, so the lever is measure rather than height.
+*/
+@media (min-width: 900px) and (max-width: 1199px) {
+  .edicion-triptico__objeto { flex: 1 1 46%; }
+  .edicion-triptico__lecturas { flex: 1 1 54%; }
+  .edicion-triptico__fijo { gap: clamp(0.9rem, 2vw, 1.6rem); }
+}
+
+.edicion-triptico__objeto { margin: 0; overflow: hidden; border-radius: 6px; }
+.edicion-triptico__objeto img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: 52% 46%;
+  will-change: transform;
+}
+/* The camera, across the whole story rather than per beat.
+
+   Scale pushes in the whole way. X drifts across, so the far side of the
+   object comes into frame. Y ARCS: `min(t, 1 - t)` peaks at the middle and
+   returns, which is what stops the move reading as a straight dolly and makes
+   it read as going round something. The roll stays inside §22's 1–6° band. */
+[data-scrub] .edicion-triptico__objeto img {
+  --t-x: calc((var(--t, 0) - 0.5) * -6%);
+  --t-y: calc(min(var(--t, 0), calc(1 - var(--t, 0))) * -6%);
+  /* The base scale has to cover the drift AND the roll, or the frame shows
+     ground at an edge. 1.12 leaves 6% of overhang on each side against a 3%
+     maximum drift, which is what the first version (1.05 against 3.5%) did
+     not: it opened a sliver at the left edge for the first 7% of the pin. */
+  transform: scale(calc(1.12 + var(--t, 0) * 0.24))
+    translate3d(var(--t-x), var(--t-y), 0)
+    rotate(calc(var(--t, 0) * 2.4deg));
+}
+
+/* The three readings share one slot and swap. Non-overlapping windows, the
+   same shape the state sequence uses, because two paragraphs at half opacity
+   on top of one another are unreadable. */
+.edicion-triptico__lecturas { position: relative; display: grid; }
+.edicion-triptico__texto { grid-area: 1 / 1; }
+[data-scrub] .edicion-triptico__texto {
+  --tr: 0.1;
+  /* The incoming reading starts at 55% of the window and the outgoing one is
+     gone by 45% of it, so the two never coexist. Ramping both across the whole
+     window put two headings and two paragraphs on top of each other at half
+     opacity, which is the thing this is shaped to prevent. */
+  --llega: clamp(0, calc((var(--t, 0) - var(--d) - var(--tr) * 0.55) / calc(var(--tr) * 0.45)), 1);
+  --sale: clamp(0, calc((var(--t, 0) - var(--ds)) / calc(var(--tr) * 0.45)), 1);
+  opacity: calc(var(--llega) - var(--sale));
+  transform: translate3d(0, calc((1 - var(--llega)) * 14px), 0);
+}
+/* Unarmed the three stack in the flow, which is the whole story in reading
+   order rather than three paragraphs on one line. */
+.edicion-triptico:not([data-scrub]) .edicion-triptico__lecturas {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+.edicion-triptico:not([data-scrub]) .edicion-triptico__texto { grid-area: auto; }
+
+/* ===================================================================== §49
+   The technical capability items on the third reading.
+
+   §49: "reveal them progressively as the user scrolls… use minimal line/icon
+   animations… do not create floating neon labels. The visual language remains
+   industrial/editorial." So it is a hairline that draws in under each row and
+   nothing else — no icon set, no glow, no label floating off the object. */
+.edicion-triptico__especificaciones { margin-top: clamp(1rem, 2.4vw, 1.8rem); }
+.edicion-triptico__especificaciones h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* 0.62, not 0.5: at 0.7rem this is normal text under WCAG and 0.5 composited
+     to 3.45:1 on the cream ground against AA's 4.5. It is §49's own heading
+     over the five print specs. At 0.62 it is 5.08. An eyebrow is meant to be
+     quiet, not unreadable. */
+  opacity: 0.62;
+}
+.edicion-triptico__especificaciones ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.edicion-triptico__especificaciones li {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 34%) 1fr;
+  gap: 0.7rem;
+  padding: 0.42rem 0 0.46rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.edicion-triptico__especificaciones li strong { font-weight: 700; }
+.edicion-triptico__especificaciones li span { color: rgba(23, 16, 12, 0.68); }
+/* The line. It is the only thing that animates, and it draws from the left. */
+.edicion-triptico__especificaciones li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(23, 16, 12, 0.16);
+  transform-origin: left;
+}
+[data-scrub] .edicion-triptico__especificaciones li {
+  /* --e is the row's own opening point inside the last third; 0.06 of travel
+     is about a fifth of a screen, so they arrive one after another under the
+     reader's thumb rather than all at once. */
+  --ee: clamp(0, calc((var(--t, 0) - var(--e)) / 0.06), 1);
+  opacity: var(--ee);
+  transform: translate3d(calc((1 - var(--ee)) * 10px), 0, 0);
+}
+/* And a short window, which is the other way to run out of stage. At 1024x600
+   the measure fix further up still left 33px over the fold, because the stage
+   is only 490px there. §49's five rows carry the overhang, so they carry the
+   saving. It sits BELOW the rules it overrides rather than above them: both
+   are (0,1,1), and a media query adds no specificity — the first version of
+   this block was written 80 lines earlier and lost on source order, computing
+   7.56px of padding where it had asked for 4.16. */
+@media (min-width: 900px) and (max-height: 719px) {
+  .edicion-triptico__especificaciones { margin-top: 0.8rem; }
+  .edicion-triptico__especificaciones li { padding: 0.26rem 0 0.3rem; }
+  .edicion-triptico__texto p { margin-bottom: 0.6rem; }
+}
+
+[data-scrub] .edicion-triptico__especificaciones li::after {
+  transform: scaleX(var(--ee));
+}
+/* No reduce override here on purpose. The progressive reveal is declared under
+   [data-scrub], and `Triptico` does not write that attribute when motion is
+   reduced — so the items are simply present, which is what the override was
+   trying to say. It used to be written as a reduce block that also selected
+   [data-scrub], which is a rule that can never match. */
+
+.edicion-triptico__texto h3 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display, var(--font-sans));
+  /* Sized to its own column, not the viewport: at 3.2vw the longest heading
+     ran off the right edge of a 42% column. */
+  font-size: clamp(1.4rem, 2.1vw, 2.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.edicion-triptico__texto p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.5;
+  max-width: 42ch;
+  color: rgba(23, 16, 12, 0.74);
+}
+
+/* §87: with motion reduced there is no pin and no camera. The story becomes
+   the object once, then its three readings in order — "stable representative
+   scene states", which is the section's own phrase. */
+@media (prefers-reduced-motion: reduce) {
+  /* The reserve and the pin are behind [data-scrub] now, which reduced motion
+     never sets, so these two only have to undo what the base rule still
+     carries. Kept at matched specificity anyway: a stale override that has
+     become a no-op is cheaper to leave correct than to re-derive later. */
+  .edicion-triptico__fijo { padding-block: 2rem; }
+  .edicion-triptico__objeto img { transform: none; }
+}
+
+/* ===================================================================== §42
+   The state-to-state sequence.
+
+   Section 42 asks for an oversized light editorial sequence with ~25vh of
+   breathing room before the content settles, a dedicated media layer fading in
+   over ~700ms ease-in-out, and one state visibly transitioning into another
+   under the scroll -- explicitly "avoid a basic static screenshot".
+
+   Every number below is that section's, and the structure obeys its last rule:
+   OPACITY belongs to the state, TRANSFORM belongs to the screen inside it. The
+   white card and its shadow are identical in all four states and never move, so
+   what the reader sees is one phone whose screen is being replaced, not four
+   photographs being cross-faded. */
+/* min-width: 0 on every box down the chain. A grid item's automatic minimum
+   is its content's min-content size, so one 34ch caption inside pushed the
+   whole six-column body to 449px inside a 390px phone -- 34ch is 406px at
+   this font. Nothing here may be wider than its track. */
+.edicion-secuencia { grid-column: span 6; min-width: 0; }
+
+.edicion-secuencia__titular h3 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display, var(--font-sans));
+  /* "Oversized", per §42, and sized against the viewport rather than the grid
+     column because this heading is the section's whole announcement. */
+  font-size: clamp(1.9rem, 5vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: min(17ch, 100%);
+  text-wrap: balance;
+}
+.edicion-secuencia__titular p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.5;
+  max-width: min(48ch, 100%);
+  color: rgba(23, 16, 12, 0.72);
+}
+
+.edicion-secuencia__recorrido { position: relative; }
+
+.edicion-secuencia__fijo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1rem, 2.6vw, 2rem);
+}
+
+/* One grid cell per state in the scrubbed layout, one row per state otherwise.
+   Declared here so the figure's own rules are shared by both. */
+.edicion-secuencia__escenario {
+  display: grid;
+  gap: clamp(1.6rem, 4vw, 3rem);
+  align-items: center;
+  min-width: 0;
+}
+
+.edicion-secuencia__estado {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 900px) {
+  .edicion-secuencia__estado {
+    flex-direction: row;
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+}
+
+/* The frame. Same treatment as the planchas -- a white card, not a drawn
+   device bezel -- because these four sit a screen above two of them and the
+   pipeline already cropped the mockup's own bezel away. */
+.edicion-secuencia__marco {
+  position: relative;
+  flex: 0 0 auto;
+  /* Sized against the viewport's HEIGHT as well as its width. On a 1024x800
+     laptop the width rule alone gave a 360px frame, which is 784px tall
+     against a 690px pinned stage: the foot of the phone and the whole index
+     sat below the fold of a screen that is pinned precisely so nothing has to.
+     392/854 is the plate's own ratio, and 11rem covers the sticky offset plus
+     the index and its gap. */
+  --ancho: min(20rem, 62vw, calc((100svh - 11rem) * 392 / 854));
+  width: var(--ancho);
+  aspect-ratio: 392 / 854;
+  /* THE FRAME DOES ALL THE ROUNDING. The plates are square rectangles -- the
+     pipeline extends the screen's own corner colour outwards rather than
+     masking the device arc to white -- because during a wipe two plates are
+     side by side inside this frame and a rounded plate puts a notch at the
+     seam. 14% of the width is the iPhone 15 Pro's own screen radius against
+     its own 393pt width, so the card reads as a screen, not as a card. */
+  border-radius: calc(var(--ancho) * 0.14);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(23, 16, 12, 0.1), 0 26px 64px -30px rgba(23, 16, 12, 0.5);
+}
+.edicion-secuencia__pantalla {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* The plate is cut at exactly 392x854, the frame's own ratio, so cover here
+     crops nothing; it is only insurance against a rounding pixel. */
+  object-fit: cover;
+  display: block;
+}
+
+.edicion-secuencia__nota { max-width: min(34ch, 100%); min-width: 0; }
+.edicion-secuencia__nota strong {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.edicion-secuencia__nota strong span {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--edicion-acento, #4e0909);
+}
+.edicion-secuencia__nota p {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.25vw, 1.02rem);
+  line-height: 1.55;
+  color: rgba(23, 16, 12, 0.74);
+}
+
+/* ------------------------------------------------------------ armed only
+   Everything above renders a plain vertical strip of four captioned states,
+   which is what a reader gets with JS off or motion reduced. The scrub is
+   added here and nowhere else. */
+
+/* §42: "approximately 25vh breathing room before the content settles." The
+   title is read, then a quiet screen-quarter, and only then does the stage
+   pin. It is gated because 25vh of nothing above a static strip is not
+   breathing room, it is a hole. */
+[data-scrub] .edicion-secuencia__recorrido {
+  margin-top: 25vh;
+  /* Four states: one screen to arrive and three transitions of ~53svh each.
+     The chapter record accounts for the total. */
+  min-height: 260svh;
+}
+[data-scrub] .edicion-secuencia__fijo {
+  position: sticky;
+  top: 110px;
+  /* 100svh minus the offset, or the pinned block runs past the viewport foot
+     and the index under it is never seen. */
+  min-height: calc(100svh - 110px);
+}
+
+/* All four states in the same cell. Grid rather than absolute positioning, so
+   the row is still sized by the tallest of them and the stage needs no height
+   declared in two places. */
+[data-scrub] .edicion-secuencia__escenario { gap: 0; }
+[data-scrub] .edicion-secuencia__estado {
+  grid-area: 1 / 1;
+  /* --s is the sequence's own 0->1 scroll progress; --d is this state's
+     arrival, --ds the next state's, which is this one's departure. Arithmetic
+     inside clamp() has to be wrapped in calc() or the whole declaration is
+     dropped without a word. */
+  --tr: 0.16;
+  --llega: clamp(0, calc((var(--s, 0) - var(--d)) / var(--tr)), 1);
+  --sale: clamp(0, calc((var(--s, 0) - var(--ds)) / var(--tr)), 1);
+}
+
+/* THE TRANSITION IS A WIPE, NOT A DISSOLVE, and the first version of this was
+   a dissolve. Two of her screens cross-faded at 50% each read as a double
+   exposure: her marble ground doubled, two headings on top of one another, and
+   the four-digit cycle number sitting inside a calendar grid. A wipe keeps
+   both states fully opaque at every point of the travel.
+
+   Every state after the first is clipped in from the right while its screen
+   slides the same distance the other way, so the screen's left edge stays
+   welded to the clip edge -- which is the push a phone performs -- and the
+   state underneath drifts left behind it. */
+[data-scrub] .edicion-secuencia__estado + .edicion-secuencia__estado .edicion-secuencia__marco {
+  /* No shadow on the states that wipe. The first state's card is never
+     clipped and never leaves, so it carries the shadow for all four; a
+     clip-path on a box cuts its drop shadow off, and four identical shadows
+     stacked would darken at the edges as the sequence advanced. */
+  box-shadow: none;
+  clip-path: inset(0 0 0 calc((1 - var(--llega)) * 100%));
+}
+[data-scrub] .edicion-secuencia__pantalla {
+  /* In from the right, its left edge welded to the clip edge; then 28% to the
+     left as the next state covers it. The 28% is smaller than the wipe on
+     purpose: the gap it opens at the frame's right edge is always narrower
+     than the incoming state's clip, so no blank card is ever visible between
+     the two. */
+  transform: translate3d(calc((1 - var(--llega)) * 100% - var(--sale) * 28%), 0, 0);
+  will-change: transform;
+}
+
+/* The caption swaps, it does not cross-fade, and for the same reason: two
+   paragraphs at half opacity on top of each other are unreadable, which is
+   exactly what the first version did. The outgoing line leaves over the first
+   45% of the transition and the incoming one arrives over the last 45%, so
+   there is never more than one on screen. */
+[data-scrub] .edicion-secuencia__nota {
+  --ct: calc(var(--tr) * 0.45);
+  --llega-t: clamp(0, calc((var(--s, 0) - var(--d) - var(--tr) * 0.55) / var(--ct)), 1);
+  --sale-t: clamp(0, calc((var(--s, 0) - var(--ds)) / var(--ct)), 1);
+  opacity: calc(var(--llega-t) - var(--sale-t));
+  transform: translate3d(0, calc((1 - var(--llega-t)) * 14px), 0);
+}
+
+/* The index. Also the affordance that says there are four of these at all --
+   without it a reader who does not scroll far enough sees one screen and no
+   reason to think there is more. */
+.edicion-secuencia__indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.edicion-secuencia__indice button {
+  appearance: none;
+  border: 1px solid rgba(23, 16, 12, 0.16);
+  background: transparent;
+  color: rgba(23, 16, 12, 0.62);
+  border-radius: 999px;
+  padding: 0.38rem 0.85rem;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color var(--t-hover) var(--ease-cine),
+    border-color var(--t-hover) var(--ease-cine),
+    background-color var(--t-hover) var(--ease-cine);
+}
+.edicion-secuencia__indice button:hover {
+  color: rgba(23, 16, 12, 0.9);
+  border-color: rgba(23, 16, 12, 0.35);
+}
+.edicion-secuencia__indice button[aria-current] {
+  color: var(--edicion-crema, #f4f2f0);
+  background: rgba(23, 16, 12, 0.88);
+  border-color: rgba(23, 16, 12, 0.88);
+}
+
+/* The phone has to fit the phone, chips and all.
+
+   At the desktop numbers a 390x844 viewport put the fourth chip below the fold
+   of its own pinned screen: 110px of header offset plus a 527px frame plus the
+   caption left nothing for the index. The offset comes down to the mobile
+   header's own height and the frame comes down with it. */
+@media (max-width: 767px) {
+  [data-scrub] .edicion-secuencia__fijo,
+  [data-scrub] .edicion-triptico__fijo {
+    top: 72px;
+    min-height: calc(100svh - 72px);
+  }
+  /* 15rem, not 11: below 900px the caption sits UNDER the phone rather than
+     beside it, so it comes out of the same vertical budget. */
+  .edicion-secuencia__marco { --ancho: min(18rem, 54vw, calc((100svh - 15rem) * 392 / 854)); }
+  .edicion-secuencia__indice button { font-size: 0.72rem; padding: 0.3rem 0.62rem; }
+}
+
+/* §42 names this one exactly: the media layer fades in over ~700ms ease-in-out.
+   Higher specificity than the shared §28 reveal so it overrides the duration
+   and the curve, and it sets ONLY those two longhands -- transition-property
+   is left alone, so the reduced-motion rule that switches it off still wins. */
+.edicion-secuencia__escenario.animate-show-media,
+.edicion-secuencia__escenario.animate-show-media[data-armado]:not([data-visible]) {
+  transition-duration: 700ms;
+  transition-timing-function: ease-in-out;
+  transition-delay: 110ms;
+}
+
+/* =============================================== the compact update list
+   Measured off the live reference: two columns, bold label left, grey sentence
+   right, many rows, on a warm paper ground. Section 37 asks for this register
+   after a dense section, and section 78 forbids animating it -- this is the
+   breathing mechanism, so it is a table you read, not a thing that performs. */
+.edicion-lista {
+  grid-column: span 6;
+  margin-top: clamp(1.5rem, 4vw, 3.5rem);
+  /* The warm paper the reference sets these on. */
+  background: color-mix(in srgb, var(--edicion-crema) 78%, #d9cfc2);
+  padding: clamp(1.2rem, 3vw, 2.6rem);
+  border-radius: 4px;
+}
+.edicion-lista h3 {
+  margin: 0 0 1.2rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(23, 16, 12, 0.55);
+}
+.edicion-lista dl { margin: 0; display: grid; gap: 0; }
+.edicion-lista__fila {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.2rem 2rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(23, 16, 12, 0.1);
+}
+.edicion-lista__fila:first-child { border-top: 0; }
+@media (min-width: 760px) {
+  .edicion-lista__fila { grid-template-columns: minmax(9rem, 15rem) 1fr; }
+}
+.edicion-lista dt {
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+.edicion-lista dd {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(23, 16, 12, 0.7);
+  max-width: 62ch;
+}
+@media (max-width: 767px) { .edicion-lista { grid-column: auto; } }
+
+/* ===================================================================== §16
+   The hero title as artwork, not a heading.
+
+   Section 16: "Large enough to behave like imagery. Treat the title as custom
+   vector artwork rather than a normal centered H1." It was 54px in a 252px
+   column while a chapter H2 was 141px -- the page's own title was a quarter the
+   size of every chapter's. Sized to its column now, and the column widened to
+   carry it.
+
+   Entrance per the section: opacity up, scale 0.96 -> 1, groups arriving on
+   40-80ms offsets, movement quiet. Gated on a media query so it is simply present
+   with JS broken or motion reduced. */
+/* The label column and the retablo are sized against each other: the title is
+   now artwork-scale, so the column has to carry it AND still clear the art.
+   Checked in the browser, not judged -- frame right edge vs first panel left.
+
+   `min(25rem, 31vw)` was NOT clear of it. Measured: the column's right edge
+   crossed the first panel's left edge by 75px at 1024, 47 at 1280 and 53 at
+   1440, clearing only at 1680 — and the standfirst and the right-aligned
+   numerals both ran onto the portrait's cream ground, which is exactly the
+   collision the narrower rule this replaced existed to avoid.
+
+   The second term subtracts the rail, because the column starts after it: the
+   space between the rail and the art is what the label may have, and the
+   numerals are right-aligned against its far edge. Re-measured across the
+   band: at 46vw the column comes out 231/333/374/437px against 243/355/402/472
+   of room, so there are 12 to 23px of air between the label and the art at
+   every width instead of 75px of overlap. */
+@media (min-width: 1024px) {
+  .edicion-hero__marco { width: min(25rem, calc(46vw - var(--edicion-rail))); }
+}
+.edicion-hero__titulo {
+  font-size: clamp(2.6rem, 5.6vw, 5.4rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span {
+    animation: edicion-titulo-entra 620ms var(--ease-cine) backwards;
+  }
+}
+/* 40-80ms offsets between groups. */
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(1) { animation-delay: 620ms; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(2) { animation-delay: 680ms; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edicion-hero__titulo > span:nth-child(3) { animation-delay: 740ms; }
+}
+
+@keyframes edicion-titulo-entra {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edicion-hero__titulo > span { animation: none; }
+}
+
+/* ===================================================================== §8
+   THE VEIL IS TALLER THAN THE HEADER, because that is where the words are.
+
+   §8's gradient is "as readability requires", and painted inside the header's
+   own 50px box it was not enough. A `to bottom, colour, transparent` gradient
+   across 50px is at half its alpha by the header's vertical centre, which is
+   exactly where the nav links sit: 0.275 effective over her artwork. Measured
+   by screenshotting the links, hiding them, and comparing the glyph cores
+   against the pixels behind them at seven scroll positions, the median link
+   contrast ran 3.57:1 to 5.61:1 — four of the seven below WCAG's 4.5:1 for
+   normal text, over chapters II, III and IV's intro plates.
+
+   Height 220% and a pseudo-element, so the gradient spans 110px and the fade
+   tail runs well past the header's foot. At the link baseline it is now about
+   four fifths of full alpha rather than half, and the visual is SOFTER rather
+   than harder: the falloff is spread over twice the distance, which is the
+   opposite of "an obvious solid navbar". The colour is the registered custom
+   property, inherited from the header, so it still crosses over in 300ms.
+
+   The block that used to be here did something different and only half worked:
+   it animated the pseudo-element's OPACITY, which fades the veil up as the
+   hero hands over to chapter I and does nothing at the other eleven
+   boundaries, where the opacity is pinned at 1 and the two gradients swapped
+   in a single frame. */
+.edicion-cabecera::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 220%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, var(--edicion-velo), transparent);
+}
+
+/* -----------------------------------------------------------------------
+   Nothing else here any more, and the deletion is the fix.
+
+   This block used to move the veil onto a pseudo-element and animate its
+   OPACITY, on the reasoning that `background-image` snaps and opacity does
+   not. That is true and it solved half the problem: it fades the veil up as
+   the hero hands over to chapter I, because that boundary is "no gradient" to
+   "a gradient". It does nothing at the other ELEVEN boundaries, which are
+   dark-to-light and light-to-dark with the pseudo-element's opacity pinned at
+   1 the whole way — the two gradients still swapped in a frame, which is the
+   defect the block was written to fix.
+
+   The veil is a registered `<color>` inside a gradient now (see the theming
+   block at the top of this file), so one mechanism covers both: transparent to
+   dark at the handover, dark to light at every cut. */
+
+/* ===================================================================== §2
+   The 1680px canvas cap, applied rather than merely declared.
+
+   --edicion-lienzo was defined and referenced nowhere, so at 2400px wide the
+   rail measured 14% instead of 20% and the composition had no maximum. */
+@media (min-width: 1681px) {
+  /* The content is pushed to the RIGHT of the centred rail, not pulled to the
+     viewport's left edge. margin-inline-end: auto in an align-items: flex-end
+     column did the latter, so above 1680px the rail printed on top of the
+     chapter title and the whole chapter index. */
+  .edicion-capitulo > * {
+    max-width: calc(var(--edicion-lienzo) - var(--edicion-rail));
+    margin-inline-start: calc((100vw - var(--edicion-lienzo)) / 2 + var(--edicion-rail));
+    margin-inline-end: auto;
+  }
+  /* The hero is part of the composition §2 caps, and it was not: the rule
+     above selects chapter children only, so above 1680px the retablo kept
+     spreading while everything under it stopped. */
+  .edicion-hero__pegajoso {
+    max-width: var(--edicion-lienzo);
+    /* The same expression the rail uses, not `margin-inline: auto`: auto
+       centres inside the content box and the rail centres against 100vw, so a
+       scrollbar put them 7px out of register at 2400px. */
+    margin-inline-start: max(0px, calc((100vw - var(--edicion-lienzo)) / 2));
+    margin-inline-end: auto;
+  }
+  .edicion-rail { left: max(0px, calc((100vw - var(--edicion-lienzo)) / 2)); }
+}
+
+/* ===================================================================== §85
+   The tablet band. Section 85 gives three: desktop 140svh minimum, TABLET
+   roughly 100-120svh, mobile 70-90svh. Only two existed, so a 900px-wide
+   tablet got the phone's 70svh and lost the room the 3D choreography needs. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .edicion-capitulo__intro { min-height: 110svh; }
+}
+/* Section 85: "Mobile title should generally settle lower in the screen rather
+   than being vertically centered. This gives more space to imagery above." */
+@media (max-width: 767px) {
+  .edicion-capitulo__intro { align-items: flex-end; padding-bottom: 8svh; }
+}
+
+/* ===================================================================== §88
+   The z-index system, as named tokens on the scale the brief specifies.
+
+   Section 88's closing line is "Never randomly increase z-index to fix bugs",
+   which is only possible if the layers have names. These are the six the
+   section specifies, at the values it gives.
+
+   THEY ARE THE PAGE'S LAYERS, NOT ITS EVERY z-index. Twelve raw values
+   survive: eleven in this file and one inline in `secuencia.tsx`, where the
+   number is the state's own index. This paragraph used to say fourteen, and
+   used to say all of them were local stacking inside a component.
+
+   TEN of the twelve are local stacking inside a component — a panel over its
+   own scrim, a caption over its own image, a card lifted over its own siblings
+   — where the number means "above the thing next to me" and a global token
+   would say less than the digit does. Two are cross-component. An earlier
+   version of this paragraph said eleven and two, which is thirteen, and named
+   only one of the two:
+
+   `.edicion-capitulo__intro { z-index: 1 }` holds the static plate above the
+   canvas, which is `--z-escena: 0`. `.edicion-capitulo__cuerpo::before` and
+   `::after` share `z-index: 3` — both of them, in one declaration; the only
+   §77 scrim at 2 is on the INTRO's pseudo-elements below 1024px, which are
+   children of a z-index: 1 element and therefore in a different stacking
+   context entirely. The intro stays a raw 1 rather than taking `--z-media`
+   because the body's scrims are at 3 in the same context and a 10 would paint
+   the intro over them.
+
+   The tokens exist for the cross-component decisions, which are the ones that
+   get fixed by guessing a bigger number.
+
+   `--z-media` has no consumer today. It is kept because the band between it
+   and `--z-media-alta` is what the raw values inside components are implicitly
+   working in, and naming the floor of that band is what makes the next
+   cross-component question answerable. */
+:root {
+  --z-escena: 0;       /* the cinematic canvas and chapter grounds */
+  --z-media: 10;       /* editorial media */
+  --z-media-alta: 20;  /* media that must sit over its neighbours */
+  --z-rail: 50;        /* the sidebar and local navigation */
+  --z-cabecera: 9999;  /* the global header */
+  --z-modal: 10004;    /* the video modal */
+}
+.edicion-lienzo { z-index: var(--z-escena); }
+.edicion-rail { z-index: var(--z-rail); }
+.edicion-cabecera { z-index: var(--z-cabecera); }
+.edicion-modal { z-index: var(--z-modal); }
+.edicion-volver { z-index: var(--z-media-alta); }
+
+/* ===================================================================== §89
+   Pointer-event architecture. Decorative wrappers never take a click; their
+   interactive children opt back in. This is what stops the fixed cinematic
+   layer and the geometry from stealing input. */
+.edicion-lienzo,
+.edicion-geometria,
+.edicion-hero__escena,
+.edicion-hero__panel,
+.edicion-hero__anacronismo,
+.edicion-capitulo__escena { pointer-events: none; }
+.edicion-hero__marco { pointer-events: none; }
+.edicion-hero__marco a { pointer-events: auto; }
+
+/* ===================================================================== §73
+   Inline links: understated. Underline on hover, and explicitly NOT a pill --
+   section 73 says "Do not convert every link into a pill", and the pills on
+   this page are reserved for the CTAs that genuinely are buttons. */
+.edicion-capitulo__cuerpo p a,
+.edicion-lista dd a,
+.edicion-triptico__texto a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 16, 12, 0.28);
+  transition: border-color var(--t-hover) var(--ease-salida);
+}
+.edicion-capitulo__cuerpo p a:hover,
+.edicion-lista dd a:hover,
+.edicion-triptico__texto a:hover { border-bottom-color: currentColor; }
+
+/* §31's two leftovers. The `padding-inline: 1.2rem` that used to live here
+   was overriding the centring padding declared with the carousel itself --
+   later in the file, same specificity -- so the first and last cards could
+   never reach the middle and every card snapped 40px off centre. The comment
+   above it claimed the inactive-card state it never implemented; that state is
+   with the rest of the carousel now, where it can be read beside the rule that
+   decides which card is active. */
+
+/* ================================================================ §17
+   THE HERO → SIDEBAR MORPH.
+
+   Section 17 calls this "one of the defining transitions" and ends with the
+   instruction that decides the implementation: "Do not cut from hero to
+   sidebar. The user should subconsciously understand that the opening artwork
+   has transformed into the navigation system."
+
+   Before this, the rail simply faded in while the hero faded out. Two elements
+   crossfading is precisely the cut the section forbids -- and it is the same
+   trap the retablo fold exists to avoid: identical at both endpoints, wrong in
+   the middle.
+
+   So there is ONE object. The hero's label travels into the rail's column and
+   the rail only takes over once the two are in the same place showing the same
+   words, which is not a handover a reader can see.
+
+   --m is the morph's own 0->1 across the section's scrub window, 35% -> 90%. */
+@media (min-width: 1024px) {
+  .edicion-hero { --m: clamp(0, calc((var(--p, 0) - 0.35) / 0.55), 1); }
+
+  /* Steps 1, 2 and 5: the title reduces in scale, the visual centre migrates
+     to the left fifth, and it settles inside the navigation frame.
+     transform-origin is the top-left so the block collapses TOWARDS the rail
+     rather than shrinking about its own middle. */
+  .edicion-hero__marco {
+    transform-origin: left top;
+    --morfo-x: calc((1.1rem - var(--edicion-rail) - clamp(1rem, 2vw, 2.2rem)) * var(--m, 0));
+    /*
+      THE ENDPOINT IS ANCHORED, not travelled to.
+
+      It was `-50% + (--m * -18svh)`: a viewport-relative journey from a
+      viewport-relative start, which lands somewhere different on every screen
+      height. Measured at m = 1, the wordmark's top against the rail's own —
+      which is fixed, at the rail's padding-top of `--edicion-cabecera-h` +
+      0.9rem ≈ 64px — came out 30px high at 900, and an svh/px mix only traded
+      that for +25 at 1050 and −25 at 800.
+
+      So `top` interpolates instead: 50% of the stage at m = 0, a fixed 3.6rem
+      at m = 1, with the −50% centring unwinding as it goes. 3.6rem puts the
+      frame's own padding above the wordmark, so the wordmark itself arrives on
+      the rail's, at every viewport height rather than at one.
+    */
+    --morfo-y: calc(-50% * (1 - var(--m, 0)));
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .edicion-hero__marco {
+    /* `top` is a real positional property, so it belongs in the motion-gated
+       block with the transform it partners: with motion reduced the frame must
+       stay centred and still, and this would otherwise have travelled while
+       the transform beside it did not. */
+    top: calc(50% - var(--m, 0) * (50% - 3.6rem));
+    transform:
+      translate(var(--morfo-x), var(--morfo-y))
+      scale(calc(1 - var(--m, 0) * 0.74));
+  }
+  /*
+    THE FRAME SHEDS EVERYTHING BUT THE WORDMARK ON THE WAY OVER.
+
+    §17 forbids a cut and asks the reader to understand that the opening
+    artwork BECAME the navigation. What shipped was a cross-dissolve of two
+    differently-sized objects in two different places. Measured at 1440x900,
+    scrollY 415, --hp 0.9222, with both painted (hero frame at 0.648, rail at
+    0.444): the six chapter names were drawn twice, at (20, 314, 277, 90) and
+    (20, 669, 248, 176) — 355px apart vertically and 1.95x the height — and the
+    wordmark twice in the same left column, (20, 46, 277, 165) against
+    (20, 66, 248, 52), 3.2x the size.
+
+    So the two things that exist in both places leave the hero BEFORE the rail
+    arrives at 0.86. The standfirst and the index fade over --m 0.45 to 0.72;
+    the six names are gone by the time the rail's six appear, and there is
+    never a moment where the page shows either of them twice. This is also
+    §1.1's step 2 — "text begins to leave" — happening where the grammar puts
+    it, between the scene finishing its motion and the next world arriving.
+
+    What is left travelling is the wordmark, which is the one object the reader
+    is meant to watch become the rail's. Its scale endpoint is 0.26 rather than
+    0.74 for that reason: the hero's is a three-line display wordmark and the
+    rail's is the same three lines at 0.95rem, and a handover between two sizes
+    that far apart is a cut no matter how it is faded.
+  */
+  .edicion-hero__pie,
+  .edicion-hero__indice {
+    opacity: calc(1 - clamp(0, calc((var(--m, 0) - 0.45) / 0.27), 1));
+  }
+}
+
+/* Step 4: a rectangular Renaissance proportion frame becomes the sidebar
+   boundary. 340:464 is the section's own ratio -- it is 1:1.365, close to the
+   √2 of a printed page, which is why the sidebar reads as a page rather than a
+   panel. It draws in as the morph completes and stays as the rail's edge. */
+.edicion-rail__frame {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  top: calc(var(--edicion-cabecera-h) + 0.9rem);
+  aspect-ratio: 340 / 464;
+  border: 1px solid currentColor;
+  /* 0 below 1024px, where there is no rail for it to bound. The scrubbed value
+     that replaces it above that breakpoint is in the block below. */
+  opacity: 0;
+  pointer-events: none;
+}
+/*
+  IT DRAWS DURING THE MORPH, not half a screen after it.
+
+  §17 numbers this step 4 — "a rectangular Renaissance proportion frame becomes
+  the sidebar boundary" — inside the 35%→90% scrub, and step 5 says the title
+  "settles INSIDE this navigation frame". It was keyed to `data-fase`, a
+  discrete state the machine writes when the first chapter's marker crosses the
+  header line, which is a different event entirely. Measured at 1440x900: at
+  scrollY 419 the rail was at 0.508 and the hero's wordmark at 0.574, with --m
+  already saturated, and the frame was at 0; still 0 at 450 where the morph
+  ends; still 0 at 600, 700, 800, 850, 900; it appeared between 925 and 950.
+  Four hundred and eighty-five pixels after the thing it is the boundary of, so
+  the title spent the whole morph settling inside a frame that was not drawn.
+
+  `--hp` is the hero's own progress published on <html>, the same value the
+  rail's arrival reads. The frame draws over its last quarter, so it is there
+  before the wordmark lands. It is held at 0.18 afterwards by the fallback,
+  which is what keeps it "as the rail's edge" for the rest of the page.
+*/
+@media (min-width: 1024px) {
+  .edicion-rail__frame {
+    opacity: calc(0.18 * clamp(0, calc((var(--hp, 1) - 0.7) / 0.25), 1));
+  }
+}
+
+/* Steps 6 and 8: the chapter links become legible and the rail takes over as
+   the fixed navigation while the 80% column becomes the storytelling surface.
+   The rail arrives LATE and fast, at the point where it is already sitting on
+   top of the hero label showing the same six words -- so there is nothing to
+   see crossing over. */
+@media (min-width: 1024px) {
+  html[data-fase="hero"] .edicion-rail {
+    opacity: clamp(0, calc((var(--hp, 0) - 0.86) / 0.14), 1);
+  }
+}
+
+/* Step 7: the geometry outside the sidebar fades, while the part of it inside
+   the sidebar survives a moment longer -- which is what makes the grid read as
+   having BECOME the frame rather than simply switching off.
+
+   IT WAS DEAD CODE. The second stop read `calc(var(--edicion-rail) * 1px)` and
+   `--edicion-rail` is already a length (line 16), so that is length x length,
+   which is invalid at computed-value time and drops the whole declaration.
+   `mask-image` resolved to `none` and the geometry faded uniformly, which is
+   exactly the "simply switching off" this step exists to avoid.
+
+   Gated to 1024px as well, because the rail itself is: below that there is no
+   sidebar for the geometry to survive inside, and the mask would have held a
+   240px band at full strength against nothing. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .edicion-geometria {
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0,
+      rgba(0, 0, 0, 1) var(--edicion-rail),
+      rgba(0, 0, 0, calc(1 - var(--m, 0))) calc(var(--edicion-rail) + 1px),
+      rgba(0, 0, 0, calc(1 - var(--m, 0))) 100%
+    );
+  }
+}
+
+/* ================================================================ §29 / §30
+   THE CONSTELLATION.
+
+   Five cards in a loose cloud, each expanding from its own origin at its own
+   rate. Every number here is section 29's: base scales 0.80/0.65/0.75/0.80/1.00
+   from initial scales .40/.325/.375/.40/.50, hidden until 20%, expanding
+   20–45%, opacity arriving 40–65%, at rest by 100%.
+
+   --c is the block's own scroll progress; --fase staggers each card's slice of
+   that window so the five do not start together, which is what "expanding
+   outward from their individual origins" means. */
+.edicion-constelacion {
+  grid-column: span 6;
+  position: relative;
+  /* Tall enough that the cloud has room to expand into and the scroll has
+     something to scrub across. */
+  min-height: 92svh;
+  margin-block: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.edicion-carta {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  width: 22%;
+  margin: 0;
+  /* THE RESTING STATE IS "ARRIVED", and that is the whole point of declaring
+     these here rather than only in the scrubbed rule below.
+
+     They used to be declared once, as `clamp(0, calc((var(--c, 0) - …)), 1)`,
+     and `--c` is written only by `useProgreso` from constelacion.tsx. With
+     JavaScript off at 1024px and up, `--c` fell back to 0, `--opaco` resolved
+     to 0, and every one of chapter I's five drawings rendered at opacity 0 —
+     the whole editorial body of a chapter, invisible, which §100 names as a
+     condition that makes the result unacceptable. The scrub is added under
+     [data-scrub], which the component writes only once it is running. */
+  --aparecer: 1;
+  --opaco: 1;
+  --deriva: 0px;
+  /* Peripheral cards stay partly transparent; the primary reaches 1. */
+  --base: 0.78;
+  /* §30's "surrounding cards lose 5–15% emphasis", as a multiplier rather than
+     a flat value — a flat 0.62 took the peripherals down 21% and the primary
+     38%, both outside the band. */
+  --atenuacion: 1;
+  transform:
+    translateY(var(--deriva))
+    scale(calc(var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)));
+  opacity: calc(var(--opaco) * var(--base) * var(--atenuacion));
+  transition:
+    transform var(--t-hover) var(--ease-cine),
+    opacity var(--t-hover) var(--ease-cine),
+    filter var(--t-hover) var(--ease-cine);
+  will-change: transform, opacity;
+}
+/* Section 29's reveal, in three overlapping bands driven by one value. --c is
+   the block's own scroll progress and --fase staggers each card's slice of it,
+   which is what "expanding outward from their individual origins" means. */
+[data-scrub] .edicion-carta {
+  --aparecer: clamp(0, calc((var(--c, 0) - 0.20 - var(--fase, 0)) / 0.13), 1);
+  --opaco: clamp(0, calc((var(--c, 0) - 0.40 - var(--fase, 0)) / 0.13), 1);
+  /* Slightly different parallax rates, per the section's last line. */
+  --deriva: calc((var(--c, 0) - 0.5) * var(--par, 0.1) * -260px);
+}
+.edicion-carta[data-primaria] {
+  width: 30%;
+  --base: 1;
+  z-index: 2;
+}
+
+/* §32: each of the five goes somewhere, and the anchor is what makes §30's
+   "focus should behave equivalently to hover" possible at all — a <figure>
+   with nothing focusable in it can never match :focus-within. */
+.edicion-carta a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 3px;
+}
+/* The cloud's own hover treatment is a scale and a shadow, neither of which a
+   keyboard reader can see coming; this is the ring that says which card Enter
+   would open. Offset outward so it does not sit on the artwork. */
+.edicion-carta a:focus-visible {
+  outline: 2px solid var(--edicion-acento);
+  outline-offset: 4px;
+}
+.edicion-carta img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+  box-shadow: 0 12px 34px -20px rgba(23, 16, 12, 0.55);
+  transition: box-shadow var(--t-hover) var(--ease-cine);
+}
+.edicion-carta figcaption {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+.edicion-carta figcaption strong { font-weight: 700; }
+/* 0.62, not 0.58: at 13.68px this is normal text under WCAG and the old value
+   measured 4.45:1 on the cream ground against AA's 4.5. It is the line that
+   carries every drawing's dimensions and signature date. */
+.edicion-carta figcaption span { color: rgba(23, 16, 12, 0.62); font-variant-numeric: tabular-nums; }
+
+/* §30: the active card moves forward, scale rises 4–7%, opacity reaches 1, the
+   surrounding cards lose emphasis, the shadow increases, over 250–350ms.
+   Explicitly NOT a rearrangement of the cloud -- the section forbids that. */
+.edicion-constelacion:hover .edicion-carta,
+.edicion-constelacion:focus-within .edicion-carta {
+  filter: saturate(0.88);
+  /* 12% off, inside §30's 5–15% band, and relative to whatever the card's own
+     resting opacity is rather than a flat value that ignores it. */
+  --atenuacion: 0.88;
+}
+/* Through the cloud, deliberately. `.edicion-constelacion:hover .edicion-carta`
+   above is (0,3,0) and this used to be (0,2,0), so the dim won on the hovered
+   card too: it sat at 0.88 and stayed desaturated, against §30's explicit
+   "opacity → 1", while the comment claimed the opposite. */
+.edicion-constelacion:hover .edicion-carta:hover,
+.edicion-constelacion:focus-within .edicion-carta:focus-within {
+  z-index: 3;
+  filter: none;
+  /* §30: the active card's opacity reaches 1 whatever it was resting at. */
+  --atenuacion: 1;
+  --base: 1;
+  transform:
+    translateY(var(--deriva))
+    scale(calc((var(--ini) + (var(--esc) - var(--ini)) * var(--aparecer)) * 1.055));
+}
+.edicion-constelacion:hover .edicion-carta:hover img,
+.edicion-constelacion:focus-within .edicion-carta:focus-within img {
+  box-shadow: 0 22px 48px -18px rgba(23, 16, 12, 0.66);
+}
+
+/* Below the large breakpoint the absolute cloud becomes §31's carousel, and
+   this element IS the carousel: it carries `data-carril`, so everything that
+   makes a snap rail — the 65vw / 50vw card, the centring padding, the active
+   card at 1 and the rest at 0.7 — comes from the block up beside the plate
+   wall's. It used to say "the chapter body already provides one", which was
+   true and was the bug: the body provided one carousel for the whole chapter,
+   so the five drawings were a single 254px card in it, stacked vertically and
+   2,036px tall.
+
+   What is left here is only what the cloud has to stop doing: the absolute
+   placement, the per-card scale and the reveal, none of which survive a rail.
+   The cards keep their own aspect ratios, which is why the rail sets
+   `align-items: start`. */
+@media (max-width: 1023px) {
+  .edicion-constelacion { min-height: 0; }
+  .edicion-carta {
+    position: static;
+    width: 100%;
+    transform: none;
+    /* The cloud's three-value opacity is gone, and §31's active state is a
+       filter on the rail's child rather than an opacity, so there is nothing
+       left here for this to compute. */
+    opacity: 1;
+  }
+  .edicion-carta[data-primaria] { width: 100%; }
+}
+/* The hover rule up there is (0,4,0) — `.edicion-constelacion:hover
+   .edicion-carta:hover` — and a media query adds no specificity, so
+   `.edicion-carta { transform: none }` at (0,1,0) loses to it. A TAP sets and
+   keeps :hover, so touching a full-width card applied the cloud's scale and
+   shrank it: "El cuello" goes from 1 to 0.686, a 31% collapse, over 300ms.
+   Matched specificity, placed after, so the tie resolves on source order. */
+@media (max-width: 1023px) {
+  /*
+    §30's cloud state does not exist here, and it was half-applying.
+
+    Below 1024px the constellation is §31's snap rail, whose own active state
+    is `filter: opacity()` on the rail's children. §30's hover rules set
+    `filter` too — `saturate(0.88)` on the siblings at (0,3,0) and `none` on
+    the active card at (0,4,0) — so a TAP, which sets and keeps :hover, replaced
+    the rail's dim with a saturation change and the six cards stopped reading as
+    a carousel. The transform was already neutralised here for the same reason
+    (a tap used to shrink a full-width card by 31%); the filter goes with it,
+    and `--atenuacion` with both, since nothing reads it at this width.
+  */
+  .edicion-constelacion:hover .edicion-carta,
+  .edicion-constelacion:focus-within .edicion-carta,
+  .edicion-constelacion:hover .edicion-carta:hover,
+  .edicion-constelacion:focus-within .edicion-carta:focus-within {
+    transform: none;
+    filter: opacity(var(--carril-opacidad, 1));
+    --atenuacion: 1;
+  }
+}
+
+/* §87 for the cloud: no travel, but §30's non-motion half survives — the
+   active card reaches 1, the surrounding cards lose 12%, the shadow grows,
+   `filter: none` clears the desaturation. What goes is the scale, and it has
+   to go at matching specificity for the same reason as the tap above: the
+   hover rule is (0,4,0) and this block's base rule is (0,1,0), so hovering a
+   card under reduced motion was applying a 31% shrink over 300ms to exactly
+   the reader who asked for less movement. */
+@media (prefers-reduced-motion: reduce) {
+  .edicion-carta {
+    transform: none;
+    opacity: 1;
+    transition: opacity var(--t-micro) linear, filter var(--t-micro) linear;
+  }
+  .edicion-carta[data-primaria] { opacity: 1; }
+  .edicion-constelacion:hover .edicion-carta:hover,
+  .edicion-constelacion:focus-within .edicion-carta:focus-within {
+    transform: none;
+  }
+}
+
+/* ============================================================ §39 / §40 / §45
+   THE SECOND DARK BEAT.
+
+   Section 45: "another dark cinematic insert near the end" of a chapter, with
+   roughly 25vh of separation before it, a light→dark transition, and media
+   animating in. Its purpose is stated outright -- "an unexpected second
+   cinematic beat within one chapter" -- and it is what stops every chapter
+   having the identical dark→light rhythm. */
+.edicion-beat-oscuro {
+  grid-column: span 6;
+  position: relative;
+  /* The section's own 25vh of breathing room before the block enters. */
+  margin-top: 25vh;
+  /* Full-bleed out of the padded editorial column: this is the cinematic world
+     returning, and it cannot return inside a reading measure. */
+  margin-inline: calc(clamp(1.2rem, 4vw, 3.5rem) * -1);
+  padding: clamp(2.5rem, 7vw, 6rem) clamp(1.2rem, 4vw, 3.5rem);
+  background: var(--edicion-negro);
+  color: var(--edicion-crema);
+}
+/* Light → dark, as a band rather than an edge (§77-C). */
+.edicion-beat-oscuro::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: clamp(90px, 12vh, 190px);
+  transform: translateY(-100%);
+  background: linear-gradient(to bottom, transparent, var(--edicion-negro));
+  pointer-events: none;
+}
+/* And back to light for the rest of the chapter -- only when there IS a rest of
+   the chapter. When the beat is the last block, the next thing is the following
+   chapter's dark intro, and a dark→transparent scrim over it reads as a light
+   band between two dark blocks. */
+.edicion-beat-oscuro[data-vuelve]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(90px, 12vh, 190px);
+  transform: translateY(100%);
+  background: linear-gradient(to bottom, var(--edicion-negro), transparent);
+  pointer-events: none;
+}
+/*
+  §40's "deliberate visual reset" is a BAND, not a seam.
+
+  When the dark beat is the last thing in a chapter's body — which it is in
+  chapter III — it hands straight over to the next chapter's dark intro, and
+  `data-vuelve` is false so its bottom scrim is suppressed for exactly that
+  reason: a dark→cream→dark scrim between two dark blocks reads as a light
+  band nobody asked for.
+
+  The body's own bottom padding was still painting one. Measured at 1440x900:
+  the beat's foot at 11,539 and the body's at 11,611, so 72px of cream sat
+  between §45's black and chapter IV's near-black — a hairline seam rather than
+  §40's reset, and the one place on the page where two dark worlds meet through
+  a sliver of the light one. The padding goes when the beat is the last child;
+  everywhere else it stays, because everywhere else the light body genuinely
+  continues after it.
+*/
+.edicion-capitulo__cuerpo:has(> .edicion-beat-oscuro:last-child) {
+  padding-bottom: 0;
+}
+/*
+  And cut C goes with it. §77-C softens a LIGHT-to-dark seam, and when the body
+  ends on the beat its foot is already black — so the cream scrim hanging below
+  it was painting the exact band `data-vuelve` exists to prevent, one level up.
+  Measured at 1440x900 down a column through the seam: near-black at y=760,
+  then (242, 240, 238) at 840, then a hundred-pixel ramp back down into chapter
+  IV's intro. Two dark worlds meeting need no scrim between them.
+*/
+.edicion-capitulo__cuerpo:has(> .edicion-beat-oscuro:last-child)::after {
+  display: none;
+}
+/*
+  The same seam below 1024px, where cut C lives on the NEXT chapter's intro
+  instead (see the block that moves it there). Same test, one level up: a
+  chapter whose body ends on the beat hands over to a chapter that must not
+  open with a cream scrim. Measured at 390x844 before this: black at y=702,
+  (242, 239, 237) at 784.
+*/
+@media (max-width: 1023px) {
+  .edicion-capitulo:has(> .edicion-capitulo__cuerpo > .edicion-beat-oscuro:last-child)
+    + .edicion-capitulo
+    .edicion-capitulo__intro::before {
+    display: none;
+  }
+}
+
+/* Nothing here below the large breakpoint any more, and that is the change.
+
+   This block used to undo the whole beat on a phone — `grid-column: auto`,
+   `margin-inline: 0`, no 25vh, no scrims — because the chapter BODY was a
+   horizontal snap carousel and `grid-column: span 6` inside
+   `grid-auto-flow: column` meant six 65vw tracks, 390vw wide, with the film
+   two and a half screens off to the right behind a blank dark field. The
+   carousel moved onto the card group (see the §3 / §31 block), the body is a
+   six-track reading column at every width, and §45's band gets to be a band on
+   a phone: full-bleed out of the editorial measure, 25vh of separation, and
+   both cuts. */
+
+.edicion-beat-oscuro__interior { max-width: 100%; }
+
+/* Inside the dark beat the video's caption inverts. */
+.edicion-beat-oscuro .edicion-video { grid-column: auto; }
+.edicion-beat-oscuro .edicion-video__pie p { color: rgba(246, 243, 239, 0.72); }

@@ -13,6 +13,10 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
 
+    // Local asset-prep scratch, gitignored and not part of the site.
+    "tmp/**",
+    "produccion/**",
+
   ]),
 ]);
 

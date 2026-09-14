@@ -20,9 +20,9 @@ export const INK = "#240e06";
 export const BURGUNDY = "#4e0909";
 export const BLUE = "#c4d9dd";
 
-/** TheSeasons is a TTF because Satori cannot embed woff2. */
-export function seasonsFont() {
-  return readFile(join(process.cwd(), "public/fonts/the-seasons-regular.ttf"));
+/** A TTF, not the woff2 subset: Satori cannot embed woff2. */
+export function serifFont() {
+  return readFile(join(process.cwd(), "public/fonts/EBGaramond-Regular.ttf"));
 }
 
 /**
@@ -38,22 +38,6 @@ export function seasonsFont() {
  */
 export function toDataUrl(png: Buffer) {
   return `data:image/png;base64,${png.toString("base64")}`;
-}
-
-/**
- * TheSeasons draws "/" and "-" as decorative ornaments, not punctuation, and
- * the licensed file here is a demo build whose ornament carries a DEMO
- * watermark -- so "Diseño UX/UI" rendered as "Diseño UX(DEMO)UI" on the card.
- * The homepage card sidesteps this by never writing a slash; the case-study
- * cards take their text from the case-study copy, which does. Swapping to the
- * middot the rest of that copy already uses keeps it readable and keeps the
- * watermark off Monica's share images.
- */
-export function serifSafe(text: string) {
-  return text
-    .replace(/\s*[/-]\s*/g, " · ")
-    .replace(/(?: · )+/g, " · ")
-    .trim();
 }
 
 /**
@@ -112,13 +96,13 @@ export function ProjectCard({
             {title}
           </div>
           <div style={{ display: "flex", marginTop: 22, fontSize: 30, color: BURGUNDY, lineHeight: 1.25 }}>
-            {serifSafe(subtitle)}
+            {subtitle}
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 22, color: INK, opacity: 0.7 }}>
           <div style={{ display: "flex", width: 90, height: 6, background: BURGUNDY, borderRadius: 6 }} />
-          <div style={{ display: "flex" }}>{serifSafe(footnote)}</div>
+          <div style={{ display: "flex" }}>{footnote}</div>
         </div>
       </div>
 

@@ -4,6 +4,7 @@
 @import "./award.css";
 @import "./case-study.css";
 @import "./backdrop.css";
+@import "./edicion.css";
 
 /*
   Mónica Calle — portfolio.
@@ -80,6 +81,24 @@ html {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* TWO SMOOTH SCROLLERS CANNOT SHARE A PAGE.
+
+   Lenis owns the scroll position in root mode and writes its own animated
+   value every frame; `scroll-behavior: smooth` above makes the browser animate
+   the same property at the same time for a fragment jump. They compound.
+   Measured at 1440x900: /es#impreso settled at 17048 against the chapter's own
+   offset of 16643 -- every deep link landed 405px inside its chapter instead
+   of at its top, and the same for #oficio.
+
+   Lenis ships this rule in `lenis/dist/lenis.css`, which this project does not
+   import because it needs nothing else from that file. The class is Lenis's
+   own, added to <html> when the provider mounts, so the browser's smooth
+   scroll is off exactly when Lenis is there and on when it is not -- which is
+   the reduced-motion case, where SmoothScroll deliberately does not mount. */
+html.lenis {
+  scroll-behavior: auto;
 }
 
 /* .eyebrow--light is defined in sections.css, which globals.css @imports at the
@@ -159,42 +178,46 @@ img {
 
 /* Scroll-reveal, as progressive enhancement.
 
-   The finished state is the DEFAULT. The start state only exists under
-   html.motion, which an inline script in app/[locale]/layout.tsx adds before
-   paint, and only when the visitor has not asked for reduced motion.
+   The finished state is the DEFAULT. The start state only exists inside
+   `@media (prefers-reduced-motion: no-preference)` AND only for an element the
+   observer has not yet marked `.in-view`.
+
+   This used to name `html.motion`, set by an inline script in
+   app/[locale]/layout.tsx. There is no such script and no such class — the
+   flag was removed because React owns <html> and hydration strips it about
+   10ms into every load, which that file now says outright. The contract the
+   sentence was describing survives; the mechanism named for it did not.
 
    It used to be the other way round -- opacity: 0 unconditionally, released by
    an IntersectionObserver -- so a JS error, a blocked script, a failed
    hydration or an observer that never fired left every revealed element
    invisible for good. The comment here claimed a .no-js fallback and nothing
    in the repository ever set that class. */
-html.motion [data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.9s var(--ease-out-expo),
-    transform 0.9s var(--ease-out-expo);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not(.in-view) {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
 }
 
-html.motion [data-reveal].in-view {
-  opacity: 1;
-  transform: none;
-}
-
-/* The gate above is read once, before paint. A visitor who turns reduced
-   motion ON mid-session keeps html.motion, and every element not yet observed
-   stays at opacity: 0 with a 0.9s transition still armed -- animation the user
-   has just asked to stop. The media query is live where the class is not, so
-   it neutralises the start state the moment the preference flips, matching
+/* Belt and braces for a preference that flips mid-session. The paragraph above
+   used to explain this as the media query rescuing a `html.motion` class read
+   once before paint; there is no such class, and the query above is already
+   live. What is left that is genuinely worth stating is the ordering: the
+   start state and its neutraliser are both live, so the moment the preference
+   flips the start state stops applying, matching
    what .split__inner already does in award.css and what Lenis already does
    through useSyncExternalStore in components/site/smooth-scroll.tsx.
 
    Note this sets the FINISHED state, not display: none: reduced motion means
    less movement, not less content. */
 @media (prefers-reduced-motion: reduce) {
-  html.motion [data-reveal] {
+  [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;

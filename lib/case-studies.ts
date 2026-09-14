@@ -21,3 +21,25 @@ export type CaseStudySlug = (typeof CASE_STUDY_SLUGS)[number];
  */
 export const GRAFICO_PDF = "/assets/portafolio-grafico.pdf";
 export const GRAFICO_ROUTE = "/proyectos/portafolio-grafico";
+
+/**
+ * Where a case study came FROM, so it can send the reader back to it.
+ *
+ * Every "volver a proyectos" link on every detail route pointed at
+ * `/#projects`, and there is no `#projects` on this site: the Edition replaced
+ * the old homepage and its only ids are its six chapter anchors. So the one
+ * control a reader uses to get out of a case study dropped them at the top of
+ * a 29,000px homepage with no idea where they had been. The footer was fixed
+ * for exactly this reason and its comment says so; these three links were
+ * missed.
+ *
+ * Keyed rather than hardcoded, so a slug added to CASE_STUDY_SLUGS without a
+ * chapter is a type error rather than another silent `/#projects`.
+ */
+export const CAPITULO_DE: Record<CaseStudySlug, string> = {
+  vibe: "producto",
+  voluntee: "producto",
+};
+
+/** The graphic portfolio belongs to chapter V, the printed one. */
+export const GRAFICO_CAPITULO = "impreso";

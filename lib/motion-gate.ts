@@ -19,6 +19,20 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
+ * The same question as a STORE rather than a snapshot, for
+ * `useSyncExternalStore`.
+ *
+ * The OS setting can be toggled while the page is open, and a component that
+ * builds a different DOM for the two answers has to hear about it. It lives
+ * beside the snapshot so the two cannot end up asking different queries.
+ */
+export function subscribeToReducedMotion(alCambiar: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", alCambiar);
+  return () => mq.removeEventListener("change", alCambiar);
+}
+
+/**
  * Is there a real cursor that can hover?
  *
  * Used to switch off effects that exist only to follow a mouse pointer. The

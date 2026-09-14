@@ -1,0 +1,276 @@
+{
+  "marca": {
+    "linea1": "Mónica",
+    "linea2": "Calle",
+    "linea3": "Edition",
+    "etiqueta": "2026 Edition",
+    "indice": "Chapter index",
+    "indiceRail": "Chapters (sidebar)",
+    "volver": "Back to the chapter index"
+  },
+  "hero": {
+    "entradilla": "Graphic and UX/UI designer in Valencia. Six chapters: what I draw, and what I'm asked for."
+  },
+  "cta": {
+    "escribir": "Write to me",
+    "ver": "See the project",
+    "ampliar": "see it larger",
+    "cv": "Open my CV",
+    "verVideo": "Play video",
+    "cerrar": "Close"
+  },
+  "capitulos": {
+    "ilustracion": {
+      "titulo": "ILLUSTRATION",
+      "entradilla": "Nobody asked me for four of these five.",
+      "declaracion": "I draw in Procreate and I had never put these drawings in my portfolio. Maybe because they look nothing like the work I get asked for. Nobody asked me for four of the five, and only two of them carry a date. The fifth is the only one that answers to a brief, and you will see it in full in <enlace>the campaign chapter</enlace>.",
+      "piezasTitulo": "The five, one by one.",
+      "piezas": {
+        "pelo-cobre": {
+          "titulo": "Copper",
+          "linea": "The hair covers more of the canvas than the face, and I painted its highlights strand by strand. I barely drew the coat at all: a dark mass and a pale collar.",
+          "meta": "3000 × 3000 px · unsigned, undated"
+        },
+        "panuelo": {
+          "titulo": "The headscarf",
+          "linea": "I painted the whole face and the neck stayed as line: inside the contour there is no colour. The jaw stroke runs on past the chin. I signed and dated it all the same.",
+          "meta": "3000 × 3000 px · signed 07-01-2025"
+        },
+        "modigliani": {
+          "titulo": "The neck",
+          "linea": "The neck runs down unbroken into the dress, and the dress is one dark mass without a fold. The lids come halfway down the eyes and the look goes to the floor.",
+          "meta": "3000 × 3000 px · signed “January 09 25”"
+        },
+        "nube": {
+          "titulo": "The haze",
+          "linea": "I painted the face and the neck in full detail. At the shoulder the body comes apart into the ground. No clothing, no edge closing the figure.",
+          "meta": "2048 × 2732 px · the only one that is not square · signed, undated"
+        },
+        "ceguera": {
+          "titulo": "Ceguera Digital",
+          "linea": "The only one that answers to a brief, and the only one without a single shadow: clear line over flat colour. The phone stands upright on her head and has grown an arm of its own. That arm covers her eyes while hers hang at her sides.",
+          "meta": "3000 × 3000 px · from the Ceguera Digital campaign"
+        }
+      }
+    },
+    "marca": {
+      "titulo": "BRAND",
+      "entradilla": "Three identities, and the first one is mine.",
+      "declaracion": "A brand does not end at the logo: it ends when someone else can use it without calling me. Estudio Raíz is my own studio, so I was the client and the designer at once, and that is where you find out fast which decisions hold.",
+      "metodo": {
+        "titulo": "What I hand over with a brand",
+        "filas": {
+          "logotipo": {
+            "q": "Logotype",
+            "a": "Primary, secondary, and a reduced version that survives at 16px, because the favicon always turns up."
+          },
+          "color": {
+            "q": "Palette",
+            "a": "With HEX and CMYK values. Give only HEX and the first print invoice finds out."
+          },
+          "tipografia": {
+            "q": "Typefaces",
+            "a": "One for headings, one for text, with the weights that are used and the ones that are not."
+          },
+          "aplicacion": {
+            "q": "Applications",
+            "a": "Stationery, packaging or web depending on the brief. Viña Esmeralda was a label; Estudio Raíz, a Webflow site."
+          },
+          "manual": {
+            "q": "Guidelines",
+            "a": "Short. Nobody opens an eighty-page document twice."
+          }
+        }
+      },
+      "obras": {
+        "esmeralda": {
+          "titulo": "Viña Esmeralda",
+          "nota": "Label, case and hang tag for a Mediterranean wine."
+        },
+        "raiz-marca": {
+          "titulo": "Estudio Raíz",
+          "nota": "The wordmark of my own studio."
+        },
+        "isabella": {
+          "titulo": "Isabella Mendoza",
+          "nota": "Monogram and signature for a hair and wellbeing salon."
+        },
+        "raiz-aplicada": {
+          "titulo": "Raíz, on screen",
+          "nota": "The same identity, this time on the studio site."
+        },
+        "isabella-aplicada": {
+          "titulo": "Isabella, applied",
+          "nota": "The monogram on the sign and inside the salon."
+        }
+      }
+    },
+    "campana": {
+      "titulo": "CAMPAIGN",
+      "entradilla": "A drawing of mine ended up at bus-shelter scale.",
+      "declaracion": "Ceguera Digital is a public-service campaign about looking at your phone and missing your stop. The illustration that opens this portfolio belongs to it, and here you see it where it was meant to be: in the street, at a person's height.",
+      "video": {
+        "titulo": "Ceguera Digital, in the street",
+        "nota": "The full poster in an Ajuntament de València bus shelter. The illustration that opens this edition is the same one you see here at real size."
+      },
+      "obras": {
+        "loreal": {
+          "titulo": "L'Oréal Paris",
+          "nota": "Reveal your power in two shades. One face, two lipsticks, one line."
+        },
+        "ingres": {
+          "titulo": "Ingres, 1823",
+          "nota": "Madame Jacques-Louis Leblanc. Metropolitan Museum of Art, public domain."
+        }
+      }
+    },
+    "producto": {
+      "titulo": "PRODUCT",
+      "entradilla": "Two apps, and the research that decided what they are.",
+      "secuencia": {
+        "titulo": "Vibe asks for two facts and hands back a week.",
+        "nota": "Four screens, in the order the app puts them in. I did not redraw any of them for this page.",
+        "indice": "Vibe states",
+        "estados": {
+          "datos": {
+            "etiqueta": "Your cycle",
+            "nota": "Average cycle length, and the days of the last period. That is all."
+          },
+          "ciclo": {
+            "etiqueta": "My cycle",
+            "nota": "Everything else comes out of those two answers: day 23, luteal phase, next period in five days."
+          },
+          "checkin": {
+            "etiqueta": "Check in",
+            "nota": "A daily record: mood, energy, stress, sleep. It corrects tomorrow's prediction."
+          },
+          "agenda": {
+            "etiqueta": "Agenda",
+            "nota": "Then the week moves with the phase: variable energy, high sensitivity, a priority of closing and ordering."
+          }
+        }
+      },
+      "planchasTitulo": "The product I delivered",
+      "planchas": {
+        "vibe": {
+          "titulo": "Vibe · Weekly agenda",
+          "nota": "The whole screen as I delivered it, not a crop. It turns the cycle phase into what to prioritise and what to limit that week."
+        },
+        "voluntee": {
+          "titulo": "Voluntee · Advanced filters",
+          "nota": "Ten filter groups on one screen: type, category, experience, organisation, days, schedule, family and age. Nothing hidden behind an accordion."
+        }
+      },
+      "metodo": {
+        "titulo": "How I got there",
+        "filas": {
+          "desk": {
+            "q": "Desk research",
+            "a": "The starting point in both projects: understand the problem before looking at a single screen."
+          },
+          "netnografia": {
+            "q": "Netnography",
+            "a": "Reading what people already say in forums and feeds, instead of asking them what they think they would do."
+          },
+          "benchmarking": {
+            "q": "Benchmarking",
+            "a": "Seven platforms analysed for Voluntee. Not to copy them: to know what is already solved."
+          },
+          "dafo": {
+            "q": "SWOT matrix",
+            "a": "In both cases. It forces you to write down the weaknesses, which is the part that skips itself."
+          },
+          "encuesta": {
+            "q": "Survey",
+            "a": "69 people for Vibe. Enough to see a pattern, not enough to pretend statistical significance."
+          },
+          "entrevistas": {
+            "q": "Interviews",
+            "a": "For Voluntee, alongside the survey. What people say out loud does not fit in a form."
+          },
+          "personas": {
+            "q": "User personas",
+            "a": "Two per project, with empathy maps. Marina arrives on a recommendation; Carlos demands information."
+          },
+          "journeys": {
+            "q": "Customer journeys",
+            "a": "To find where people fall off, which is almost never where I expected."
+          }
+        }
+      }
+    },
+    "impreso": {
+      "titulo": "PRINT",
+      "entradilla": "Thirty A4 pages you turn with your hand.",
+      "declaracion": "Paper does not let you take it back. A cover, a poster and thirty laid-out pages force you to settle the hierarchy before it prints, and that discipline is what I bring to a screen afterwards.",
+      "triptico": {
+        "objeto": {
+          "titulo": "Thirty pages, A4",
+          "cuerpo": "Not a folder of loose images: a document with an order, a cover and an ending. You read it start to finish or you do not read it."
+        },
+        "reticula": {
+          "titulo": "The grid holds",
+          "cuerpo": "One structure carries thirty pages of very different content. When the grid is good, changing the content does not force you to redesign the page."
+        },
+        "tinta": {
+          "titulo": "Paper does not let you take it back",
+          "cuerpo": "On screen I can move a line at three in the morning. In print the decision is final, and that changes how long I spend making it."
+        }
+      },
+      "metodo": {
+        "titulo": "What paper checks",
+        "filas": {
+          "sangre": {
+            "q": "Bleed",
+            "a": "Three millimetres a side. You forget it once and then you never forget it."
+          },
+          "perfil": {
+            "q": "Colour profile",
+            "a": "CMYK with the printer's profile, not my screen's."
+          },
+          "tinta": {
+            "q": "Ink coverage",
+            "a": "Rich blacks smear when nobody checks the total. The limit comes before the artwork does."
+          },
+          "tipo": {
+            "q": "Text size",
+            "a": "What reads on screen at 10px does not read on paper at 7pt."
+          },
+          "prueba": {
+            "q": "Proof",
+            "a": "One, always, before the run. A monitor lies about paper."
+          }
+        }
+      },
+      "obras": {
+        "portafolio": {
+          "titulo": "Graphic portfolio",
+          "nota": "The cover of the thirty pages you can open at the end of this edition."
+        },
+        "lobo": {
+          "titulo": "Steppenwolf",
+          "nota": "A poster for the Hermann Hesse novel."
+        },
+        "nespresso": {
+          "titulo": "Nespresso",
+          "nota": "The fold-out, cut back to what Plakatstil allows."
+        }
+      }
+    },
+    "oficio": {
+      "titulo": "PRACTICE",
+      "entradilla": "Where I have worked, what I use, and how to write to me.",
+      "historiaTitulo": "I design product, and I stay with it into production.",
+      "documentosTitulo": "The printed portfolio and the CV, in full.",
+      "documentos": {
+        "cv": {
+          "nota": "Experience, education and skills on two pages.",
+          "meta": "2 pages · PDF"
+        }
+      }
+    }
+  },
+  "pie": {
+    "derechos": "© 2026 Mónica Calle"
+  }
+}

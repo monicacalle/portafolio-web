@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { geist, newYork } from "../fonts";
+import { geist, garamond, bodoni } from "../fonts";
 import "../globals.css";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
-import { Backdrop } from "@/components/site/backdrop";
-import { NegativeReveal } from "@/components/site/negative-reveal";
-import { Preloader } from "@/components/site/preloader";
-import { Cursor } from "@/components/site/cursor";
-import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SITE_URL, PERSON } from "@/lib/site";
-import { OG_LOCALE, type Locale } from "@/lib/i18n/config";
+import { type Locale } from "@/lib/i18n/config";
 import { routing } from "@/lib/i18n/routing";
 import { localePath } from "@/lib/i18n/paths";
-import { shareImage } from "@/lib/og/card";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -82,36 +76,27 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={l} className={`${geist.variable} ${newYork.variable}`} suppressHydrationWarning>
-      <head>
-        {/* Progressive enhancement, inline and before paint.
+    <html lang={l} className={`${geist.variable} ${garamond.variable} ${bodoni.variable}`} suppressHydrationWarning>
+      {/* NO GLOBAL MOTION FLAG ON <html>. There was one here -- an inline
+          pre-paint script setting data-motion="1" -- and it did not work, in
+          the same way its predecessor did not work. React owns this element
+          because the layout renders it, and hydration resets it: the class was
+          stripped about 10ms after paint, and so was the data attribute. The
+          comment left behind claimed the opposite. Measured on 2026-09-13:
+          document.documentElement.dataset.motion was undefined in the live
+          DOM, nothing in any stylesheet read it, and React 19 logged "
+          Encountered a script tag while rendering React component" on every
+          client render for it.
 
-            [data-reveal] used to be opacity: 0 unconditionally, so any failure --
-            a JS error anywhere in the bundle, a blocked script, a hydration
-            mismatch, an observer that never fires -- left the whole page blank.
-            A comment claimed a .no-js fallback; nothing set it.
-
-            The default HTML is now the finished page. This adds the class that
-            opts INTO animation, and only when motion is wanted. It has to be
-            inline in <head> rather than an effect: an effect runs after paint,
-            so it flashes, and it does not run at all in the hydration-failure
-            case this exists to survive. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
-              "document.documentElement.classList.add('motion')}catch(e){}",
-          }}
-        />
-      </head>
+          What replaces it is per-element self-arming: `Revelar` writes
+          data-armado on each target and `Secuencia` renders data-scrub on
+          itself, so the hidden state exists only where JS has actually run and
+          there is no global flag left to lose. Plain CSS conditions use
+          @media (prefers-reduced-motion: no-preference) directly, which needs
+          no flag at all. */}
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
-          <Backdrop />
-          <Preloader />
-          <Cursor />
-          <ScrollProgress />
           <SmoothScroll>{children}</SmoothScroll>
-          <NegativeReveal />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,0 +1,276 @@
+{
+  "marca": {
+    "linea1": "Mónica",
+    "linea2": "Calle",
+    "linea3": "Edición",
+    "etiqueta": "Edición 2026",
+    "indice": "Índice de capítulos",
+    "indiceRail": "Capítulos (barra lateral)",
+    "volver": "Volver al índice de capítulos"
+  },
+  "hero": {
+    "entradilla": "Diseñadora gráfica y UX/UI en Valencia. Seis capítulos: lo que dibujo y lo que me encargan."
+  },
+  "cta": {
+    "escribir": "Escríbeme",
+    "ver": "Ver el proyecto",
+    "ampliar": "verlo más grande",
+    "cv": "Abrir mi CV",
+    "verVideo": "Ver el vídeo",
+    "cerrar": "Cerrar"
+  },
+  "capitulos": {
+    "ilustracion": {
+      "titulo": "ILUSTRACIÓN",
+      "entradilla": "A cuatro de estos cinco no me los pidió nadie.",
+      "declaracion": "Dibujo en Procreate y nunca había puesto estos dibujos en mi portafolio. Quizá porque no se parecen a lo que me encargan. A cuatro de los cinco no me los pidió nadie, y solo dos llevan fecha. El quinto es el único que responde a un briefing, y lo verás entero en <enlace>el capítulo de campaña</enlace>.",
+      "piezasTitulo": "Los cinco, uno por uno.",
+      "piezas": {
+        "pelo-cobre": {
+          "titulo": "Cobre",
+          "linea": "El pelo ocupa más superficie que la cara y le pinté los brillos hebra a hebra. El abrigo apenas lo dibujé: una masa oscura y un cuello claro.",
+          "meta": "3000 × 3000 px · sin firma ni fecha"
+        },
+        "panuelo": {
+          "titulo": "El pañuelo",
+          "linea": "Pinté la cara entera y el cuello se quedó en línea: dentro del contorno no hay color. El trazo de la mandíbula se prolonga más allá de la barbilla. Aun así lo firmé y le puse fecha.",
+          "meta": "3000 × 3000 px · firmado 07-01-2025"
+        },
+        "modigliani": {
+          "titulo": "El cuello",
+          "linea": "El cuello baja sin interrumpirse hasta dentro del vestido, y el vestido es una mancha oscura sin un pliegue. Los párpados caen hasta la mitad del ojo y la mirada va hacia abajo.",
+          "meta": "3000 × 3000 px · firmado «January 09 25»"
+        },
+        "nube": {
+          "titulo": "La niebla",
+          "linea": "Pinté la cara y el cuello con todo el detalle. A la altura del hombro el cuerpo se deshace en el fondo. No hay ropa ni borde que cierre la figura.",
+          "meta": "2048 × 2732 px · el único que no es cuadrado · firmado, sin fecha"
+        },
+        "ceguera": {
+          "titulo": "Ceguera Digital",
+          "linea": "El único que responde a un briefing, y el único sin una sola sombra: línea clara sobre color plano. El móvil va de pie sobre su cabeza y le ha salido un brazo propio. Ese brazo le tapa los ojos mientras ella lleva los suyos caídos.",
+          "meta": "3000 × 3000 px · de la campaña Ceguera Digital"
+        }
+      }
+    },
+    "marca": {
+      "titulo": "MARCA",
+      "entradilla": "Tres identidades, y la primera es la mía.",
+      "declaracion": "Una marca no termina en el logotipo: termina cuando otra persona puede usarla sin llamarme. Estudio Raíz es mi propio estudio, así que fui a la vez clienta y diseñadora, y ahí se nota enseguida qué decisiones aguantan.",
+      "metodo": {
+        "titulo": "Lo que entrego con una marca",
+        "filas": {
+          "logotipo": {
+            "q": "Logotipo",
+            "a": "Principal, secundario y una versión reducida que aguante a 16px, porque el favicon siempre llega."
+          },
+          "color": {
+            "q": "Paleta",
+            "a": "Con los valores en HEX y en CMYK. Si sólo das HEX, la primera factura de imprenta lo descubre."
+          },
+          "tipografia": {
+            "q": "Tipografías",
+            "a": "Una para titular y otra para texto, con los pesos que se usan y los que no."
+          },
+          "aplicacion": {
+            "q": "Aplicaciones",
+            "a": "Papelería, packaging o web según el encargo. Viña Esmeralda fue etiqueta; Estudio Raíz, web en Webflow."
+          },
+          "manual": {
+            "q": "Manual",
+            "a": "Corto. Un documento de ochenta páginas no lo abre nadie dos veces."
+          }
+        }
+      },
+      "obras": {
+        "esmeralda": {
+          "titulo": "Viña Esmeralda",
+          "nota": "Etiqueta, estuche y colgante para un vino mediterráneo."
+        },
+        "raiz-marca": {
+          "titulo": "Estudio Raíz",
+          "nota": "El logotipo de mi propio estudio."
+        },
+        "isabella": {
+          "titulo": "Isabella Mendoza",
+          "nota": "Monograma y firma para un salón de bienestar capilar."
+        },
+        "raiz-aplicada": {
+          "titulo": "Raíz, en pantalla",
+          "nota": "La misma identidad, ya en la web del estudio."
+        },
+        "isabella-aplicada": {
+          "titulo": "Isabella, aplicada",
+          "nota": "El monograma en el rótulo y dentro del salón."
+        }
+      }
+    },
+    "campana": {
+      "titulo": "CAMPAÑA",
+      "entradilla": "Un dibujo mío acabó a tamaño de marquesina.",
+      "declaracion": "Ceguera Digital es una campaña de servicio público sobre mirar el móvil y perder la parada. La ilustración que abre este portafolio es suya, y aquí la ves donde tenía que estar: en la calle, a la altura de una persona.",
+      "video": {
+        "titulo": "Ceguera Digital, en la calle",
+        "nota": "El cartel completo en una marquesina del Ajuntament de València. La ilustración que abre esta edición es la misma que ves aquí a tamaño real."
+      },
+      "obras": {
+        "loreal": {
+          "titulo": "L'Oréal Paris",
+          "nota": "Revela tu poder en dos tonos. Una cara, dos barras, una frase."
+        },
+        "ingres": {
+          "titulo": "Ingres, 1823",
+          "nota": "Madame Jacques-Louis Leblanc. Metropolitan Museum of Art, dominio público."
+        }
+      }
+    },
+    "producto": {
+      "titulo": "PRODUCTO",
+      "entradilla": "Dos aplicaciones, y la investigación que decidió cómo son.",
+      "secuencia": {
+        "titulo": "Vibe pide dos datos y devuelve una semana.",
+        "nota": "Cuatro pantallas, en el orden en que las pone la app. No he redibujado ninguna para esta página.",
+        "indice": "Estados de Vibe",
+        "estados": {
+          "datos": {
+            "etiqueta": "Datos de tu ciclo",
+            "nota": "Longitud media del ciclo, y los días de la última regla. Con eso entra."
+          },
+          "ciclo": {
+            "etiqueta": "Mi ciclo",
+            "nota": "De esas dos respuestas sale todo lo demás: día 23, fase lútea, próxima regla en cinco días."
+          },
+          "checkin": {
+            "etiqueta": "Check in",
+            "nota": "Un registro diario: ánimo, energía, estrés, sueño. Corrige la predicción del día siguiente."
+          },
+          "agenda": {
+            "etiqueta": "Agenda",
+            "nota": "Y la semana cambia con la fase: energía variable, sensibilidad alta, prioridad de cierre y orden."
+          }
+        }
+      },
+      "planchasTitulo": "El producto que entregué",
+      "planchas": {
+        "vibe": {
+          "titulo": "Vibe · Agenda semanal",
+          "nota": "La pantalla entera tal y como la entregué, no un trozo. Traduce la fase del ciclo en qué priorizar y qué limitar esa semana."
+        },
+        "voluntee": {
+          "titulo": "Voluntee · Filtros avanzados",
+          "nota": "Diez grupos de filtros en una sola pantalla: tipo, categoría, experiencia, organización, días, horario, familia y edad. Nada se esconde detrás de un acordeón."
+        }
+      },
+      "metodo": {
+        "titulo": "Cómo llegué hasta ahí",
+        "filas": {
+          "desk": {
+            "q": "Desk research",
+            "a": "Punto de partida en los dos proyectos: entender el problema antes de mirar una sola pantalla."
+          },
+          "netnografia": {
+            "q": "Netnografía",
+            "a": "Leer lo que la gente ya dice en foros y redes, en lugar de preguntarles qué creen que harían."
+          },
+          "benchmarking": {
+            "q": "Benchmarking",
+            "a": "Siete plataformas analizadas en Voluntee. No para copiarlas: para saber qué ya está resuelto."
+          },
+          "dafo": {
+            "q": "Matriz DAFO",
+            "a": "En los dos casos. Obliga a escribir las debilidades, que es la parte que se salta sola."
+          },
+          "encuesta": {
+            "q": "Encuesta",
+            "a": "69 personas en Vibe. Suficiente para ver un patrón, no para fingir significancia estadística."
+          },
+          "entrevistas": {
+            "q": "Entrevistas",
+            "a": "En Voluntee, además de la encuesta. Lo que la gente cuenta en voz alta no cabe en un formulario."
+          },
+          "personas": {
+            "q": "User personas",
+            "a": "Dos por proyecto, con sus mapas de empatía. Marina llega por recomendación; Carlos exige información."
+          },
+          "journeys": {
+            "q": "Customer journeys",
+            "a": "Para encontrar dónde se cae la gente, que casi nunca es donde yo esperaba."
+          }
+        }
+      }
+    },
+    "impreso": {
+      "titulo": "IMPRESO",
+      "entradilla": "Treinta páginas A4 que se pasan con la mano.",
+      "declaracion": "El papel no deja rectificar. Una portada, un cartel y treinta páginas maquetadas obligan a decidir la jerarquía antes de imprimir, y esa disciplina es la que llevo después a una pantalla.",
+      "triptico": {
+        "objeto": {
+          "titulo": "Treinta páginas, A4",
+          "cuerpo": "No es una carpeta de imágenes sueltas: es un documento con orden, con portada y con final. Se lee de principio a fin o no se lee."
+        },
+        "reticula": {
+          "titulo": "La retícula aguanta",
+          "cuerpo": "Una sola estructura sostiene treinta páginas de contenido muy distinto. Cuando la retícula es buena, cambiar el contenido no obliga a rediseñar la página."
+        },
+        "tinta": {
+          "titulo": "El papel no deja rectificar",
+          "cuerpo": "En pantalla puedo mover una línea a las tres de la mañana. Impreso, la decisión es definitiva, y eso cambia cuánto tiempo dedico a tomarla."
+        }
+      },
+      "metodo": {
+        "titulo": "Lo que comprueba el papel",
+        "filas": {
+          "sangre": {
+            "q": "Sangre",
+            "a": "Tres milímetros por lado. Se olvida una vez y ya no se olvida más."
+          },
+          "perfil": {
+            "q": "Perfil de color",
+            "a": "CMYK con el perfil de la imprenta, no el de mi pantalla."
+          },
+          "tinta": {
+            "q": "Carga de tinta",
+            "a": "Los negros ricos manchan si nadie mira el total. El límite va antes del arte final."
+          },
+          "tipo": {
+            "q": "Tamaño de texto",
+            "a": "Lo que se lee en pantalla a 10px no se lee en papel a 7pt."
+          },
+          "prueba": {
+            "q": "Prueba impresa",
+            "a": "Una, siempre, antes de la tirada. El monitor miente sobre el papel."
+          }
+        }
+      },
+      "obras": {
+        "portafolio": {
+          "titulo": "Portafolio gráfico",
+          "nota": "La portada de las treinta páginas que puedes abrir al final de esta edición."
+        },
+        "lobo": {
+          "titulo": "El lobo estepario",
+          "nota": "Cartel para la novela de Hermann Hesse."
+        },
+        "nespresso": {
+          "titulo": "Nespresso",
+          "nota": "El desplegable, reducido a lo que el Plakatstil permite."
+        }
+      }
+    },
+    "oficio": {
+      "titulo": "OFICIO",
+      "entradilla": "Dónde he trabajado, qué uso y cómo escribirme.",
+      "historiaTitulo": "Diseño producto y lo acompaño hasta producción.",
+      "documentosTitulo": "El portafolio impreso y el CV, enteros.",
+      "documentos": {
+        "cv": {
+          "nota": "La experiencia, la formación y las competencias en dos páginas.",
+          "meta": "2 páginas · PDF"
+        }
+      }
+    }
+  },
+  "pie": {
+    "derechos": "© 2026 Mónica Calle"
+  }
+}

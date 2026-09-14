@@ -9,15 +9,25 @@ import { useTranslations } from "next-intl";
 import logo from "@/public/assets/logo-oscuro.svg";
 import { LanguageSwitcher } from "./language-switcher";
 
-// Links are absolute (`/#id`) so the header works from sub-pages (case studies)
-// too, not just the homepage. On the homepage they resolve to in-page anchors.
+/* Links are absolute (`/#id`) so this header works from the case-study routes,
+   which is the only place it renders — the homepage has the Edition's own.
+
+   THE SIX IDS IT USED TO LIST DO NOT EXIST. `#home #about #skills #curriculum
+   #projects #contact` were the old homepage's sections and the Edition
+   replaced it; its only ids are its six chapter anchors. So every link in this
+   header, on every case-study page, landed at the top of the homepage and did
+   nothing. components/site/footer.tsx was fixed for exactly this reason and
+   its comment says so; this file was missed.
+
+   The scroll-spy below is homepage-only by design and this header never
+   renders there, so it simply never matches — which was already true. */
 const LINKS = [
-  { id: "home", key: "home" },
-  { id: "about", key: "about" },
-  { id: "skills", key: "skills" },
-  { id: "curriculum", key: "curriculum" },
-  { id: "projects", key: "projects" },
-  { id: "contact", key: "contact" },
+  { id: "ilustracion", key: "ilustracion" },
+  { id: "marca", key: "marca" },
+  { id: "campana", key: "campana" },
+  { id: "producto", key: "producto" },
+  { id: "impreso", key: "impreso" },
+  { id: "oficio", key: "oficio" },
 ] as const;
 
 export function Header() {
@@ -54,7 +64,10 @@ export function Header() {
   return (
     <header className={`hdr ${scrolled ? "hdr--scrolled" : ""}`}>
       <div className="hdr__inner shell">
-        <Link href="/#home" className="hdr__brand" onClick={() => setOpen(false)} aria-label={t("brandAria")}>
+        {/* `/` and not `/#home`: there is no `#home` either, and a bare path is
+            what the brand mark should be anyway — it goes to the top of the
+            homepage, which is what "home" means. */}
+        <Link href="/" className="hdr__brand" onClick={() => setOpen(false)} aria-label={t("brandAria")}>
           <Image src={logo} alt={t("logoAlt")} className="hdr__logo" priority />
         </Link>
 

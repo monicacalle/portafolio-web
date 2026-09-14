@@ -18,7 +18,7 @@ export default async function OpengraphImage() {
   const t = await getTranslations("og");
   // TheSeasons is a TTF, which Satori can embed (woff2 cannot be used here).
   const seasons = await readFile(
-    join(process.cwd(), "public/fonts/the-seasons-regular.ttf"),
+    join(process.cwd(), "public/fonts/EBGaramond-Regular.ttf"),
   );
 
   return new ImageResponse(

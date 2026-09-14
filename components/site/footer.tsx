@@ -15,10 +15,15 @@ export function Footer() {
         <Image src={logo} alt={t("footer.logoAlt")} className="footer__logo" />
       </Link>
       <nav className="footer__links">
-        <Link href="/#about">{nav("about")}</Link>
-        <Link href="/#skills">{nav("skills")}</Link>
-        <Link href="/#projects">{nav("projects")}</Link>
-        <Link href="/#contact">{nav("contact")}</Link>
+        {/* These pointed at /#about /#skills /#projects /#contact, which the
+            Edition deleted. The homepage's only ids are its six chapter
+            anchors, so all four links landed at the top of the page and did
+            nothing -- on the case-study routes, which is where a recruiter
+            actually reads. */}
+        <Link href="/#ilustracion">{nav("ilustracion")}</Link>
+        <Link href="/#marca">{nav("marca")}</Link>
+        <Link href="/#producto">{nav("producto")}</Link>
+        <Link href="/#oficio">{nav("oficio")}</Link>
       </nav>
       <p className="footer__fine">{t("footer.fine")}</p>
     </footer>

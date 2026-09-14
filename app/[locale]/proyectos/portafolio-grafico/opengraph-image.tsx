@@ -9,7 +9,7 @@ import {
   OG_CONTENT_TYPE,
   ProjectCard,
   toDataUrl,
-  seasonsFont,
+  serifFont,
 } from "@/lib/og/card";
 
 /*
@@ -41,7 +41,7 @@ export default async function GraficoOgImage({
   // Literal path, read here: a path passed as an argument defeats the file
   // tracer and bundles all of public/ into this function. See lib/og/card.ts.
   const [font, png] = await Promise.all([
-    seasonsFont(),
+    serifFont(),
     readFile(join(process.cwd(), "public/images/portafolioabierto.png")),
   ]);
   const image = toDataUrl(png);
