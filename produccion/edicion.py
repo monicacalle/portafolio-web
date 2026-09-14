@@ -840,6 +840,21 @@ D = os.path.join(RAIZ, 'produccion', 'fuentes', 'drive')
 # I ILUSTRACION. Foreground is the copper-hair plane already cut for the film;
 # background is her sage-olive ground, softened.
 _a3 = Image.open(os.path.join(ILUS, 'Untitled_Artwork 3.png'))
+
+# CHAPTER I'S DESKTOP FALLBACK, which §81 asks to be LANDSCAPE and which was a
+# 1150x3229 portrait — /cine/pelo-cobre.avif, the tall hair detail cut for the
+# film. `object-fit: scale-down` contains it, so with WebGL off at 1440x900 the
+# plate painted 449px wide inside a 1137px box: a 40%-wide strip with 344px of
+# flat ground either side. §81's own words are "fallback is not a broken state"
+# and it must preserve the crop.
+#
+# The same painting the scene is built from, cropped 16:10 on her face rather
+# than on a lock of hair. Four of the five chapters already do exactly this.
+_a3_w, _a3_h = _a3.size
+_c1_h = round(_a3_w * 1050 / 1680)
+_c1_y = max(0, min(_a3_h - _c1_h, round(_a3_h * 0.30 - _c1_h / 2)))
+guardar(_a3.convert('RGB').crop((0, _c1_y, _a3_w, _c1_y + _c1_h)),
+        'cap-ilustracion', 1680, q=58)
 guardar(_alfa_por_fondo(_a3), 'plano-i-fg', 1200, q=58)
 guardar(_fondo_escena(_a3, 1400, 26, 0.55), 'plano-i-bg', 1400, q=48)
 

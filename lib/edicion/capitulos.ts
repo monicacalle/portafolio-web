@@ -60,7 +60,17 @@ export const CAPITULOS = [
     // The sage-olive of Untitled_Artwork 3, corner-sampled. It is the ground of
     // the retablo's centre panel, so the page opens without a colour change.
     fondo: "#888866",
-    placa: "/cine/pelo-cobre.avif",
+    /*
+      §81's DESKTOP fallback, which the section asks to be landscape. It was
+      "/cine/pelo-cobre.avif" — 1150x3229, the tall hair detail cut for the
+      film — and `object-fit: scale-down` contains it, so with WebGL off at
+      1440x900 it painted 449px wide inside a 1137px box: a 40%-wide strip with
+      344px of flat ground either side. §81's own words are "fallback is not a
+      broken state" and the crop is one of the four things it must preserve.
+      This is the same painting the scene is built from, cropped 16:10 on her
+      face, which is what the other four chapters already do.
+    */
+    placa: "/edicion/cap-ilustracion.avif",
     /*
       §81's portrait fallback, and this used to be `undefined` with the reason
       "already 1150x3229, taller than 9:16, it fills a phone as it is". It does

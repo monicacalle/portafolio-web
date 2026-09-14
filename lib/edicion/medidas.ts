@@ -33,6 +33,7 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
   "/edicion/campana-marquesina-poster.avif": [1280, 720],
   "/edicion/cap-impreso.avif": [1553, 1013],
   "/edicion/cap-campana-retrato.avif": [900, 1600],
+  "/edicion/cap-ilustracion.avif": [1680, 1050],
   "/edicion/cap-ilustracion-retrato.avif": [900, 1600],
   "/edicion/cap-impreso-retrato.avif": [900, 1600],
   "/edicion/cap-marca-retrato.avif": [900, 1600],
@@ -86,6 +87,7 @@ export const MEDIDAS: Record<string, readonly [number, number]> = {
  *  download at full size. */
 const VARIANTES: Record<string, readonly (readonly [string, number])[]> = {
   "/edicion/cap-impreso.avif": [["/edicion/cap-impreso-w640.avif", 640], ["/edicion/cap-impreso-w1024.avif", 1024]],
+  "/edicion/cap-ilustracion.avif": [["/edicion/cap-ilustracion-w640.avif", 640], ["/edicion/cap-ilustracion-w1024.avif", 1024]],
   "/edicion/cap-marca.avif": [["/edicion/cap-marca-w640.avif", 640], ["/edicion/cap-marca-w1024.avif", 1024]],
   "/edicion/cap-producto.avif": [["/edicion/cap-producto-w640.avif", 640], ["/edicion/cap-producto-w1024.avif", 1024]],
   "/edicion/ceguera-figura.avif": [["/edicion/ceguera-figura-w640.avif", 640], ["/edicion/ceguera-figura-w1024.avif", 1024]],

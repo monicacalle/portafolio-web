@@ -430,14 +430,15 @@ function DprAdaptativo() {
 }
 
 /** Tells the shell its first stable frame has painted, for section 82. */
-function AvisoPrimerCuadro({ onListo }: { onListo: () => void }) {
+function AvisoPrimerCuadro({ onListo }: { onListo: (v: boolean) => void }) {
   const n = useRef(0);
   useFrame(() => {
     n.current += 1;
     // Not frame 1: the first frame can paint before textures have uploaded,
     // and fading in over a half-decoded scene is the flash section 82 forbids.
-    if (n.current === 8) onListo();
+    if (n.current === 8) onListo(true);
   });
+
   return null;
 }
 
@@ -479,6 +480,36 @@ export function Lienzo() {
   );
   const soportado = conContexto && anchoSuficiente && conMovimiento;
   usePrecarga(progresos, soportado);
+
+  /*
+    §82's own sentence, finally with something behind it. The stylesheet hides
+    the static plate rather than removing it "because the canvas can lose its
+    context at any moment, and the plate has to be there to come back" — and
+    nothing was listening, so a lost context left `data-lienzo="activo"` set
+    and all five chapters showing a hidden plate over a 22% ground with no
+    scene behind it. A browser drops a WebGL context on its own terms: a GPU
+    reset, a driver update, too many live contexts across tabs.
+
+    ON `document`, IN THE CAPTURE PHASE, and both halves are load-bearing.
+    `webglcontextlost` does not bubble, so a listener on an ancestor only ever
+    sees it going DOWN — capture is the one phase it passes through. And it is
+    here rather than inside the Canvas because a listener attached to
+    `gl.domElement` from an R3F child never fired: measured, three's own
+    handler logged "Context Lost" and ours did not run at all.
+
+    `preventDefault` is what makes restoration possible: without it the browser
+    never fires `webglcontextrestored`.
+  */
+  useEffect(() => {
+    if (!soportado) return;
+    const perdido = (e: Event) => {
+      if (!(e.target instanceof HTMLCanvasElement)) return;
+      e.preventDefault();
+      setListo(false);
+    };
+    document.addEventListener("webglcontextlost", perdido, true);
+    return () => document.removeEventListener("webglcontextlost", perdido, true);
+  }, [soportado]);
 
   useEffect(() => {
     /*
@@ -538,7 +569,7 @@ export function Lienzo() {
         frameloop="always"
       >
         <DprAdaptativo />
-        <AvisoPrimerCuadro onListo={() => setListo(true)} />
+        <AvisoPrimerCuadro onListo={setListo} />
         {/*
           Section 90: only the current scene renders, and only while it is on
           screen. The brief's rule is "continue one chapter ahead" and "do not
