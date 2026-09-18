@@ -9,8 +9,10 @@
       "label": "Diseño de producto",
       "blurb": "Productos digitales de principio a fin: investigación, definición del problema, flujos y una dirección visual cuidada.",
       "items": [
+        { "title": "CatchApp", "tag": "Diseño de producto · App móvil · Social", "action": "Ver proyecto" },
         { "title": "Vibe App", "tag": "Diseño de producto · App móvil · FemTech", "action": "Ver proyecto" },
-        { "title": "Voluntee App", "tag": "Diseño de producto · Investigación UX", "action": "Ver proyecto" }
+        { "title": "Voluntee App", "tag": "Diseño de producto · Investigación UX", "action": "Ver proyecto" },
+        { "title": "Kazaar Fragrances", "tag": "Rediseño de marca · UX/UI · Motion", "action": "Ver proyecto" }
       ]
     },
     {

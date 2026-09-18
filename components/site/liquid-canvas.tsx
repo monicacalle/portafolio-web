@@ -28,7 +28,7 @@ const CONFIG = {
   SPEED: 1, // global time multiplier
   GRID: 9, // marching-squares cell in px — smaller = smoother, more cost
   COLOR: "90, 26, 18", // warm burgundy-brown (rgb)
-  ALPHA: 0.32, // line opacity
+  ALPHA: 0.2, // line opacity (30%)
   WIDTH: 1.1, // line width (css px)
 };
 

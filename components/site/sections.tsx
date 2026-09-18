@@ -2,7 +2,6 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./reveal";
-import logo from "@/public/images/asset4.png";
 import { SplitText } from "./split-text";
 import { Magnetic } from "./magnetic";
 import { Marquee } from "./marquee";
@@ -10,9 +9,15 @@ import { Footer } from "./footer";
 import about from "@/public/images/about.png";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
+import kazaarLogo from "@/public/images/kazaar/Kazaar Logo.svg";
+import catchAppCover from "@/public/assets/catchApp/Onboarding 3.png";
+import catchAppLogo from "@/public/assets/catchApp/CatchApp.png";
+import catchOrange from "@/public/assets/catchApp/Image Onboarding 2.png";
+import catchMusic from "@/public/assets/catchApp/Image Onboarding-1.png";
+import catchAliens from "@/public/assets/catchApp/Image Onboarding.png";
+import catchPromise from "@/public/assets/catchApp/pinky promisces-02 1.png";
 import raiz from "@/public/images/mockupraiz.png";
 import isa from "@/public/images/mockupisa.png";
-import iphone from "@/public/images/iphone.webp";
 import grafico from "@/public/images/portafolioabierto.png";
 import luxeestate from "@/public/images/luxeestate.png";
 import selvatica from "@/public/assets/selvaticamockup.webp";
@@ -190,10 +195,19 @@ const PROJECT_MEDIA: {
     code?: string;
     wide?: boolean;
     inModalPdf?: boolean;
+    logoOnly?: boolean;
+    portrait?: boolean;
+    catchAnimated?: boolean;
   }[];
 }[] = [
   {
     items: [
+      {
+        img: catchAppCover,
+        href: "/proyectos/catchapp",
+        internal: "/proyectos/catchapp",
+        catchAnimated: true,
+      },
       {
         img: vibe,
         href: `${PDF_HOST}/vibe-app-memoria.pdf`,
@@ -203,6 +217,12 @@ const PROJECT_MEDIA: {
         img: voluntee,
         href: `${PDF_HOST}/voluntee-app-slides.pdf`,
         internal: "/proyectos/voluntee",
+      },
+      {
+        img: kazaarLogo,
+        href: "/proyectos/kazaar-fragrances",
+        internal: "/proyectos/kazaar-fragrances",
+        logoOnly: true,
       },
     ],
   },
@@ -283,24 +303,44 @@ export function Projects() {
                 
                 const renderMedia = () => {
                   const props = {
-                    className: "card__media cursor-pointer",
+                    className: `card__media cursor-pointer${m.logoOnly ? " card__media--logo" : ""}${m.portrait ? " card__media--portrait" : ""}${m.catchAnimated ? " card__media--catchapp" : ""}`,
                     "data-cursor": cardCursor,
                     "data-title": p.title,
                     "aria-label": `${p.action}: ${p.title}`
                   };
                   
-                  const img = (
+                  const img = m.catchAnimated ? (
+                    <div className="catch-card" aria-hidden="true">
+                      <span className="catch-card__ring catch-card__ring--one" />
+                      <span className="catch-card__ring catch-card__ring--two" />
+                      <span className="catch-card__asset catch-card__logo">
+                        <Image src={catchAppLogo} alt="" sizes="12rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__orange">
+                        <Image src={catchOrange} alt="" sizes="10rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__aliens">
+                        <Image src={catchAliens} alt="" sizes="10rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__promise">
+                        <Image src={catchPromise} alt="" sizes="9rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__music">
+                        <Image src={catchMusic} alt="" sizes="9rem" />
+                      </span>
+                    </div>
+                  ) : (
                     <Image
                       src={m.img}
                       alt={p.title}
                       sizes="(max-width: 800px) 100vw, 40rem"
-                      placeholder="blur"
+                      placeholder={m.logoOnly ? "empty" : "blur"}
                     />
                   );
                   
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {img}
                       </DialogTrigger>
                     );
@@ -313,7 +353,7 @@ export function Projects() {
                   const props = { className: "card__link cursor-pointer" };
                   if (m.inModalPdf) {
                     return (
-                      <DialogTrigger render={<div {...props} />}>
+                      <DialogTrigger render={<button type="button" {...props} />}>
                         {p.action}
                       </DialogTrigger>
                     );
@@ -373,7 +413,6 @@ export function Projects() {
    ========================================================================= */
 export function Contact() {
   const t = useTranslations("contact");
-  const nav = useTranslations("nav");
   const tags = t.raw("tags") as string[];
 
   return (

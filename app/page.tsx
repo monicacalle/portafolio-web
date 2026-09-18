@@ -72,11 +72,11 @@ export default async function Home() {
       <Header />
       <main>
         <Hero />
+        <Projects />
         <About />
         <ServicesMarquee />
         <Skills />
         <Curriculum />
-        <Projects />
         <Contact />
       </main>
     </>

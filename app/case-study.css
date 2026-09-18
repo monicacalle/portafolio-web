@@ -99,6 +99,87 @@
   width: 100%;
   height: auto;
 }
+.cs__hero--brand {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr);
+  min-height: clamp(28rem, 56vw, 44rem);
+  background: #ebe9e5;
+}
+.cs__hero-logo {
+  display: grid;
+  place-items: center;
+  padding: clamp(2.5rem, 7vw, 6rem);
+}
+.cs__hero--brand .cs__hero-logo img {
+  width: min(100%, 30rem);
+  height: auto;
+}
+.cs__hero-photo {
+  display: grid;
+  place-items: center;
+  padding: clamp(2rem, 5vw, 4rem);
+  background:
+    radial-gradient(circle at 65% 30%, rgba(121, 86, 49, 0.26), transparent 45%),
+    #17130f;
+}
+.cs__hero--brand .cs__hero-photo img {
+  width: min(100%, 19rem);
+  height: auto;
+  border-radius: 0.35rem;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.35);
+}
+.cs__hero--screens {
+  display: grid;
+  place-items: center;
+  min-height: clamp(34rem, 62vw, 48rem);
+  padding: clamp(2.5rem, 7vw, 6rem);
+  background:
+    radial-gradient(circle at 78% 20%, rgba(191, 209, 255, 0.95), transparent 25%),
+    radial-gradient(circle at 18% 82%, rgba(255, 93, 67, 0.24), transparent 26%),
+    #ebf9c6;
+}
+.cs__hero--vibe {
+  background:
+    radial-gradient(circle at 78% 20%, rgba(169, 181, 127, 0.5), transparent 28%),
+    radial-gradient(circle at 16% 82%, rgba(193, 132, 142, 0.35), transparent 30%),
+    #f2eee5;
+}
+.cs__hero--voluntee {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(187, 176, 255, 0.9), transparent 27%),
+    radial-gradient(circle at 15% 84%, rgba(231, 226, 14, 0.72), transparent 29%),
+    #fffdec;
+}
+.cs__hero-screen-stack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.cs__hero-screen {
+  position: relative;
+  width: clamp(12rem, 25vw, 20rem);
+  flex: 0 0 auto;
+  border-radius: clamp(1.2rem, 3vw, 2rem);
+  box-shadow: 0 2rem 4rem rgba(33, 45, 25, 0.22);
+}
+.cs__hero-screen img {
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+.cs__hero-screen--1 {
+  z-index: 1;
+  transform: translateX(2.5rem) rotate(-7deg) translateY(1.5rem);
+}
+.cs__hero-screen--2 {
+  z-index: 3;
+  transform: scale(1.07);
+}
+.cs__hero-screen--3 {
+  z-index: 2;
+  transform: translateX(-2.5rem) rotate(7deg) translateY(1.5rem);
+}
 
 /* Overview grid --------------------------------------------------------- */
 .cs__overview {
@@ -179,6 +260,269 @@
   margin: 0;
 }
 
+/* CatchApp screen system ------------------------------------------------ */
+.cs__screens {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+.cs__screens-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.65fr);
+  align-items: end;
+  gap: 0.75rem clamp(1.5rem, 5vw, 4rem);
+}
+.cs__screens-head .eyebrow {
+  grid-column: 1 / -1;
+}
+.cs__screens-title {
+  margin: 0;
+  color: var(--burgundy);
+  font-size: clamp(2.7rem, 7vw, 5.5rem);
+  line-height: 0.95;
+}
+.cs__screens-head > p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.cs__screens-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2.7vw, 2rem);
+}
+.cs__screen {
+  min-width: 0;
+  margin: 0;
+}
+.cs__screen-media {
+  display: grid;
+  place-items: center;
+  padding: clamp(0.7rem, 2vw, 1.15rem);
+  overflow: hidden;
+  border: 1px solid rgba(36, 14, 6, 0.1);
+  border-radius: clamp(1rem, 2.5vw, 1.5rem);
+  background: #ebf9c6;
+}
+.cs__screen:nth-child(3n + 2) .cs__screen-media {
+  background: #dce6ff;
+}
+.cs__screen:nth-child(3n + 3) .cs__screen-media {
+  background: #ffe2db;
+}
+.cs__screens--vibe .cs__screen-media {
+  background: #f2eee5;
+}
+.cs__screens--vibe .cs__screen:nth-child(3n + 2) .cs__screen-media {
+  background: #e2e5d4;
+}
+.cs__screens--vibe .cs__screen:nth-child(3n + 3) .cs__screen-media {
+  background: #eadcdf;
+}
+.cs__screens--voluntee .cs__screen-media {
+  background: #fffdec;
+}
+.cs__screens--voluntee .cs__screen:nth-child(3n + 2) .cs__screen-media {
+  background: #d9d2ff;
+}
+.cs__screens--voluntee .cs__screen:nth-child(3n + 3) .cs__screen-media {
+  background: #f0ed65;
+}
+.cs__screen-media img {
+  width: 100%;
+  height: auto;
+  border-radius: clamp(0.8rem, 2vw, 1.2rem);
+  box-shadow: 0 1rem 2rem rgba(36, 14, 6, 0.12);
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.cs__screen:hover .cs__screen-media img {
+  transform: translateY(-0.35rem) scale(1.012);
+}
+.cs__screen figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  padding: 0.8rem 0.25rem 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.cs__screen figcaption span {
+  color: #ff5d43;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+/* Kazaar campaign showcase --------------------------------------------- */
+.cs__showcase,
+.cs__ads {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+.cs__showcase-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.cs__showcase-title,
+.cs__ads-title {
+  margin: 0;
+  color: var(--burgundy);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  line-height: 0.98;
+}
+.cs__showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+}
+.cs__showcase-card {
+  overflow: hidden;
+  border: 1px solid rgba(36, 14, 6, 0.12);
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
+  background: var(--paper-2);
+}
+.cs__showcase-card:first-child {
+  grid-column: 1 / -1;
+}
+.cs__showcase-documents {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(36, 14, 6, 0.12);
+}
+.cs__showcase-document {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #e7e4df;
+}
+.cs__showcase-scroll {
+  display: block;
+  height: clamp(28rem, 58vw, 44rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(78, 9, 9, 0.48) transparent;
+  scrollbar-width: thin;
+  background: #fff;
+}
+.cs__showcase-scroll--email {
+  height: clamp(28rem, 58vw, 44rem);
+}
+.cs__showcase-scroll img {
+  width: 100%;
+  height: auto;
+}
+.cs__showcase-document-label {
+  padding: 0.8rem 1rem;
+  color: var(--burgundy);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.cs__showcase-video {
+  display: grid;
+  place-items: center;
+  min-height: clamp(28rem, 40vw, 36rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  background: #17130f;
+}
+.cs__showcase-video video {
+  width: 100%;
+  max-height: 32rem;
+  object-fit: contain;
+}
+.cs__showcase-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+.cs__showcase-copy p {
+  margin: 0;
+  color: var(--burgundy);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.cs__showcase-copy h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.15rem, 2.7vw, 1.55rem);
+}
+.cs__showcase-copy span {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.cs__ads-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.65fr);
+  align-items: end;
+  gap: clamp(1rem, 4vw, 3rem);
+}
+.cs__ads-head p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.cs__ads-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+}
+.cs__ad {
+  margin: 0;
+}
+.cs__ad-media {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
+  background: #17130f;
+}
+.cs__ad-media img,
+.cs__ad-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cs__ad-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  color: #f5eee5;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(122, 72, 48, 0.65), transparent 28%),
+    linear-gradient(155deg, #12100e, #3e2920 70%, #17120f);
+}
+.cs__ad-placeholder span {
+  font-family: var(--font-heading), serif;
+  font-size: clamp(2.25rem, 7vw, 4rem);
+}
+.cs__ad-placeholder small {
+  color: rgba(245, 238, 229, 0.58);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.cs__ad figcaption {
+  padding: 0.8rem 0.25rem 0;
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 /* Footer CTA ------------------------------------------------------------ */
 .cs__foot {
   display: flex;
@@ -197,6 +541,55 @@
    Mobile Centering Overrides
    ========================================================================= */
 @media (max-width: 768px) {
+  .cs__hero--brand {
+    grid-template-columns: 1fr;
+  }
+  .cs__hero-photo {
+    min-height: 26rem;
+  }
+  .cs__hero--screens {
+    min-height: 32rem;
+    padding-inline: 0;
+  }
+  .cs__hero-screen {
+    width: min(58vw, 15rem);
+  }
+  .cs__hero-screen--1 {
+    transform: translateX(4.5rem) rotate(-8deg) translateY(1.25rem);
+  }
+  .cs__hero-screen--3 {
+    transform: translateX(-4.5rem) rotate(8deg) translateY(1.25rem);
+  }
+  .cs__screens-head {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .cs__screens-head .eyebrow {
+    grid-column: auto;
+  }
+  .cs__screens-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cs__showcase-grid,
+  .cs__ads-grid,
+  .cs__ads-head {
+    grid-template-columns: 1fr;
+  }
+  .cs__showcase-card:first-child {
+    grid-column: auto;
+  }
+  .cs__showcase-documents {
+    grid-template-columns: 1fr;
+  }
+  .cs__showcase-scroll,
+  .cs__showcase-scroll--email {
+    height: min(65vh, 38rem);
+  }
+  .cs__showcase-head,
+  .cs__ads-head {
+    text-align: center;
+    align-items: center;
+  }
   .cs__back {
     align-self: center;
   }
@@ -216,3 +609,17 @@
   }
 }
 
+@media (max-width: 480px) {
+  .cs__screens-grid {
+    gap: 0.8rem;
+  }
+  .cs__screen-media {
+    padding: 0.45rem;
+    border-radius: 0.9rem;
+  }
+  .cs__screen figcaption {
+    align-items: flex-start;
+    font-size: 0.7rem;
+    line-height: 1.3;
+  }
+}

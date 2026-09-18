@@ -9,8 +9,10 @@
       "label": "Product design",
       "blurb": "Digital products end to end: research, problem definition, flows and a considered visual direction.",
       "items": [
+        { "title": "CatchApp", "tag": "Product design · Mobile app · Social", "action": "View project" },
         { "title": "Vibe App", "tag": "Product design · Mobile app · FemTech", "action": "View project" },
-        { "title": "Voluntee App", "tag": "Product design · UX research", "action": "View project" }
+        { "title": "Voluntee App", "tag": "Product design · UX research", "action": "View project" },
+        { "title": "Kazaar Fragrances", "tag": "Brand redesign · UX/UI · Motion", "action": "View project" }
       ]
     },
     {

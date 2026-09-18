@@ -54,7 +54,12 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${geist.variable} ${newYork.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${geist.variable} ${newYork.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body className="grain">
         <NextIntlClientProvider messages={messages}>
           <Backdrop />

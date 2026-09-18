@@ -15,7 +15,11 @@
       "type": "Type",
       "platform": "Platform"
     },
-    "cta": "See the full project (PDF)"
+    "cta": "See the full project (PDF)",
+    "showcaseTitle": "Prototypes and campaign assets",
+    "comingSoon": "Content in progress",
+    "adsTitle": "Social media ads",
+    "adsDescription": "A series of assets that brings Kazaar's new visual world into static and motion formats."
   },
   "items": {
     "vibe": {
@@ -61,7 +65,22 @@
         { "value": "1.6%", "label": "…yet say their current app helps them prepare for it." },
         { "value": "64.5%", "label": "want clear self-care instructions, not just a chart." },
         { "value": "40.3%", "label": "would rather “hack” emotional stability than physical pain." }
-      ]
+      ],
+      "gallery": {
+        "title": "From cycle data to daily guidance",
+        "description": "Nine screens show Vibe's core journey: a transparent introduction, cycle personalization and the tools that turn data into everyday decisions.",
+        "labels": [
+          "Welcome · Your hormonal GPS",
+          "Onboarding · Hormonal stage",
+          "Onboarding · Cycle data",
+          "Onboarding · Tools",
+          "Onboarding · Privacy and trial",
+          "Home · Cycle status",
+          "Agenda · Weekly strategy",
+          "Daily check-in",
+          "Profile and personal data"
+        ]
+      }
     },
     "voluntee": {
       "title": "Voluntee",
@@ -106,7 +125,130 @@
         { "value": "58%", "label": "started because “someone invited me,” not from official information." },
         { "value": "66%", "label": "wrongly believe that volunteering can be paid." },
         { "value": "+50%", "label": "would take part more if the information were transparent and organized." }
+      ],
+      "gallery": {
+        "title": "From intention to impact",
+        "description": "Sixteen screens cover the Voluntee experience: initial education, access, opportunity discovery, filters, tracking, conversation and profile management.",
+        "labels": [
+          "Welcome to Voluntee",
+          "Onboarding · Your help transforms",
+          "Onboarding · Impact without complications",
+          "Onboarding · Transparency and safety",
+          "Onboarding · Goodbye paperwork",
+          "Onboarding · Start your mission",
+          "Platform access",
+          "Log in",
+          "Create an account",
+          "Explore volunteering opportunities",
+          "Advanced filters",
+          "Organization details",
+          "Saved opportunities",
+          "Volunteering history",
+          "Organization conversation",
+          "Profile and documentation"
+        ]
+      }
+    },
+    "kazaar-fragrances": {
+      "title": "Kazaar Fragrances",
+      "tagline": "A digital and visual redesign that carries the fragrance identity across every touchpoint.",
+      "meta": {
+        "role": "Art direction · UX/UI Design · Motion",
+        "year": "In progress",
+        "type": "Brand redesign · Digital campaign",
+        "platform": "Mobile · Email · Social media"
+      },
+      "overview": {
+        "product": "Kazaar Fragrances is a redesign project that brings digital experience, visual identity and campaign communication together in one coherent brand system.",
+        "role": "End-to-end experience redesign: visual concept, mobile page prototypes, email design, motion logo and advertising assets for social media.",
+        "audience": "People interested in fragrance who discover, compare and connect with the brand mainly through digital channels and mobile devices.",
+        "challenge": "Translate the sensory character of a fragrance into distinct digital formats without losing recognition, consistency or visual impact.",
+        "limitations": "Work in progress. This page is ready to receive the final prototypes and assets for each format as they are completed."
+      },
+      "sections": [
+        {
+          "heading": "Redesign direction",
+          "body": "The project proposes a more contemporary and cohesive presence for Kazaar Fragrances. The identity needs to behave as a flexible system: recognizable on a mobile screen, expressive in motion and consistent across promotional formats of different scales."
+        },
+        {
+          "heading": "A mobile-first experience",
+          "body": "The page prototypes prioritize clear navigation, visual product storytelling and effortless reading on small screens. The goal is to turn the sensory world of fragrance into a direct and immersive digital experience."
+        },
+        {
+          "heading": "A brand in motion",
+          "body": "The redesign extends into email, an animated logo and social media advertising. Each asset adapts rhythm, composition and hierarchy to its channel while maintaining one visual voice across the campaign."
+        }
+      ],
+      "showcase": [
+        {
+          "eyebrow": "UX/UI",
+          "title": "Mobile page prototypes",
+          "description": "High-fidelity flows and screens designed to present the brand and its fragrances on mobile devices.",
+          "format": "Mobile"
+        },
+        {
+          "eyebrow": "CRM",
+          "title": "Email design",
+          "description": "An editorial and commercial asset that brings the new visual system into direct communication.",
+          "format": "Email"
+        },
+        {
+          "eyebrow": "Motion identity",
+          "title": "Motion logo",
+          "description": "An animated interpretation of the logo for intros, posts and branded moments.",
+          "format": "Motion"
+        }
       ]
+    },
+    "catchapp": {
+      "title": "CatchApp",
+      "tagline": "A mobile app that turns everyday plans into opportunities to meet people and nurture friendships.",
+      "meta": {
+        "role": "UX/UI Design · Visual identity",
+        "year": "In progress",
+        "type": "Mobile app · Social product",
+        "platform": "iOS / Android"
+      },
+      "overview": {
+        "product": "CatchApp is a social app for discovering plans, creating meetups and inviting other people. It brings events, maps, chats and profiles into one experience, making the step from “I want to meet people” to “we have a plan” feel simple.",
+        "role": "Product concept, experience architecture, core user flows, high-fidelity UX/UI design and a visual identity with its own color, typography and illustration system.",
+        "audience": "People who want to expand their social circle, keep friendships active and find company for specific activities without entering the dynamics of a dating app.",
+        "challenge": "Create a social experience that builds trust and makes real-life meetups easier: discover a plan, understand who is joining, coordinate the place, share a ride and keep talking afterwards.",
+        "limitations": "A high-fidelity prototype. The proposal covers the essential flows and prepares the experience for future usability testing and product development."
+      },
+      "sections": [
+        {
+          "heading": "From discovery to meeting up",
+          "body": "The experience is organized around plans. From the home screen, people can explore events, see who is attending, create an activity and check its location. The goal is to reduce the distance between finding something interesting and confirming a real meetup."
+        },
+        {
+          "heading": "Connections with context",
+          "body": "Each plan brings together the information people need to feel confident before joining: confirmed attendees, meeting point, date, map and options for coordinating the journey. Chats keep the conversation linked to the experience so the connection does not disappear when the event ends."
+        },
+        {
+          "heading": "An identity that breaks the ice",
+          "body": "The visual direction uses lime green, soft blue and coral, paired with illustrated characters and rounded shapes. The playful tone makes onboarding feel approachable and separates CatchApp from more impersonal social interfaces or dating products."
+        }
+      ],
+      "gallery": {
+        "title": "From first connection to a real plan",
+        "description": "Thirteen screens cover the complete experience: welcome, access, event discovery, plan creation, coordination, conversation and profile.",
+        "labels": [
+          "Loading screen",
+          "Onboarding · Keep friends close",
+          "Onboarding · Friendship streaks",
+          "Onboarding · Brand promise",
+          "Log in",
+          "Create an account",
+          "Explore plans",
+          "Create a plan",
+          "Plan details",
+          "Coordinate a ride",
+          "Location and meeting point",
+          "Conversations",
+          "Profile, streaks and achievements"
+        ]
+      }
     }
   }
 }
