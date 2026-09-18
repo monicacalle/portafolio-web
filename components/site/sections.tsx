@@ -13,6 +13,13 @@ import { GRAFICO_ROUTE } from "@/lib/case-studies";
 import about from "@/public/images/about.png";
 import vibe from "@/public/images/vibe.png";
 import voluntee from "@/public/images/voluntee.png";
+import kazaarLogo from "@/public/images/kazaar/Kazaar Logo.svg";
+import catchAppCover from "@/public/assets/catchApp/Onboarding 3.png";
+import catchAppLogo from "@/public/assets/catchApp/CatchApp.png";
+import catchOrange from "@/public/assets/catchApp/Image Onboarding 2.png";
+import catchMusic from "@/public/assets/catchApp/Image Onboarding-1.png";
+import catchAliens from "@/public/assets/catchApp/Image Onboarding.png";
+import catchPromise from "@/public/assets/catchApp/pinky promisces-02 1.png";
 import raiz from "@/public/images/mockupraiz.png";
 import isa from "@/public/images/mockupisa.png";
 import grafico from "@/public/images/portafolioabierto.png";
@@ -232,6 +239,12 @@ const PROJECT_MEDIA: {
   {
     items: [
       {
+        img: catchAppCover,
+        href: "/proyectos/catchapp",
+        internal: "/proyectos/catchapp",
+        catchAnimated: true,
+      },
+      {
         img: vibe,
         href: `${PDF_HOST}/vibe-app-memoria.pdf`,
         internal: "/proyectos/vibe",
@@ -240,6 +253,12 @@ const PROJECT_MEDIA: {
         img: voluntee,
         href: `${PDF_HOST}/voluntee-app-slides.pdf`,
         internal: "/proyectos/voluntee",
+      },
+      {
+        img: kazaarLogo,
+        href: "/proyectos/kazaar-fragrances",
+        internal: "/proyectos/kazaar-fragrances",
+        logoOnly: true,
       },
     ],
   },
@@ -280,7 +299,6 @@ type ProjectGroup = {
   // `size` is present only on the items that link a PDF.
   items: { title: string; tag: string; action: string; size?: string }[];
 };
-
 
 export function Projects() {
   const t = useTranslations("projects");
@@ -331,33 +349,61 @@ export function Projects() {
                 const linkAttrs = m.internal
                   ? {}
                   : { target: "_blank", rel: "noopener noreferrer" };
-                
+
                 const renderMedia = () => {
                   const props = {
-                    className: "card__media cursor-pointer",
+                    className: `card__media cursor-pointer${m.logoOnly ? " card__media--logo" : ""}${m.portrait ? " card__media--portrait" : ""}${m.catchAnimated ? " card__media--catchapp" : ""}`,
                     "data-cursor": cardCursor,
                     "data-title": p.title,
-                    "aria-label": `${p.action}: ${p.title}`
+                    "aria-label": `${p.action}: ${p.title}`,
                   };
-                  
-                  const img = (
+
+                  const img = m.catchAnimated ? (
+                    <div className="catch-card" aria-hidden="true">
+                      <span className="catch-card__ring catch-card__ring--one" />
+                      <span className="catch-card__ring catch-card__ring--two" />
+                      <span className="catch-card__asset catch-card__logo">
+                        <Image src={catchAppLogo} alt="" sizes="12rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__orange">
+                        <Image src={catchOrange} alt="" sizes="10rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__aliens">
+                        <Image src={catchAliens} alt="" sizes="10rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__promise">
+                        <Image src={catchPromise} alt="" sizes="9rem" />
+                      </span>
+                      <span className="catch-card__asset catch-card__music">
+                        <Image src={catchMusic} alt="" sizes="9rem" />
+                      </span>
+                    </div>
+                  ) : (
                     <Image
                       src={m.img}
                       alt={p.title}
                       sizes="(max-width: 800px) 100vw, 40rem"
-                      placeholder="blur"
+                      placeholder={m.logoOnly ? "empty" : "blur"}
                     />
                   );
                   const Tag = m.internal ? Link : "a";
-                  return <Tag href={href} {...linkAttrs} {...props}>{img}</Tag>;
+                  return (
+                    <Tag href={href} {...linkAttrs} {...props}>
+                      {img}
+                    </Tag>
+                  );
                 };
 
                 const renderAction = () => {
                   const props = { className: "card__link cursor-pointer" };
                   const Tag = m.internal ? Link : "a";
-                  return <Tag href={href} {...linkAttrs} {...props}>{p.action}</Tag>;
+                  return (
+                    <Tag href={href} {...linkAttrs} {...props}>
+                      {p.action}
+                    </Tag>
+                  );
                 };
-                
+
                 const content = (
                   <Reveal
                     key={p.title}

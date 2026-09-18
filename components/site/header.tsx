@@ -13,10 +13,10 @@ import { LanguageSwitcher } from "./language-switcher";
 // too, not just the homepage. On the homepage they resolve to in-page anchors.
 const LINKS = [
   { id: "home", key: "home" },
+  { id: "projects", key: "projects" },
   { id: "about", key: "about" },
   { id: "skills", key: "skills" },
   { id: "curriculum", key: "curriculum" },
-  { id: "projects", key: "projects" },
   { id: "contact", key: "contact" },
 ] as const;
 

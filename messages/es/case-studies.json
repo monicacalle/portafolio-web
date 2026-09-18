@@ -15,7 +15,11 @@
       "type": "Tipo",
       "platform": "Plataforma"
     },
-    "cta": "Ver el proyecto completo (PDF)"
+    "cta": "Ver el proyecto completo (PDF)",
+    "showcaseTitle": "Prototipos y piezas de campaña",
+    "comingSoon": "Contenido en preparación",
+    "adsTitle": "Ads para redes sociales",
+    "adsDescription": "Una serie de piezas que lleva el nuevo universo visual de Kazaar a formatos estáticos y en movimiento."
   },
   "items": {
     "vibe": {
@@ -61,7 +65,22 @@
         { "value": "1,6 %", "label": "…pero dice que su app actual la ayuda a anticiparse." },
         { "value": "64,5 %", "label": "quiere instrucciones claras de autocuidado, no solo un gráfico." },
         { "value": "40,3 %", "label": "prioriza «hackear» la estabilidad emocional sobre el dolor físico." }
-      ]
+      ],
+      "gallery": {
+        "title": "Del ciclo a una guía diaria",
+        "description": "Nueve pantallas muestran el recorrido principal de Vibe: una introducción transparente, la personalización del ciclo y las herramientas que convierten los datos en decisiones cotidianas.",
+        "labels": [
+          "Bienvenida · Tu GPS hormonal",
+          "Onboarding · Etapa hormonal",
+          "Onboarding · Datos del ciclo",
+          "Onboarding · Herramientas",
+          "Onboarding · Privacidad y prueba",
+          "Inicio · Estado del ciclo",
+          "Agenda · Estrategia semanal",
+          "Check-in diario",
+          "Perfil y datos personales"
+        ]
+      }
     },
     "voluntee": {
       "title": "Voluntee",
@@ -106,7 +125,130 @@
         { "value": "58 %", "label": "empezó porque «una persona me invitó», no por la información oficial." },
         { "value": "66 %", "label": "cree, erróneamente, que el voluntariado puede ser remunerado." },
         { "value": "+50 %", "label": "participaría más si la información fuera transparente y organizada." }
+      ],
+      "gallery": {
+        "title": "De la intención al impacto",
+        "description": "Dieciséis pantallas recorren la experiencia de Voluntee: educación inicial, acceso, descubrimiento de oportunidades, filtros, seguimiento, conversación y gestión del perfil.",
+        "labels": [
+          "Bienvenida a Voluntee",
+          "Onboarding · Tu ayuda transforma",
+          "Onboarding · Impacto sin complicaciones",
+          "Onboarding · Transparencia y seguridad",
+          "Onboarding · Adiós al papeleo",
+          "Onboarding · Comienza tu misión",
+          "Acceso a la plataforma",
+          "Inicio de sesión",
+          "Crear una cuenta",
+          "Explorar voluntariados",
+          "Filtros avanzados",
+          "Detalle de la entidad",
+          "Oportunidades guardadas",
+          "Historial de voluntariados",
+          "Conversación con la entidad",
+          "Perfil y documentación"
+        ]
+      }
+    },
+    "kazaar-fragrances": {
+      "title": "Kazaar Fragrances",
+      "tagline": "Un rediseño digital y visual que lleva la identidad de la fragancia a cada punto de contacto.",
+      "meta": {
+        "role": "Dirección de arte · Diseño UX/UI · Motion",
+        "year": "En desarrollo",
+        "type": "Rediseño de marca · Campaña digital",
+        "platform": "Mobile · Email · Redes sociales"
+      },
+      "overview": {
+        "product": "Kazaar Fragrances es un proyecto de rediseño que reúne experiencia digital, identidad visual y comunicación de campaña en un sistema coherente para la marca.",
+        "role": "Rediseño integral de la experiencia: concepto visual, prototipos de páginas mobile, diseño de email, logotipo en movimiento y piezas publicitarias para redes sociales.",
+        "audience": "Personas interesadas en fragancias que descubren, comparan y conectan con la marca principalmente desde canales digitales y dispositivos móviles.",
+        "challenge": "Traducir el carácter sensorial de una fragancia a formatos digitales distintos sin perder reconocimiento, consistencia ni impacto visual.",
+        "limitations": "Proyecto en desarrollo. Esta página está preparada para incorporar progresivamente los prototipos y las piezas finales de cada formato."
+      },
+      "sections": [
+        {
+          "heading": "La dirección del rediseño",
+          "body": "El proyecto plantea una presencia más contemporánea y cohesionada para Kazaar Fragrances. La identidad debe funcionar como un sistema flexible: reconocible en una pantalla mobile, expresiva en movimiento y consistente en formatos promocionales de distinta escala."
+        },
+        {
+          "heading": "Una experiencia pensada para mobile",
+          "body": "Los prototipos de página priorizan una navegación clara, una presentación visual del producto y una lectura fluida desde pantallas pequeñas. La intención es convertir el universo sensorial de la fragancia en una experiencia digital directa y envolvente."
+        },
+        {
+          "heading": "Una marca que se mueve",
+          "body": "El rediseño se extiende al email, al logotipo animado y a los anuncios para redes sociales. Cada pieza adapta ritmo, composición y jerarquía al canal, manteniendo una misma voz visual en toda la campaña."
+        }
+      ],
+      "showcase": [
+        {
+          "eyebrow": "UX/UI",
+          "title": "Prototipos de páginas mobile",
+          "description": "Flujos y pantallas de alta fidelidad para presentar la marca y sus fragancias desde dispositivos móviles.",
+          "format": "Mobile"
+        },
+        {
+          "eyebrow": "CRM",
+          "title": "Diseño de email",
+          "description": "Una pieza editorial y comercial que traslada el nuevo sistema visual a la comunicación directa.",
+          "format": "Email"
+        },
+        {
+          "eyebrow": "Motion identity",
+          "title": "Logotipo en movimiento",
+          "description": "Una interpretación animada del logotipo para aperturas, publicaciones y momentos de marca.",
+          "format": "Motion"
+        }
       ]
+    },
+    "catchapp": {
+      "title": "CatchApp",
+      "tagline": "Una app móvil que convierte los planes cotidianos en oportunidades para conocer gente y cuidar las amistades.",
+      "meta": {
+        "role": "Diseño UX/UI · Identidad visual",
+        "year": "En desarrollo",
+        "type": "App móvil · Producto social",
+        "platform": "iOS / Android"
+      },
+      "overview": {
+        "product": "CatchApp es una app social para descubrir planes, crear encuentros e invitar a otras personas. Reúne eventos, mapas, chats y perfiles en una misma experiencia para que pasar de «quiero conocer gente» a «tenemos un plan» sea sencillo.",
+        "role": "Conceptualización del producto, arquitectura de la experiencia, flujos principales, diseño UX/UI de alta fidelidad e identidad visual con un sistema propio de color, tipografía e ilustración.",
+        "audience": "Personas que quieren ampliar su círculo social, mantener vivas sus amistades y encontrar compañía para actividades concretas sin entrar en la dinámica de una app de citas.",
+        "challenge": "Crear una experiencia social que genere confianza y facilite encuentros reales: descubrir un plan, entender quién participa, coordinar el lugar, compartir transporte y seguir conversando después.",
+        "limitations": "Prototipo de alta fidelidad. La propuesta cubre los flujos esenciales y deja preparada la experiencia para futuras pruebas de usabilidad y desarrollo del producto."
+      },
+      "sections": [
+        {
+          "heading": "De descubrir a quedar",
+          "body": "La experiencia se organiza alrededor de los planes. Desde el inicio se pueden explorar eventos, ver quién asistirá, crear una actividad propia y consultar la ubicación. El objetivo es reducir la distancia entre descubrir algo interesante y confirmar un encuentro real."
+        },
+        {
+          "heading": "Conexiones con contexto",
+          "body": "Cada plan reúne la información necesaria para sentirse seguro antes de participar: personas confirmadas, punto de encuentro, fecha, mapa y opciones para coordinar el trayecto. Los chats mantienen la conversación vinculada a la experiencia y evitan que la conexión se pierda al terminar el evento."
+        },
+        {
+          "heading": "Una identidad que rompe el hielo",
+          "body": "La dirección visual utiliza verde lima, azul suave y coral, combinados con personajes ilustrados y formas redondeadas. El tono lúdico hace que el onboarding resulte cercano y diferencia CatchApp de las interfaces sociales más impersonales o asociadas a las citas."
+        }
+      ],
+      "gallery": {
+        "title": "De la primera conexión al plan real",
+        "description": "Trece pantallas recorren la experiencia completa: bienvenida, acceso, descubrimiento de eventos, creación de planes, coordinación, conversación y perfil.",
+        "labels": [
+          "Pantalla de carga",
+          "Onboarding · Amigos cerca",
+          "Onboarding · Rachas de amistad",
+          "Onboarding · Promesa de marca",
+          "Inicio de sesión",
+          "Crear cuenta",
+          "Explorar planes",
+          "Crear un plan",
+          "Detalle del plan",
+          "Coordinar transporte",
+          "Ubicación y punto de encuentro",
+          "Conversaciones",
+          "Perfil, rachas y logros"
+        ]
+      }
     }
   }
 }

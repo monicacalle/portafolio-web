@@ -385,6 +385,13 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
 }
 .card__media img {
   width: 100%;
@@ -394,6 +401,144 @@
 }
 .card:hover .card__media img {
   transform: scale(1.05);
+}
+.card__media--logo {
+  display: grid;
+  place-items: center;
+  padding: clamp(2.75rem, 7vw, 5.5rem);
+  background: #050505;
+}
+.card__media--logo img {
+  width: min(78%, 21rem);
+  height: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+.card:hover .card__media--logo img {
+  transform: scale(1.03);
+}
+.card__media--portrait {
+  display: grid;
+  place-items: center;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  background: #edfac9;
+}
+.card__media--portrait img {
+  width: auto;
+  height: 100%;
+  max-height: 20rem;
+  object-fit: contain;
+  border-radius: 1.2rem;
+  box-shadow: 0 1.2rem 2.4rem rgba(41, 52, 35, 0.16);
+}
+.card:hover .card__media--portrait img {
+  transform: translateY(-0.25rem) rotate(1deg) scale(1.02);
+}
+.card__media--catchapp {
+  display: block;
+  background: #edfac9;
+  isolation: isolate;
+}
+.catch-card {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.catch-card__asset {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  will-change: transform;
+}
+.catch-card__asset img,
+.card:hover .catch-card__asset img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transform: none;
+  filter: none;
+}
+.catch-card__logo {
+  z-index: 5;
+  top: 45%;
+  left: 50%;
+  width: min(34%, 12rem);
+  animation: catch-logo-pulse 4.8s ease-in-out infinite;
+}
+.catch-card__orange {
+  top: 3%;
+  left: 4%;
+  width: min(27%, 10rem);
+  animation: catch-float-orange 6.2s ease-in-out infinite;
+}
+.catch-card__aliens {
+  top: 3%;
+  right: 3%;
+  width: min(28%, 10.5rem);
+  animation: catch-float-aliens 7.1s ease-in-out -1.6s infinite;
+}
+.catch-card__promise {
+  bottom: 1%;
+  left: 8%;
+  width: min(25%, 9.5rem);
+  animation: catch-float-promise 6.8s ease-in-out -3s infinite;
+}
+.catch-card__music {
+  right: 8%;
+  bottom: 2%;
+  width: min(24%, 9rem);
+  animation: catch-float-music 6.5s ease-in-out -2.1s infinite;
+}
+.catch-card__ring {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid rgba(255, 93, 67, 0.24);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: catch-ring 7s ease-in-out infinite;
+}
+.catch-card__ring--one {
+  inset: 17% 29%;
+}
+.catch-card__ring--two {
+  inset: 30% 39%;
+  border-color: rgba(108, 141, 218, 0.25);
+  animation-delay: -3.5s;
+}
+
+@keyframes catch-logo-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, calc(-50% - 0.35rem)) scale(1.04); }
+}
+@keyframes catch-float-orange {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-5deg); }
+  50% { transform: translate3d(0.55rem, 0.45rem, 0) rotate(-1deg); }
+}
+@keyframes catch-float-aliens {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(5deg); }
+  50% { transform: translate3d(-0.45rem, 0.6rem, 0) rotate(1deg); }
+}
+@keyframes catch-float-promise {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(3deg); }
+  50% { transform: translate3d(0.65rem, -0.55rem, 0) rotate(-2deg); }
+}
+@keyframes catch-float-music {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+  50% { transform: translate3d(-0.6rem, -0.4rem, 0) rotate(2deg); }
+}
+@keyframes catch-ring {
+  0%, 100% { transform: scale(0.86); opacity: 0.25; }
+  50% { transform: scale(1.18); opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catch-card__asset,
+  .catch-card__ring {
+    animation: none;
+  }
+  .catch-card__logo {
+    transform: translate(-50%, -50%);
+  }
 }
 .card__meta {
   display: flex;
@@ -428,7 +573,10 @@
   letter-spacing: 0.01em;
   color: var(--burgundy);
   white-space: nowrap;
-  padding-bottom: 2px;
+  padding: 0 0 2px;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
 }
 .card__link::after {
   content: "";

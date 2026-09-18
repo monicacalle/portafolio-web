@@ -14,7 +14,7 @@
 
 :root {
   /* Ink + paper */
-  --paper: #f4f2f0;
+  --paper: #fbfffef2;
   /* dominant cream background */
   --paper-2: #fdfdfd;
   /* lifted card cream */
@@ -216,12 +216,20 @@ html.motion [data-reveal].in-view {
 
 /* ── PDF Book Flip ── */
 @keyframes pageFlipNext {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-180deg); }
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-180deg);
+  }
 }
 @keyframes pageFlipPrev {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(180deg); }
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
 }
 
 /* ── PDF Viewer Grain Texture ── */
