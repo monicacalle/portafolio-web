@@ -234,6 +234,9 @@ const PROJECT_MEDIA: {
     internal?: string;
     code?: string;
     wide?: boolean;
+    logoOnly?: boolean;
+    portrait?: boolean;
+    catchAnimated?: boolean;
   }[];
 }[] = [
   {

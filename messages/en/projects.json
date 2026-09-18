@@ -20,6 +20,11 @@
       "blurb": "Digital products end to end: research, problem definition, flows and a considered visual direction.",
       "items": [
         {
+          "title": "CatchApp",
+          "tag": "Product design · Mobile app · Social",
+          "action": "View project"
+        },
+        {
           "title": "Vibe App",
           "tag": "Product design · Mobile app · FemTech",
           "action": "View project",
@@ -30,6 +35,11 @@
           "tag": "Product design · UX research",
           "action": "View project",
           "size": "20 MB"
+        },
+        {
+          "title": "Kazaar Fragrances",
+          "tag": "Brand redesign · UX/UI · Motion",
+          "action": "View project"
         }
       ]
     },

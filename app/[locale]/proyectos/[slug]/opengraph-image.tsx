@@ -37,8 +37,12 @@ export const alt = "Mónica Calle";
 // a runtime path defeats Next's file tracer, which then bundles all of public/
 // into this function. See lib/og/card.ts.
 const IMAGE: Record<string, () => Promise<Buffer>> = {
+  catchapp: () =>
+    readFile(join(process.cwd(), "public/assets/catchApp/Onboarding 3.png")),
   vibe: () => readFile(join(process.cwd(), "public/images/vibe.png")),
   voluntee: () => readFile(join(process.cwd(), "public/images/voluntee.png")),
+  "kazaar-fragrances": () =>
+    readFile(join(process.cwd(), "public/images/kazaar/ad-01.png")),
 };
 
 // Metadata images are their own route handlers with their own segment config,

@@ -10,7 +10,12 @@
  * Adding a slug here is all that is needed for it to be pre-rendered AND
  * indexed. Keys must match the `items` keys in messages/{es,en}/case-studies.json.
  */
-export const CASE_STUDY_SLUGS = ["vibe", "voluntee"] as const;
+export const CASE_STUDY_SLUGS = [
+  "catchapp",
+  "vibe",
+  "voluntee",
+  "kazaar-fragrances",
+] as const;
 
 export type CaseStudySlug = (typeof CASE_STUDY_SLUGS)[number];
 
