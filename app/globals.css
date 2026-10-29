@@ -101,7 +101,10 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* `hidden` makes body a non-scrolling ancestor for position: sticky when
+     html also clips the x-axis. `clip` keeps horizontal artwork contained
+     without stealing the website-folder cards' scroll container. */
+  overflow-x: clip;
 }
 
 h1,
